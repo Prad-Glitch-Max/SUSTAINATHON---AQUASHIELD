@@ -6,9 +6,7 @@ import DigitalTwinSCADA from './components/DigitalTwinSCADA';
 import DatasetBenchmarkView from './components/DatasetBenchmarkView';
 import IncidentPostMortemModal from './components/IncidentPostMortemModal';
 import BlueprintSelector from './components/BlueprintSelector';
-import AdaptiveLearningConsole from './components/AdaptiveLearningConsole';
 import { CPSSimulator } from './engine/cpsSimulator';
-import { adaptiveLearningEngine } from './engine/adaptiveLearningEngine';
 import { LayoutDashboard, Database, ShieldCheck } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { sound } from './utils/soundEffects';
@@ -66,7 +64,7 @@ export default function App() {
   };
 
   // Step 1b: Launch Custom Zero-Day Attack from Hacker Prompt Console
-  // Slowed down smoothly to ~8.0s - 9.4s so judges & operators can observe every phase!
+  // Slowed down smoothly to ~8.5s so judges & operators can observe every phase!
   const handleLaunchCustomAttack = (customScenario) => {
     // Clear any previous running sequence
     customAttackTimersRef.current.forEach(t => clearTimeout(t));
@@ -75,110 +73,36 @@ export default function App() {
     setSelectedScenarioKeys([customScenario]);
     handleLaunchAttack([customScenario]);
 
-    const isLearned = simRef.current.isLearnedReflex;
+    setAutoStage(1);
 
-    if (isLearned) {
-      // ✦ FAST-PATH LEARNED REFLEX: Paced cleanly (~7.8s) so memory recall & fast fix are clearly visible
-      setAutoStage(1);
-      
-      const t1 = setTimeout(() => {
-        sound.playScan();
-        setAutoStage(2);
-      }, 2400);
+    const t1 = setTimeout(() => {
+      sound.playScan();
+      setAutoStage(2);
+    }, 2800);
 
-      const t2 = setTimeout(() => {
-        sound.playScan();
-        simRef.current.localizeAttack();
-        setSimState({ ...simRef.current.getState() });
-        setAutoStage(3);
-      }, 5000);
+    const t2 = setTimeout(() => {
+      sound.playScan();
+      simRef.current.localizeAttack();
+      setSimState({ ...simRef.current.getState() });
+      setAutoStage(3);
+    }, 5600);
 
-      const t3 = setTimeout(() => {
-        sound.playSuccess();
-        try {
-          confetti({
-            particleCount: 110,
-            spread: 75,
-            origin: { y: 0.65 },
-            colors: ['#00f2fe', '#10b981', '#38bdf8', '#34d399']
-          });
-        } catch {}
-        simRef.current.deployFix();
-        setSimState({ ...simRef.current.getState() });
-        setAutoStage(4);
-      }, 7800);
+    const t3 = setTimeout(() => {
+      sound.playSuccess();
+      try {
+        confetti({
+          particleCount: 110,
+          spread: 75,
+          origin: { y: 0.65 },
+          colors: ['#00f2fe', '#10b981', '#38bdf8', '#34d399']
+        });
+      } catch {}
+      simRef.current.deployFix();
+      setSimState({ ...simRef.current.getState() });
+      setAutoStage(4);
+    }, 8500);
 
-      customAttackTimersRef.current.push(t1, t2, t3);
-    } else {
-      // 🔍 NOVEL ATTACK: Full 9.4s exploratory diagnostic search across physical equations
-      setAutoStage(1);
-
-      const t1 = setTimeout(() => {
-        sound.playScan();
-        setAutoStage(2);
-      }, 3200);
-
-      const t2 = setTimeout(() => {
-        sound.playScan();
-        simRef.current.localizeAttack();
-        setSimState({ ...simRef.current.getState() });
-        setAutoStage(3);
-      }, 6400);
-
-      const t3 = setTimeout(() => {
-        sound.playSuccess();
-        try {
-          confetti({
-            particleCount: 120,
-            spread: 80,
-            origin: { y: 0.65 },
-            colors: ['#00f2fe', '#10b981', '#38bdf8', '#34d399']
-          });
-        } catch {}
-        simRef.current.deployFix();
-        setSimState({ ...simRef.current.getState() });
-        setAutoStage(4);
-      }, 9400);
-
-      customAttackTimersRef.current.push(t1, t2, t3);
-    }
-  };
-
-  // 1-Click Guided Learning Demonstration Loop (Review 2 Feedback Loop)
-  const handleLaunchDemoLearningLoop = () => {
-    const novelZeroDay = {
-      id: `NOVEL_ZERO_DAY_${Date.now()}`,
-      isCustom: true,
-      name: 'Harmonic Backwash Cavitation Attack',
-      rawPrompt: 'Inject 120Hz acoustic harmonic resonance into ultrafiltration backwash membrane',
-      layer: 'ACTUATOR',
-      layerName: 'Layer 5: Actuator (Backwash Valve)',
-      target: 'Ultrafiltration Membrane Backwash Valve',
-      targetNode: 'valve',
-      symptom: 'Acoustic vibration spike (120 Hz) with backwash pressure surging to 6.2 bar.',
-      traditionalMistake: 'Old IT firewalls cannot detect acoustic pressure resonance until membrane ruptures.',
-      plainMathProof: 'Acoustic Standing Wave Invariant: Pressure oscillations break Bernoulli steady-state continuity.',
-      plainFix: 'AquaShield modulates backwash frequency away from resonance band and activates hydraulic surge damper.',
-      color: '#ff2a5f',
-      physicsImpact: { pressureDelta: 3.0, flowDelta: 15 }
-    };
-
-    // Run first encounter
-    handleLaunchCustomAttack(novelZeroDay);
-
-    // After resolution, automatically record feedback and demonstrate second-encounter reflex
-    setTimeout(() => {
-      adaptiveLearningEngine.recordFeedback({
-        scenario: novelZeroDay,
-        feedbackText: 'Operator verified 120Hz harmonic spike. Hardened anti-resonance throttling rule in Experience Vault.',
-        customFix: 'Instant zero-shot anti-resonance throttling applied in 12ms.'
-      });
-
-      // Retest the same attack — watch it trigger the instant 12ms reflex!
-      setTimeout(() => {
-        handleLaunchCustomAttack(novelZeroDay);
-      }, 1200);
-    }, 8800);
+    customAttackTimersRef.current.push(t1, t2, t3);
   };
 
   // Step 1c: Replay Verified Real-World SWaT Dataset Attack into live SCADA
@@ -337,15 +261,6 @@ export default function App() {
             activeBlueprintId={simState.blueprintId || simState.blueprint?.id || 'BLUEPRINT_4_CASCADE'}
             onSelectBlueprint={handleSelectBlueprint}
             phase={simState.phase}
-          />
-
-          {/* REVIEW 2: ADAPTIVE LEARNING & EXPERIENCE VAULT (HUMAN-IN-THE-LOOP FEEDBACK) */}
-          <AdaptiveLearningConsole
-            simState={simState}
-            onTeachAttack={() => {
-              setSimState({ ...simRef.current.getState() });
-            }}
-            onLaunchDemoLearningLoop={handleLaunchDemoLearningLoop}
           />
 
           {/* ZERO-DAY HACKER PROMPT CONSOLE (JUDGES CAN ENTER ANY OUT-OF-THE-BOX ATTACK!) */}
