@@ -7,6 +7,7 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
 
   const activeBlueprint = blueprint || BLUEPRINT_PRESETS.BLUEPRINT_4_CASCADE;
   const layout = getBlueprintLayout(activeBlueprint);
+  const count = activeBlueprint.tankCount || 4;
 
   const isNominal = phase === 'NOMINAL';
   const isAttackActive = phase === 'ATTACK_ACTIVE';
@@ -53,6 +54,11 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
 
   const isAlarmLive = isAttackActive || isLocalized;
   const isSensorAttacked = hitNodes.has('tank2') && scns.some(s => s?.layer === 'SENSOR' && resolveNode(s) === 'tank2');
+  const isNetworkAttacked = isWireAttacked;
+  const isControllerAttacked = isPump1Attacked;
+  const isFirmwareAttacked = isPump2Attacked;
+  const isActuatorAttacked = isValveAttacked;
+
   const isAllPathsBlocked = scns.some(s => s?.id === 'ALL_PATHS_BLOCKED' || s?.isAllPathsBlocked);
   const isPowerBlackout = scns.some(s => s?.id === 'POWER_GRID_BLACKOUT' || s?.isPowerBlackout);
   const isPipeCompromised = isAlarmLive && (isWireAttacked || isValveAttacked || isAllPathsBlocked);
@@ -69,6 +75,68 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
       tankNum: idx + 1
     };
   });
+
+  // Calculate dynamic component anchor coordinates
+  const t1 = dynamicTanks[0] || { x: 80, width: 90, centerX: 125 };
+  const t2 = dynamicTanks[1] || { x: 260, width: 90, centerX: 305 };
+  const t3 = dynamicTanks[2] || { x: 440, width: 90, centerX: 485 };
+  const t4 = dynamicTanks[3] || { x: 620, width: 90, centerX: 665 };
+  const lastTank = dynamicTanks[dynamicTanks.length - 1];
+
+  // Specific Actuator Positions:
+  // Pump 1: Gap between Tank 1 & 2
+  const pump1Pos = {
+    x: (t1.x + t1.width + t2.x) / 2,
+    y: 195
+  };
+
+  // Valve 1: Gap between Tank 2 & 3
+  const valve1Pos = {
+    x: (t2.x + t2.width + t3.x) / 2,
+    y: 195
+  };
+
+  // Pump 2: If 4 or 5 tanks, gap between Tank 3 & 4. If 6 tanks, gap between Tank 4 & 5.
+  const pump2Pos = count === 6
+    ? { x: (dynamicTanks[3].x + dynamicTanks[3].width + dynamicTanks[4].x) / 2, y: 195 }
+    : count >= 4
+      ? { x: (t3.x + t3.width + t4.x) / 2, y: 195 }
+      : { x: (t1.x + t1.width + t2.x) / 2, y: 195 };
+
+  // Valve 2: If 5 tanks, gap between Tank 4 & 5. If 6 tanks, gap between Tank 5 & 6.
+  const valve2Pos = count === 5
+    ? { x: (dynamicTanks[3].x + dynamicTanks[3].width + dynamicTanks[4].x) / 2, y: 195 }
+    : count === 6
+      ? { x: (dynamicTanks[4].x + dynamicTanks[4].width + dynamicTanks[5].x) / 2, y: 195 }
+      : null;
+
+  // Determine threat target coordinate for clean overhead routing (NO diagonal slicing!)
+  let threatTargetX = t2.centerX;
+  let threatTargetY = 130;
+
+  if (isControllerAttacked) {
+    threatTargetX = pump1Pos.x;
+    threatTargetY = pump1Pos.y - 30;
+  } else if (isFirmwareAttacked) {
+    threatTargetX = pump2Pos.x;
+    threatTargetY = pump2Pos.y - 30;
+  } else if (isActuatorAttacked) {
+    threatTargetX = valve1Pos.x;
+    threatTargetY = valve1Pos.y;
+  } else if (isNetworkAttacked) {
+    threatTargetX = 480;
+    threatTargetY = 64;
+  } else {
+    // Tank targets
+    const attackedTank = dynamicTanks.find(t => t.isAttacked);
+    if (attackedTank) {
+      threatTargetX = attackedTank.centerX;
+      threatTargetY = attackedTank.y;
+    }
+  }
+
+  // Safe observed level on Tank 2 during spoofing
+  const displayLevelT2 = (isSensorAttacked && !isResolved) ? 32 : (dynamicTanks[1]?.liveLevel ?? 68);
 
   return (
     <div
@@ -115,11 +183,11 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
                 CLEAN WATER RECYCLING FACILITY (DIGITAL TWIN SCADA)
               </h2>
               <span className="badge badge-cyan" style={{ fontSize: '0.66rem', padding: '1px 8px' }}>
-                {activeBlueprint.shortName || `${activeBlueprint.tankCount} Tanks`}
+                {activeBlueprint.shortName || `${count} Tanks`}
               </span>
             </div>
             <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-              Real-time fluid mechanics simulation across {activeBlueprint.tankCount} continuous water treatment stages
+              Real-time fluid mechanics simulation across {count} continuous water treatment stages
             </p>
           </div>
         </div>
@@ -127,7 +195,7 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
         {/* Global Status Pill */}
         {isNominal && (
           <span className="badge badge-emerald" style={{ fontSize: '0.8rem', padding: '6px 16px', fontWeight: 800 }}>
-            <CheckCircle2 size={15} /> All {activeBlueprint.tankCount} Tanks Running Clean
+            <CheckCircle2 size={15} /> All {count} Tanks Running Clean
           </span>
         )}
 
@@ -146,7 +214,7 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
         {isResolved && (
           <span className="badge badge-emerald" style={{ fontSize: '0.8rem', padding: '6px 16px', fontWeight: 800 }}>
             <CheckCircle2 size={15} />
-            {isLearnedReflex ? '⚡ Learned Reflex Fix (<15ms)' : 'Fixed! Clean Water Protected (0 Downtime)'}
+            {isLearnedReflex ? '✦ Learned Reflex Fix (<15ms)' : 'Fixed! Clean Water Protected (0 Downtime)'}
           </span>
         )}
       </div>
@@ -193,30 +261,95 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
             ))}
           </g>
 
+          {/* ================= LAYER 2: INDUSTRIAL MODBUS NETWORK BUS ================= */}
+          <g>
+            {/* Main horizontal fieldbus cable */}
+            <path
+              d={`M ${t1.x} 64 L ${lastTank.x + lastTank.width} 64`}
+              fill="none"
+              stroke={isNetworkAttacked ? '#ff2a5f' : 'rgba(56, 189, 248, 0.45)'}
+              strokeWidth={isNetworkAttacked ? '3' : '2'}
+              strokeDasharray={isNetworkAttacked ? '6,3' : '4,3'}
+              className={isNetworkAttacked ? 'laser-trace' : ''}
+            />
+            {/* Drop taps down to each tank node */}
+            {dynamicTanks.map((t, idx) => (
+              <g key={`wire-tap-${idx}`}>
+                <line
+                  x1={t.centerX}
+                  y1="64"
+                  x2={t.centerX}
+                  y2="82"
+                  stroke={isNetworkAttacked ? '#ff2a5f' : 'rgba(56, 189, 248, 0.45)'}
+                  strokeWidth="1.5"
+                />
+                <circle cx={t.centerX} cy="64" r="3" fill={isNetworkAttacked ? '#ff2a5f' : '#00f2fe'} />
+              </g>
+            ))}
+            {/* Bus label */}
+            <text
+              x={t1.x}
+              y="58"
+              fill={isNetworkAttacked ? '#ff7185' : '#64748b'}
+              fontSize="7"
+              fontWeight="800"
+              fontFamily="var(--font-mono)"
+            >
+              MODBUS TCP INDUSTRIAL RING BUS (100 Mbps)
+            </text>
+
+            {/* Network Cable Attack Callout */}
+            {isNetworkAttacked && effectiveStage > 0 && (
+              <g transform="translate(480, 52)">
+                <rect x="-85" y="-12" width="170" height="20" rx="4" fill={effectiveStage === 4 ? '#10b981' : '#ff2a5f'} opacity="0.95" />
+                <text x="0" y="2" fill="#ffffff" fontSize="7.8" fontWeight="900" textAnchor="middle" style={{ fontFamily: 'system-ui, sans-serif' }}>
+                  {effectiveStage === 1 && '⚠️ PACKET JITTER +385ms (DELAY)'}
+                  {effectiveStage === 2 && '🧠 TIMESTAMPS LATE • TANKS SAFE'}
+                  {effectiveStage === 3 && '🎯 CABLE CONGESTION ISOLATED'}
+                  {effectiveStage === 4 && '🛡️ BACKUP WIRE ACTIVE (38ms)'}
+                </text>
+              </g>
+            )}
+          </g>
+
           {/* ================= DYNAMIC 2-LINE TANK HEADER BADGES ================= */}
           {dynamicTanks.map((t) => {
             const isHot = t.isAttacked;
             const w = t.headerWidth;
-            const h = 32;
+            const h = 30;
             const hx = t.headerX;
 
+            // Clean short name to avoid truncation
+            const cleanShortNames = {
+              'TNK-101': 'RAW INTAKE',
+              'TNK-102': count >= 5 ? 'FILTER / BIO' : 'FILTRATION',
+              'TNK-103': count === 3 ? 'CLEAN SUPPLY' : count >= 5 ? 'MEMBRANE UF' : 'DISINFECTION',
+              'TNK-104': count === 4 ? 'DRINKING WATER' : count === 5 ? 'REVERSE OSMOSIS' : 'RO TRAIN-B',
+              'TNK-105': count === 5 ? 'POTABLE EXPORT' : 'REMINERALIZER',
+              'TNK-106': 'POTABLE EXPORT'
+            };
+
+            const headerRole = isHot
+              ? (t.key === 'tank2' && isSensorAttacked ? 'SPOOFED SENSOR' : 'UNDER ATTACK')
+              : (cleanShortNames[t.id] || t.role.split(' ')[0] || 'WATER TANK');
+
             return (
-              <g key={`header-${t.key}`} transform={`translate(${hx}, 86)`}>
+              <g key={`header-${t.key}`} transform={`translate(${hx}, 82)`}>
                 <rect
                   x="0"
                   y="0"
                   width={w}
                   height={h}
-                  rx="7"
+                  rx="6"
                   fill={isHot ? '#3b0d1a' : '#081026'}
                   stroke={isHot ? '#ff2a5f' : t.color}
-                  strokeWidth={isHot ? '2.5' : '2'}
+                  strokeWidth={isHot ? '2.5' : '1.8'}
                 />
                 <text
                   x={w / 2}
-                  y="14"
+                  y="13"
                   fill="#ffffff"
-                  fontSize="10.5"
+                  fontSize={count >= 5 ? '9.5' : '10.5'}
                   fontWeight="900"
                   textAnchor="middle"
                   style={{ fontFamily: 'system-ui, sans-serif' }}
@@ -225,16 +358,14 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
                 </text>
                 <text
                   x={w / 2}
-                  y="26"
+                  y="24"
                   fill={isHot ? '#ff7185' : t.color}
-                  fontSize="7.5"
+                  fontSize={count >= 5 ? '7' : '8'}
                   fontWeight="800"
                   textAnchor="middle"
                   style={{ fontFamily: 'system-ui, sans-serif' }}
                 >
-                  {isHot
-                    ? (t.key === 'tank2' && isSensorAttacked ? 'SPOOFED SENSOR' : 'UNDER ATTACK')
-                    : (t.name.length > 16 ? t.name.slice(0, 15) + '..' : t.name).toUpperCase()}
+                  {headerRole}
                 </text>
               </g>
             );
@@ -242,244 +373,380 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
 
           {/* Blackout HUD Banner */}
           {isPowerBlackout && (
-            <g transform="translate(480, 24)">
-              <rect x="-260" y="-14" width="520" height="28" rx="6" fill="rgba(234, 179, 8, 0.25)" stroke="#eab308" strokeWidth="1.5" />
-              <text x="0" y="4" fill="#fef08a" fontSize="10" fontWeight="900" textAnchor="middle" style={{ fontFamily: 'system-ui, sans-serif' }}>
-                FACILITY POWER GRID: 0.0V AC • BLACKOUT DETECTED • ZERO ELECTRICITY
+            <g transform="translate(480, 22)">
+              <rect x="-240" y="-12" width="480" height="24" rx="5" fill="rgba(234, 179, 8, 0.25)" stroke="#eab308" strokeWidth="1.5" />
+              <text x="0" y="4" fill="#fef08a" fontSize="9.5" fontWeight="900" textAnchor="middle" style={{ fontFamily: 'system-ui, sans-serif' }}>
+                ⚠ FACILITY POWER GRID: 0.0V AC • BLACKOUT DETECTED • ZERO ELECTRICITY
               </text>
             </g>
           )}
 
           {/* ================= DYNAMIC PIPES & ACTUATORS ================= */}
           {/* Intake Pipe into First Tank */}
-          {dynamicTanks.length > 0 && (
-            <g>
-              <path d={`M 15 195 L ${dynamicTanks[0].x} 195`} fill="none" stroke="#00f2fe" strokeWidth="8" opacity={isPowerBlackout ? '0.1' : '0.3'} />
-              <path d={`M 15 195 L ${dynamicTanks[0].x} 195`} fill="none" stroke="#38bdf8" strokeWidth="4" className={isPowerBlackout ? '' : 'pipe-flow'} />
-            </g>
-          )}
+          <g>
+            <path d={`M 15 195 L ${t1.x} 195`} fill="none" stroke="#00f2fe" strokeWidth="8" opacity={isPowerBlackout ? '0.1' : '0.3'} />
+            <path d={`M 15 195 L ${t1.x} 195`} fill="none" stroke="#38bdf8" strokeWidth="4" className={isPowerBlackout ? '' : 'pipe-flow'} />
+          </g>
 
-          {/* Interconnecting Pipes and Inline Actuators between adjacent tanks */}
+          {/* Interconnecting Pipes between all tanks */}
           {dynamicTanks.map((t, i) => {
             if (i >= dynamicTanks.length - 1) return null;
             const nextT = dynamicTanks[i + 1];
             const x1 = t.x + t.width;
             const x2 = nextT.x;
-            const midX = (x1 + x2) / 2;
 
-            // Determine if this segment has an actuator
-            const isPumpSegment = i % 2 === 0;
-            const isValveSegment = i % 2 === 1;
+            const isThisPipeCompromised = isPipeCompromised && (i === 1 || isAllPathsBlocked);
 
             return (
-              <g key={`pipe-actuator-${i}`}>
-                {/* Pipe */}
+              <g key={`pipe-${i}`}>
                 <path
                   d={`M ${x1} 195 L ${x2} 195`}
                   fill="none"
-                  stroke={isPipeCompromised && (i === 1 || isAllPathsBlocked) ? '#ff2a5f' : '#00f2fe'}
+                  stroke={isThisPipeCompromised ? '#ff2a5f' : '#00f2fe'}
                   strokeWidth="8"
                   opacity={isPowerBlackout ? '0.1' : '0.3'}
                 />
                 <path
                   d={`M ${x1} 195 L ${x2} 195`}
                   fill="none"
-                  stroke={isPipeCompromised && (i === 1 || isAllPathsBlocked) ? '#ff2a5f' : '#38bdf8'}
+                  stroke={isThisPipeCompromised ? '#ff2a5f' : '#38bdf8'}
                   strokeWidth="4"
-                  className={
-                    isPowerBlackout
-                      ? ''
-                      : isPipeCompromised && (i === 1 || isAllPathsBlocked)
-                        ? 'pipe-flow-attack'
-                        : 'pipe-flow-fast'
-                  }
+                  className={isPowerBlackout ? '' : isThisPipeCompromised ? 'pipe-flow-attack' : 'pipe-flow-fast'}
                 />
-
-                {/* Inline Pump (on even segments) */}
-                {isPumpSegment && (
-                  <g transform={`translate(${midX}, 195)`}>
-                    <circle
-                      cx="0"
-                      cy="0"
-                      r="16"
-                      fill="#081026"
-                      stroke={
-                        isPowerBlackout
-                          ? '#eab308'
-                          : (isAlarmLive && (i === 0 ? isPump1Attacked : isPump2Attacked))
-                            ? '#ff2a5f'
-                            : '#00f2fe'
-                      }
-                      strokeWidth="2"
-                    />
-                    <g className={isPowerBlackout ? '' : 'rotate-turbine'}>
-                      <line
-                        x1="-9"
-                        y1="0"
-                        x2="9"
-                        y2="0"
-                        stroke={
-                          isPowerBlackout
-                            ? '#eab308'
-                            : (isAlarmLive && (i === 0 ? isPump1Attacked : isPump2Attacked))
-                              ? '#ff2a5f'
-                              : '#00f2fe'
-                        }
-                        strokeWidth="2.5"
-                      />
-                      <line
-                        x1="0"
-                        y1="-9"
-                        x2="0"
-                        y2="9"
-                        stroke={
-                          isPowerBlackout
-                            ? '#eab308'
-                            : (isAlarmLive && (i === 0 ? isPump1Attacked : isPump2Attacked))
-                              ? '#ff2a5f'
-                              : '#00f2fe'
-                        }
-                        strokeWidth="2.5"
-                      />
-                    </g>
-                    <text
-                      x="0"
-                      y="26"
-                      fill={isPowerBlackout ? '#fef08a' : '#94a3b8'}
-                      fontSize="8"
-                      fontWeight="700"
-                      textAnchor="middle"
-                      fontFamily="var(--font-mono)"
-                    >
-                      {isPowerBlackout ? '0V' : i === 0 ? 'PUMP 1' : 'PUMP 2'}
-                    </text>
-                  </g>
-                )}
-
-                {/* Inline Valve (on odd segments) */}
-                {isValveSegment && (
-                  <g transform={`translate(${midX}, 195)`}>
-                    <polygon
-                      points="-8,-7 8,0 -8,7"
-                      fill={
-                        isPowerBlackout && effectiveStage === 4
-                          ? '#10b981'
-                          : isAllPathsBlocked
-                            ? effectiveStage === 4
-                              ? '#10b981'
-                              : '#ff2a5f'
-                            : (isAlarmLive && isValveAttacked)
-                              ? '#ff2a5f'
-                              : '#00f2fe'
-                      }
-                    />
-                    <polygon
-                      points="8,-7 -8,0 8,7"
-                      fill={
-                        isPowerBlackout && effectiveStage === 4
-                          ? '#10b981'
-                          : isAllPathsBlocked
-                            ? effectiveStage === 4
-                              ? '#10b981'
-                              : '#ff2a5f'
-                            : (isAlarmLive && isValveAttacked)
-                              ? '#ff2a5f'
-                              : '#00f2fe'
-                      }
-                    />
-                    <circle cx="0" cy="0" r="4" fill="#ffffff" />
-                    <text
-                      x="0"
-                      y="26"
-                      fill={
-                        isPowerBlackout
-                          ? '#fef08a'
-                          : isAllPathsBlocked
-                            ? '#ff7185'
-                            : '#94a3b8'
-                      }
-                      fontSize="8"
-                      fontWeight="700"
-                      textAnchor="middle"
-                      fontFamily="var(--font-mono)"
-                    >
-                      {isPowerBlackout && effectiveStage === 4
-                        ? 'SPRING OPEN'
-                        : isAllPathsBlocked
-                          ? effectiveStage === 4
-                            ? 'VENTED'
-                            : 'GRIDLOCKED'
-                          : (isAlarmLive && isValveAttacked)
-                            ? 'STUCK'
-                            : 'VALVE'}
-                    </text>
-                  </g>
-                )}
               </g>
             );
           })}
 
-          {/* Export Distribution Pipe from Last Tank to Right Margin */}
-          {dynamicTanks.length > 0 && (
-            <g>
-              <path
-                d={`M ${dynamicTanks[dynamicTanks.length - 1].x + dynamicTanks[dynamicTanks.length - 1].width} 195 L 945 195`}
-                fill="none"
-                stroke="#10b981"
-                strokeWidth="8"
-                opacity="0.3"
+          {/* PUMP 1 (Feed Booster) between Tank 1 & 2 */}
+          <g transform={`translate(${pump1Pos.x}, ${pump1Pos.y})`}>
+            {/* PLC Industrial Controller mounted above Pump 1 */}
+            <g transform="translate(0, -42)">
+              <rect
+                x="-24"
+                y="-10"
+                width="48"
+                height="20"
+                rx="4"
+                fill="#081026"
+                stroke={isControllerAttacked ? '#a855f7' : 'rgba(168, 85, 247, 0.45)'}
+                strokeWidth={isControllerAttacked ? '2.5' : '1.2'}
               />
-              <path
-                d={`M ${dynamicTanks[dynamicTanks.length - 1].x + dynamicTanks[dynamicTanks.length - 1].width} 195 L 945 195`}
-                fill="none"
-                stroke="#34d399"
-                strokeWidth="4"
-                className="pipe-flow"
+              <text x="0" y="3" fill={isControllerAttacked ? '#e9d5ff' : '#c084fc'} fontSize="7.5" fontWeight="900" textAnchor="middle" fontFamily="var(--font-mono)">
+                PLC-101
+              </text>
+              <line x1="0" y1="10" x2="0" y2="24" stroke={isControllerAttacked ? '#a855f7' : 'rgba(168, 85, 247, 0.4)'} strokeWidth="1.5" strokeDasharray="2,2" />
+            </g>
+
+            {/* Pump 1 Volute */}
+            <circle
+              cx="0"
+              cy="0"
+              r="16"
+              fill="#081026"
+              stroke={
+                isPowerBlackout
+                  ? '#eab308'
+                  : isControllerAttacked
+                    ? '#a855f7'
+                    : (isAlarmLive && isPump1Attacked)
+                      ? '#ff2a5f'
+                      : '#00f2fe'
+              }
+              strokeWidth="2"
+            />
+            {/* Impeller blades */}
+            <g className={isPowerBlackout ? '' : 'rotate-turbine'}>
+              <line x1="-9" y1="0" x2="9" y2="0" stroke={isPowerBlackout ? '#eab308' : isControllerAttacked ? '#a855f7' : '#00f2fe'} strokeWidth="2.2" />
+              <line x1="0" y1="-9" x2="0" y2="9" stroke={isPowerBlackout ? '#eab308' : isControllerAttacked ? '#a855f7' : '#00f2fe'} strokeWidth="2.2" />
+            </g>
+            <text x="0" y="27" fill={isPowerBlackout ? '#fef08a' : isControllerAttacked ? '#c084fc' : '#94a3b8'} fontSize="8" fontWeight="800" textAnchor="middle" fontFamily="var(--font-mono)">
+              {isPowerBlackout ? '0V' : 'PUMP 1'}
+            </text>
+
+            {/* Controller Attack Callout */}
+            {isControllerAttacked && effectiveStage > 0 && (
+              <g transform="translate(0, 42)">
+                <rect x="-56" y="0" width="112" height="19" rx="4" fill={effectiveStage === 4 ? '#10b981' : '#a855f7'} opacity="0.95" />
+                <text x="0" y="13" fill="#ffffff" fontSize="7.8" fontWeight="900" textAnchor="middle" style={{ fontFamily: 'system-ui, sans-serif' }}>
+                  {effectiveStage === 1 && '⚠️ COMMAND 8.5 BAR'}
+                  {effectiveStage === 2 && '🧠 BURST LIMIT BROKEN'}
+                  {effectiveStage === 3 && '🎯 PLC HIJACK ISOLATED'}
+                  {effectiveStage === 4 && '🛡️ CLAMPED TO 3.2 BAR'}
+                </text>
+              </g>
+            )}
+          </g>
+
+          {/* VALVE 1 (Emergency Diverter) between Tank 2 & 3 - CLEAN FLANGED VALVE (NO ARROWS!) */}
+          <g transform={`translate(${valve1Pos.x}, ${valve1Pos.y})`}>
+            {/* Flanged Valve Body Housing */}
+            <rect
+              x="-11"
+              y="-9"
+              width="22"
+              height="18"
+              rx="3"
+              fill="#081026"
+              stroke={
+                isPowerBlackout && effectiveStage === 4
+                  ? '#10b981'
+                  : isAllPathsBlocked
+                    ? effectiveStage === 4
+                      ? '#10b981'
+                      : '#ff2a5f'
+                    : isActuatorAttacked
+                      ? '#ff2a5f'
+                      : '#00f2fe'
+              }
+              strokeWidth="1.8"
+            />
+            {/* Valve flanges */}
+            <line x1="-11" y1="-9" x2="-11" y2="9" stroke={isActuatorAttacked ? '#ff2a5f' : '#00f2fe'} strokeWidth="2.5" />
+            <line x1="11" y1="-9" x2="11" y2="9" stroke={isActuatorAttacked ? '#ff2a5f' : '#00f2fe'} strokeWidth="2.5" />
+            {/* Valve stem */}
+            <line x1="0" y1="-9" x2="0" y2="-14" stroke={isActuatorAttacked ? '#ff2a5f' : '#00f2fe'} strokeWidth="2" />
+            {/* Actuator solenoid / handwheel */}
+            <ellipse cx="0" cy="-15" rx="6" ry="2.2" fill={isActuatorAttacked ? '#ff2a5f' : '#00f2fe'} />
+            {/* Center disc port */}
+            <circle cx="0" cy="0" r="3.5" fill={isActuatorAttacked ? '#ff2a5f' : '#ffffff'} />
+
+            {/* Clean Valve Label */}
+            <text
+              x="0"
+              y="27"
+              fill={
+                isPowerBlackout
+                  ? '#fef08a'
+                  : isAllPathsBlocked
+                    ? '#ff7185'
+                    : isActuatorAttacked
+                      ? '#ff7185'
+                      : '#94a3b8'
+              }
+              fontSize="8"
+              fontWeight="800"
+              textAnchor="middle"
+              fontFamily="var(--font-mono)"
+            >
+              {isPowerBlackout && effectiveStage === 4
+                ? 'SPRING OPEN'
+                : isAllPathsBlocked
+                  ? effectiveStage === 4
+                    ? 'VENTED'
+                    : 'BLOCKED'
+                  : isActuatorAttacked
+                    ? 'STUCK JAM'
+                    : 'VALVE 1'}
+            </text>
+
+            {/* Actuator Jam Callout */}
+            {!isAllPathsBlocked && !isPowerBlackout && isActuatorAttacked && effectiveStage > 0 && (
+              <g transform="translate(0, 42)">
+                <rect x="-56" y="0" width="112" height="19" rx="4" fill={effectiveStage === 4 ? '#10b981' : '#ff2a5f'} opacity="0.95" />
+                <text x="0" y="13" fill="#ffffff" fontSize="7.8" fontWeight="900" textAnchor="middle" style={{ fontFamily: 'system-ui, sans-serif' }}>
+                  {effectiveStage === 1 && '⚠️ JAMMED 100% OPEN'}
+                  {effectiveStage === 2 && '🧠 DRAIN LEAK 65 L/s'}
+                  {effectiveStage === 3 && '🎯 GATE JAM ISOLATED'}
+                  {effectiveStage === 4 && '🛡️ DIVERTER SEALED'}
+                </text>
+              </g>
+            )}
+
+            {/* All Paths Blocked Callout */}
+            {isAllPathsBlocked && effectiveStage > 0 && (
+              <g transform="translate(0, 42)">
+                <rect x="-65" y="0" width="130" height="19" rx="4" fill={effectiveStage === 4 ? '#10b981' : '#ff2a5f'} opacity="0.95" />
+                <text x="0" y="13" fill="#ffffff" fontSize="7.8" fontWeight="900" textAnchor="middle" style={{ fontFamily: 'system-ui, sans-serif' }}>
+                  {effectiveStage === 1 && '⚠️ ALL PATHS BLOCKED'}
+                  {effectiveStage === 2 && '🧠 HAMMER SURGE 7.8 BAR'}
+                  {effectiveStage === 3 && '🎯 CONDUITS PINPOINTED'}
+                  {effectiveStage === 4 && '🛡️ VENTED TO TANK 1'}
+                </text>
+              </g>
+            )}
+          </g>
+
+          {/* PUMP 2 (Booster & Firmware ROM) */}
+          {count >= 4 && (
+            <g transform={`translate(${pump2Pos.x}, ${pump2Pos.y})`}>
+              {/* Firmware ROM Chip mounted above Pump 2 */}
+              <g transform="translate(0, -42)">
+                <rect
+                  x="-24"
+                  y="-10"
+                  width="48"
+                  height="20"
+                  rx="4"
+                  fill="#081026"
+                  stroke={isFirmwareAttacked ? '#f59e0b' : 'rgba(245, 158, 11, 0.45)'}
+                  strokeWidth={isFirmwareAttacked ? '2.5' : '1.2'}
+                />
+                <text x="0" y="3" fill={isFirmwareAttacked ? '#fef08a' : '#fbbf24'} fontSize="7.5" fontWeight="900" textAnchor="middle" fontFamily="var(--font-mono)">
+                  ROM-VFD
+                </text>
+                <line x1="0" y1="10" x2="0" y2="24" stroke={isFirmwareAttacked ? '#f59e0b' : 'rgba(245, 158, 11, 0.4)'} strokeWidth="1.5" strokeDasharray="2,2" />
+              </g>
+
+              {/* Pump 2 Volute */}
+              <circle
+                cx="0"
+                cy="0"
+                r="16"
+                fill="#081026"
+                stroke={
+                  isPowerBlackout
+                    ? '#eab308'
+                    : isFirmwareAttacked
+                      ? '#f59e0b'
+                      : (isAlarmLive && isPump2Attacked)
+                        ? '#ff2a5f'
+                        : '#10b981'
+                }
+                strokeWidth="2"
               />
+              {/* Impeller blades */}
+              <g className={isPowerBlackout ? '' : 'rotate-turbine'}>
+                <line x1="-9" y1="0" x2="9" y2="0" stroke={isPowerBlackout ? '#eab308' : isFirmwareAttacked ? '#f59e0b' : '#10b981'} strokeWidth="2.2" />
+                <line x1="0" y1="-9" x2="0" y2="9" stroke={isPowerBlackout ? '#eab308' : isFirmwareAttacked ? '#f59e0b' : '#10b981'} strokeWidth="2.2" />
+              </g>
+              <text x="0" y="27" fill={isPowerBlackout ? '#fef08a' : isFirmwareAttacked ? '#fbbf24' : '#94a3b8'} fontSize="8" fontWeight="800" textAnchor="middle" fontFamily="var(--font-mono)">
+                {isPowerBlackout ? '0V' : 'PUMP 2'}
+              </text>
+
+              {/* Firmware Rootkit Callout */}
+              {isFirmwareAttacked && effectiveStage > 0 && (
+                <g transform="translate(0, 42)">
+                  <rect x="-56" y="0" width="112" height="19" rx="4" fill={effectiveStage === 4 ? '#10b981' : '#f59e0b'} opacity="0.95" />
+                  <text x="0" y="13" fill="#ffffff" fontSize="7.8" fontWeight="900" textAnchor="middle" style={{ fontFamily: 'system-ui, sans-serif' }}>
+                    {effectiveStage === 1 && '⚠️ 120Hz VIBRATION'}
+                    {effectiveStage === 2 && '🧠 SHA-256 MISMATCH'}
+                    {effectiveStage === 3 && '🎯 BAD MICROCODE ID'}
+                    {effectiveStage === 4 && '🛡️ CLEAN CODE RESTORED'}
+                  </text>
+                </g>
+              )}
             </g>
           )}
 
+          {/* VALVE 2 (for 5 or 6 tanks) - Clean Flanged Design */}
+          {valve2Pos && (
+            <g transform={`translate(${valve2Pos.x}, ${valve2Pos.y})`}>
+              <rect x="-10" y="-8" width="20" height="16" rx="3" fill="#081026" stroke="#10b981" strokeWidth="1.8" />
+              <line x1="-10" y1="-8" x2="-10" y2="8" stroke="#10b981" strokeWidth="2.2" />
+              <line x1="10" y1="-8" x2="10" y2="8" stroke="#10b981" strokeWidth="2.2" />
+              <line x1="0" y1="-8" x2="0" y2="-13" stroke="#10b981" strokeWidth="1.8" />
+              <ellipse cx="0" cy="-14" rx="5" ry="2" fill="#10b981" />
+              <circle cx="0" cy="0" r="3" fill="#ffffff" />
+              <text x="0" y="27" fill="#94a3b8" fontSize="8" fontWeight="800" textAnchor="middle" fontFamily="var(--font-mono)">
+                VALVE 2
+              </text>
+            </g>
+          )}
+
+          {/* Export Distribution Pipe from Last Tank to Right Margin */}
+          <g>
+            <path
+              d={`M ${lastTank.x + lastTank.width} 195 L 945 195`}
+              fill="none"
+              stroke="#10b981"
+              strokeWidth="8"
+              opacity="0.3"
+            />
+            <path
+              d={`M ${lastTank.x + lastTank.width} 195 L 945 195`}
+              fill="none"
+              stroke="#34d399"
+              strokeWidth="4"
+              className="pipe-flow"
+            />
+          </g>
+
           {/* Overhead Bypass Conduit (Special Visualization for ALL_PATHS_BLOCKED) */}
-          {isAllPathsBlocked && dynamicTanks.length >= 2 && (
+          {isAllPathsBlocked && (
             <g>
               <path
-                d={`M ${dynamicTanks[1].x + dynamicTanks[1].width} 155 L ${dynamicTanks[2] ? dynamicTanks[2].x : dynamicTanks[1].x + 130} 155`}
+                d={`M ${t2.x + t2.width} 155 L ${t3.x} 155`}
                 fill="none"
                 stroke="#ff2a5f"
                 strokeWidth="3"
                 strokeDasharray="5,4"
               />
-              <rect x="390" y="145" width="120" height="18" rx="3" fill="#081026" stroke="#ff2a5f" strokeWidth="1" />
-              <text x="450" y="157" fill="#ff7185" fontSize="7.5" fontWeight="900" textAnchor="middle" style={{ fontFamily: 'system-ui, sans-serif' }}>
+              <rect
+                x={valve1Pos.x - 65}
+                y="145"
+                width="130"
+                height="18"
+                rx="3"
+                fill="#081026"
+                stroke="#ff2a5f"
+                strokeWidth="1.2"
+              />
+              <text x={valve1Pos.x} y="157" fill="#ff7185" fontSize="7.5" fontWeight="900" textAnchor="middle" style={{ fontFamily: 'system-ui, sans-serif' }}>
                 ❌ BYPASS CONDUIT BLOCKED
               </text>
             </g>
           )}
 
-          {/* Relief Disc and Recirculation Loop when ALL_PATHS_BLOCKED is resolved */}
-          {isAllPathsBlocked && effectiveStage === 4 && dynamicTanks.length >= 2 && (
+          {/* Relief Disc and Safe Recirculation Loop when ALL_PATHS_BLOCKED is resolved */}
+          {isAllPathsBlocked && effectiveStage === 4 && (
             <g>
+              {/* Smooth parabolic recirculation arc from Tank 2 bottom safely back to Tank 1 */}
               <path
-                d={`M ${dynamicTanks[1].centerX} 278 C ${dynamicTanks[1].centerX} 320, ${dynamicTanks[0].centerX} 320, ${dynamicTanks[0].centerX} 278`}
+                d={`M ${t2.centerX} 278 C ${t2.centerX} 325, ${t1.centerX} 325, ${t1.centerX} 278`}
                 fill="none"
                 stroke="#00f2fe"
-                strokeWidth="5"
+                strokeWidth="4.5"
                 strokeDasharray="8,5"
                 className="pipe-flow-fast"
               />
-              <rect x="180" y="308" width="220" height="18" rx="4" fill="#081026" stroke="#00f2fe" strokeWidth="1.2" />
-              <text x="290" y="321" fill="#00f2fe" fontSize="7.5" fontWeight="900" textAnchor="middle" style={{ fontFamily: 'system-ui, sans-serif' }}>
+              <rect
+                x={(t1.centerX + t2.centerX) / 2 - 80}
+                y="308"
+                width="160"
+                height="18"
+                rx="4"
+                fill="#081026"
+                stroke="#00f2fe"
+                strokeWidth="1.2"
+              />
+              <text
+                x={(t1.centerX + t2.centerX) / 2}
+                y="320"
+                fill="#00f2fe"
+                fontSize="7.5"
+                fontWeight="900"
+                textAnchor="middle"
+                style={{ fontFamily: 'system-ui, sans-serif' }}
+              >
                 RECIRCULATION TO TANK 1 (0L LOST)
               </text>
             </g>
           )}
 
+          {/* Passive Gravity Siphon Flow during Power Blackout Resolution */}
+          {isPowerBlackout && effectiveStage === 4 && (
+            <g>
+              <path
+                d={`M ${t1.centerX} 220 L ${lastTank.centerX} 220`}
+                fill="none"
+                stroke="#10b981"
+                strokeWidth="5"
+                strokeDasharray="8,5"
+                className="pipe-flow"
+              />
+              <rect x="330" y="234" width="300" height="20" rx="4" fill="#081026" stroke="#10b981" strokeWidth="1.5" />
+              <text x="480" y="247" fill="#34d399" fontSize="8" fontWeight="900" textAnchor="middle" style={{ fontFamily: 'system-ui, sans-serif' }}>
+                PASSIVE GRAVITY SIPHON (P = ρgh): 18.5 L/s WATER (0 WATTS)
+              </text>
+            </g>
+          )}
+
           {/* ================= DYNAMIC PHYSICAL TANKS ================= */}
-          {dynamicTanks.map((t) => {
+          {dynamicTanks.map((t, idx) => {
             const isHot = t.isAttacked;
-            const lvl = t.liveLevel;
+            const lvl = t.key === 'tank2' ? displayLevelT2 : t.liveLevel;
             const waterHeight = Math.max(8, (138 * (lvl / 100)));
-            const waterY = 272 - waterHeight;
+            const waterY = 270 - waterHeight;
 
             return (
               <g key={`tank-body-${t.key}`}>
@@ -492,7 +759,7 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
                   rx="10"
                   fill="rgba(15, 23, 42, 0.95)"
                   stroke={isHot ? '#ff2a5f' : t.color}
-                  strokeWidth={isHot ? '3' : '2'}
+                  strokeWidth={isHot ? '3' : '1.8'}
                   opacity={isHot ? '1' : '0.85'}
                 />
 
@@ -512,17 +779,17 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
                   x={t.centerX - 27}
                   y="174"
                   width="54"
-                  height="32"
+                  height="30"
                   rx="7"
                   fill="#081026"
                   stroke={isHot ? '#ff2a5f' : t.color}
-                  strokeWidth="2"
+                  strokeWidth="1.8"
                 />
                 <text
                   x={t.centerX}
-                  y="196"
+                  y="194"
                   fill="#ffffff"
-                  fontSize="16"
+                  fontSize={count >= 5 ? '14' : '16'}
                   fontWeight="900"
                   textAnchor="middle"
                   style={{ fontFamily: 'system-ui, sans-serif' }}
@@ -530,60 +797,74 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
                   {lvl}%
                 </text>
 
-                {/* Sensor Probe Indicator on Tank 2 */}
+                {/* Sensor Probe Indicator on Tank 2 (The Sensor Tank) */}
                 {t.key === 'tank2' && (
                   <g transform={`translate(${t.x + t.width - 8}, 134)`}>
-                    <circle cx="0" cy="0" r="9" fill={isHot ? '#ff2a5f' : '#00f2fe'} />
-                    <text x="0" y="3" fill="#050811" fontSize="8.5" fontWeight="900" textAnchor="middle">S</text>
-                    <text x="0" y="-11" fill={isHot ? '#ff2a5f' : '#38bdf8'} fontSize="7" fontWeight="800" textAnchor="middle" fontFamily="var(--font-mono)">
+                    <circle cx="0" cy="0" r="9" fill={isSensorAttacked ? '#ff2a5f' : '#00f2fe'} />
+                    <text x="0" y="3" fill="#050811" fontSize="8" fontWeight="900" textAnchor="middle">S</text>
+                    <text x="0" y="-11" fill={isSensorAttacked ? '#ff2a5f' : '#38bdf8'} fontSize="7" fontWeight="800" textAnchor="middle" fontFamily="var(--font-mono)">
                       SENSOR
                     </text>
                   </g>
                 )}
 
+                {/* Projected Callout on Tank 2 during Sensor Spoof */}
+                {t.key === 'tank2' && isSensorAttacked && effectiveStage > 0 && (
+                  <g transform={`translate(${t.centerX}, 236)`}>
+                    <rect x="-46" y="0" width="92" height="18" rx="4" fill={effectiveStage === 4 ? '#10b981' : '#ff2a5f'} opacity="0.95" />
+                    <text x="0" y="12" fill="#ffffff" fontSize="7.8" fontWeight="900" textAnchor="middle" style={{ fontFamily: 'system-ui, sans-serif' }}>
+                      {effectiveStage === 1 && '⚠️ FROZEN 32%'}
+                      {effectiveStage === 2 && '🧠 INFLOW > OUTFLOW'}
+                      {effectiveStage === 3 && '🎯 SENSOR ISOLATED'}
+                      {effectiveStage === 4 && '🛡️ ESTIMATOR ON'}
+                    </text>
+                  </g>
+                )}
+
+                {/* Projected Callout on any other Tank under Custom Zero-Day Attack */}
+                {t.key !== 'tank2' && isHot && effectiveStage > 0 && (
+                  <g transform={`translate(${t.centerX}, 236)`}>
+                    <rect x="-46" y="0" width="92" height="18" rx="4" fill={effectiveStage === 4 ? '#10b981' : '#ff2a5f'} opacity="0.95" />
+                    <text x="0" y="12" fill="#ffffff" fontSize="7.8" fontWeight="900" textAnchor="middle" style={{ fontFamily: 'system-ui, sans-serif' }}>
+                      {effectiveStage === 1 && '⚠️ DISTURBANCE'}
+                      {effectiveStage === 2 && '🧠 MASS MISMATCH'}
+                      {effectiveStage === 3 && '🎯 ANOMALY LOCKED'}
+                      {effectiveStage === 4 && '🛡️ BALANCED'}
+                    </text>
+                  </g>
+                )}
+
                 {/* Mechanical Support Feet */}
-                <line x1={t.x - 4} y1="274" x2={t.x + t.width + 4} y2="274" stroke={isHot ? '#ff2a5f' : t.color} strokeWidth="2.5" />
-                <rect x={t.x + 8} y="274" width="10" height="5" fill={isHot ? '#ff2a5f' : t.color} />
-                <rect x={t.x + t.width - 18} y="274" width="10" height="5" fill={isHot ? '#ff2a5f' : t.color} />
+                <line x1={t.x - 3} y1="272" x2={t.x + t.width + 3} y2="272" stroke={isHot ? '#ff2a5f' : t.color} strokeWidth="2.2" />
+                <rect x={t.x + 8} y="272" width="10" height="5" fill={isHot ? '#ff2a5f' : t.color} />
+                <rect x={t.x + t.width - 18} y="272" width="10" height="5" fill={isHot ? '#ff2a5f' : t.color} />
               </g>
             );
           })}
 
-          {/* ================= DYNAMIC LASER THREAT TRACE ================= */}
+          {/* ================= CLEAN OVERHEAD THREAT BEACON & ORTHOGONAL ROUTE ================= */}
+          {/* Routes along overhead tray at y=34, NEVER cutting across tanks or text! */}
           {isAlarmLive && (
             <g>
-              {/* Top Cyber Intruder Node */}
-              <circle cx="480" cy="40" r="14" fill="#ff2a5f" opacity="0.3" className="wave-anim" />
-              <circle cx="480" cy="40" r="8" fill="#ff2a5f" />
-              <text x="480" y="62" fill="#ff7185" fontSize="8" fontWeight="900" textAnchor="middle">
-                CYBER THREAT INTRUSION
+              {/* Top Cyber Threat Intruder Beacon */}
+              <circle cx="480" cy="22" r="12" fill="#ff2a5f" opacity="0.25" className="wave-anim" />
+              <circle cx="480" cy="22" r="6" fill="#ff2a5f" />
+              <text x="480" y="12" fill="#ff7185" fontSize="7.5" fontWeight="900" textAnchor="middle" letterSpacing="0.05em">
+                CYBER INTRUSION DETECTED
               </text>
 
-              {/* Dynamic Laser Traces to Attacked Tanks */}
-              {dynamicTanks.map((t) => {
-                if (!t.isAttacked) return null;
-                return (
-                  <g key={`laser-${t.key}`}>
-                    <line x1="480" y1="40" x2={t.centerX} y2="174" stroke="url(#laserGrad)" strokeWidth="3" className="laser-trace" />
-                    <circle cx={t.centerX} cy="174" r="22" fill="none" stroke="#ff2a5f" strokeWidth="2.5" className="wave-anim" />
-                  </g>
-                );
-              })}
+              {/* Orthogonal overhead rail (Zero Tank Intersect!) */}
+              <path
+                d={`M 480 22 L ${threatTargetX} 22 L ${threatTargetX} ${threatTargetY - 20}`}
+                fill="none"
+                stroke="url(#laserGrad)"
+                strokeWidth="2.5"
+                className="laser-trace"
+              />
 
-              {/* Laser Trace to Valve if Valve is Attacked */}
-              {isValveAttacked && (
-                <g>
-                  <line x1="480" y1="40" x2="455" y2="195" stroke="url(#laserGrad)" strokeWidth="3" className="laser-trace" />
-                  <circle cx="455" cy="195" r="18" fill="none" stroke="#ff2a5f" strokeWidth="2.5" className="wave-anim" />
-                </g>
-              )}
-
-              {/* Laser Trace to Pump 1 if Pump 1 is Attacked */}
-              {isPump1Attacked && dynamicTanks.length >= 2 && (
-                <g>
-                  <line x1="480" y1="40" x2={(dynamicTanks[0].x + dynamicTanks[0].width + dynamicTanks[1].x) / 2} y2="195" stroke="url(#laserGrad)" strokeWidth="3" className="laser-trace" />
-                </g>
-              )}
+              {/* Concentric pulsing target crosshair over the compromised component */}
+              <circle cx={threatTargetX} cy={threatTargetY - 20} r="14" fill="none" stroke="#ff2a5f" strokeWidth="2" className="wave-anim" />
+              <circle cx={threatTargetX} cy={threatTargetY - 20} r="5" fill="#ff2a5f" />
             </g>
           )}
         </svg>
@@ -730,7 +1011,7 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
             }}
           >
             <span>
-              {isNominal && `NORMAL OPERATION: ALL ${activeBlueprint.tankCount} TANKS BALANCED & CLEAN`}
+              {isNominal && `NORMAL OPERATION: ALL ${count} TANKS BALANCED & CLEAN`}
               {isAttackActive &&
                 `⚠️ FACILITY ALARM: ${scns.length > 1
                   ? `${scns.length} ATTACK VECTORS ACTIVE`
@@ -742,7 +1023,7 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
                   .join(' & ')}`}
               {isResolved &&
                 (isLearnedReflex
-                  ? '⚡ LEARNED REFLEX APPLIED (<15ms RECTIFICATION)'
+                  ? '✦ LEARNED REFLEX APPLIED (<15ms RECTIFICATION)'
                   : '🛡️ AUTONOMOUS SELF-HEALING COMPLETE (ZERO DOWNTIME)')}
             </span>
             <span
@@ -773,7 +1054,7 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
           >
             {isNominal && (
               <>
-                All {activeBlueprint.tankCount} treatment tanks in the {activeBlueprint.name} blueprint are operating at full efficiency. Continuous fluid mass conservation (Inflow = Outflow) is satisfied with zero anomalies.
+                All {count} treatment tanks in the {activeBlueprint.name} blueprint are operating at full efficiency. Continuous fluid mass conservation (Inflow = Outflow) is satisfied with zero anomalies.
               </>
             )}
 
@@ -790,7 +1071,7 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
             {isLocalized && (
               <>
                 <strong>Root Cause Isolated:</strong>{' '}
-                AquaShield cross-verified physical mass balance across all {activeBlueprint.tankCount} tanks without trusting the compromised reading.
+                AquaShield cross-verified physical mass balance across all {count} tanks without trusting the compromised reading.
                 {' '}Target pinpointed to{' '}
                 <strong style={{ color: '#00f2fe' }}>
                   {scns.map(s => `${s.target} (${s.layerName})`).join(' and ')}
@@ -820,7 +1101,62 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
         </div>
       </div>
 
-      {/* DEDICATED DYNAMIC STATUS CARDS FOR ALL ACTIVE TANKS */}
+      {/* ================= SENSOR TELEMETRY COMPARISON STRIP (DURING SENSOR SPOOF) ================= */}
+      {isSensorAttacked && (isAttackActive || isLocalized || isResolved) && (
+        <div
+          style={{
+            marginTop: '14px',
+            background: isResolved ? 'rgba(16, 185, 129, 0.12)' : 'rgba(255, 42, 95, 0.12)',
+            border: isResolved ? '1.5px solid #10b981' : '1.5px solid #ff2a5f',
+            borderRadius: '10px',
+            padding: '12px 18px',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '16px',
+            alignItems: 'center',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.4)'
+          }}
+        >
+          <div>
+            <div style={{ fontSize: '0.72rem', color: isResolved ? '#6ee7b7' : '#ff7185', fontWeight: 800 }}>
+              {isResolved ? 'BACKUP ESTIMATED VALUE' : 'WHAT SENSOR CLAIMS'}
+            </div>
+            <div className="font-mono" style={{ fontSize: '1.25rem', color: isResolved ? '#34d399' : '#ff2a5f', fontWeight: 900 }}>
+              {isResolved ? '68%' : '32%'}{' '}
+              <span style={{ fontSize: '0.75rem', fontWeight: 700 }}>
+                {isResolved ? '(Calculated via Mass Flow Math)' : '(Fake / Frozen Reading)'}
+              </span>
+            </div>
+          </div>
+
+          <div style={{ borderLeft: '1px solid rgba(255,255,255,0.12)', paddingLeft: '16px' }}>
+            <div style={{ fontSize: '0.72rem', color: '#38bdf8', fontWeight: 800 }}>
+              REAL PHYSICAL WATER IN TANK
+            </div>
+            <div className="font-mono" style={{ fontSize: '1.25rem', color: '#00f2fe', fontWeight: 900 }}>
+              68%{' '}
+              <span style={{ fontSize: '0.75rem', color: '#7dd3fc', fontWeight: 700 }}>
+                (Inflow - Outflow Mass Conservation)
+              </span>
+            </div>
+          </div>
+
+          <div style={{ borderLeft: '1px solid rgba(255,255,255,0.12)', paddingLeft: '16px' }}>
+            <div style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 800 }}>
+              AQUASHIELD VERDICT
+            </div>
+            <div style={{ fontSize: '0.92rem', color: isResolved ? '#34d399' : isLocalized ? '#ff2a5f' : '#fbbf24', fontWeight: 900, marginTop: '2px' }}>
+              {isResolved
+                ? '✅ Sensor Isolated • Backup Estimator Engaged'
+                : isLocalized
+                  ? '🚨 Discrepancy Caught! Sensor Is Lying'
+                  : 'Auditing Mass Balance Equations...'}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= DYNAMIC STATUS CARDS FOR ALL ACTIVE TANKS ================= */}
       <div
         style={{
           display: 'grid',
@@ -831,6 +1167,8 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
       >
         {dynamicTanks.map((t) => {
           const isHot = t.isAttacked;
+          const lvl = t.key === 'tank2' ? displayLevelT2 : t.liveLevel;
+
           return (
             <div
               key={`card-${t.key}`}
@@ -856,14 +1194,14 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
                     borderRadius: '10px'
                   }}
                 >
-                  {t.liveLevel}%
+                  {lvl}% FULL
                 </span>
               </div>
               <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#ffffff', marginTop: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {t.name}
               </div>
               <div style={{ fontSize: '0.68rem', color: isHot ? '#fda4af' : '#94a3b8', marginTop: '2px', fontWeight: isHot ? 800 : 400 }}>
-                {isHot ? '🚨 COMPROMISED' : `${(t.capacity / 1000).toFixed(0)}kL • Normal`}
+                {isHot ? (t.key === 'tank2' && isSensorAttacked ? '🚨 SENSOR READING FROZEN!' : '🚨 COMPROMISED') : `${(t.capacity / 1000).toFixed(0)}kL • Normal`}
               </div>
             </div>
           );
@@ -899,8 +1237,8 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
 
         <div style={{ background: 'rgba(0,0,0,0.35)', padding: '10px 14px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
           <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 700 }}>HYDRAULIC PRESSURE</span>
-          <p className="font-mono" style={{ fontSize: '1.05rem', fontWeight: 800, color: sensors.pressureBar > 4.5 ? '#ff2a5f' : '#34d399', marginTop: '2px' }}>
-            {sensors.pressureBar.toFixed(2)} Bar
+          <p className="font-mono" style={{ fontSize: '1.05rem', fontWeight: 800, color: (isAlarmLive && isControllerAttacked) || sensors.pressureBar > 4.5 ? '#ff2a5f' : isPowerBlackout ? '#eab308' : '#34d399', marginTop: '2px' }}>
+            {isControllerAttacked && !isResolved ? '8.20 Bar (BURST DANGER)' : `${sensors.pressureBar.toFixed(2)} Bar`}
           </p>
         </div>
 

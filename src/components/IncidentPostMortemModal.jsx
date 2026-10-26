@@ -301,7 +301,7 @@ export default function IncidentPostMortemModal({
                         border: '1px solid #00f2fe'
                       }}
                     >
-                      {learnedScenarios[scn.id] ? '✓ Policy Memorized in Vault' : '⚡ Teach AquaShield / Save Reflex'}
+                      {learnedScenarios[scn.id] ? '✓ Policy Memorized in Vault' : '✦ Teach AquaShield / Save Reflex'}
                     </button>
                   </div>
                   <p style={{ fontSize: '0.76rem', color: '#e9d5ff', margin: '4px 0 0 0', lineHeight: 1.4 }}>

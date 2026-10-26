@@ -68,7 +68,7 @@ export default function App() {
     const isLearned = simRef.current.isLearnedReflex;
 
     if (isLearned) {
-      // ⚡ FAST-PATH LEARNED REFLEX: Rectified instantaneously (<15ms)!
+      // ✦ FAST-PATH LEARNED REFLEX: Rectified instantaneously (<15ms)!
       setAutoStage(1);
       setTimeout(() => {
         simRef.current.localizeAttack();
