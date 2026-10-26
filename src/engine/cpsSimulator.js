@@ -73,6 +73,8 @@ export const ATTACK_SCENARIOS = {
     symptom: 'Water is pouring out of the pipe even though the computer commanded the valve to CLOSE.',
     traditionalMistake: 'Old tools blame the water sensor and think it is glitching, while 60,000 Liters of water leak away.',
     plainMathProof: 'The sensor was telling the truth: water was really leaking. The computer command was 0%, but the physical valve was stuck at 100%.',
+    plainFix: 'AquaShield isolates the mechanical gate jam, engages the secondary motorized diverter bypass valve, and preserves 100% of municipal clean water supply.',
+    color: '#ff2a5f'
   },
   ALL_PATHS_BLOCKED: {
     id: 'ALL_PATHS_BLOCKED',

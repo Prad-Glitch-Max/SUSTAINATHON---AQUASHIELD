@@ -35,7 +35,9 @@ const SCENARIOS = [
 const PRESETS = [
   { label: 'Single Attack', keys: ['SENSOR_SPOOF'] },
   { label: 'Dual Combo (Sensor + Valve)', keys: ['SENSOR_SPOOF', 'ACTUATOR_JAM'] },
-  { label: 'All 5 Layers (Full System Assault)', keys: ['SENSOR_SPOOF', 'NETWORK_REPLAY', 'CONTROLLER_HIJACK', 'FIRMWARE_ROOTKIT', 'ACTUATOR_JAM'] }
+  { label: 'All 5 Layers (Full System Assault)', keys: ['SENSOR_SPOOF', 'NETWORK_REPLAY', 'CONTROLLER_HIJACK', 'FIRMWARE_ROOTKIT', 'ACTUATOR_JAM'] },
+  { label: 'All Paths Blocked', keys: ['ALL_PATHS_BLOCKED'] },
+  { label: 'Power Blackout (0V)', keys: ['POWER_GRID_BLACKOUT'] }
 ];
 
 const STAGE_DETAILS = {
@@ -575,83 +577,6 @@ export default function InteractiveControlBar({
           >
             <UserCheck size={14} />
             <span>Manual Step-by-Step</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Review 1 Judge Inquiries / Edge Cases (1-Click Live Demos) */}
-      <div
-        style={{
-          background: 'rgba(15, 23, 42, 0.75)',
-          border: '1px solid rgba(245, 158, 11, 0.35)',
-          borderRadius: '12px',
-          padding: '10px 14px',
-          marginBottom: '14px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '10px'
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '0.78rem', fontWeight: 900, color: '#fbbf24', letterSpacing: '0.04em' }}>
-            REVIEW 1 JUDGE CHALLENGES (1-CLICK LIVE DEMO):
-          </span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-          <button
-            onClick={() => handleLaunchJudgeChallenge('ALL_PATHS_BLOCKED')}
-            disabled={!isNominal && !isResolved}
-            style={{
-              background: selectedScenarioKeys.includes('ALL_PATHS_BLOCKED')
-                ? 'rgba(255, 42, 95, 0.25)'
-                : 'rgba(255, 42, 95, 0.1)',
-              border: selectedScenarioKeys.includes('ALL_PATHS_BLOCKED')
-                ? '1.5px solid #ff2a5f'
-                : '1px solid rgba(255, 42, 95, 0.35)',
-              color: '#fda4af',
-              padding: '6px 14px',
-              borderRadius: '20px',
-              fontSize: '0.74rem',
-              fontWeight: 800,
-              cursor: !isNominal && !isResolved ? 'not-allowed' : 'pointer',
-              opacity: !isNominal && !isResolved ? 0.45 : 1,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              transition: 'all 0.2s ease',
-              boxShadow: selectedScenarioKeys.includes('ALL_PATHS_BLOCKED') ? '0 0 12px rgba(255,42,95,0.4)' : 'none'
-            }}
-          >
-            <span>🚫 1. What if Hacker Blocks ALL Alternate Paths?</span>
-          </button>
-
-          <button
-            onClick={() => handleLaunchJudgeChallenge('POWER_GRID_BLACKOUT')}
-            disabled={!isNominal && !isResolved}
-            style={{
-              background: selectedScenarioKeys.includes('POWER_GRID_BLACKOUT')
-                ? 'rgba(234, 179, 8, 0.25)'
-                : 'rgba(234, 179, 8, 0.1)',
-              border: selectedScenarioKeys.includes('POWER_GRID_BLACKOUT')
-                ? '1.5px solid #eab308'
-                : '1px solid rgba(234, 179, 8, 0.35)',
-              color: '#fef08a',
-              padding: '6px 14px',
-              borderRadius: '20px',
-              fontSize: '0.74rem',
-              fontWeight: 800,
-              cursor: !isNominal && !isResolved ? 'not-allowed' : 'pointer',
-              opacity: !isNominal && !isResolved ? 0.45 : 1,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              transition: 'all 0.2s ease',
-              boxShadow: selectedScenarioKeys.includes('POWER_GRID_BLACKOUT') ? '0 0 12px rgba(234,179,8,0.4)' : 'none'
-            }}
-          >
-            <span>🔌 2. What if there is a Total Power Shutdown (0V Blackout)?</span>
           </button>
         </div>
       </div>

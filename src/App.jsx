@@ -4,8 +4,9 @@ import ZeroDayPromptConsole from './components/ZeroDayPromptConsole';
 import InteractiveControlBar from './components/InteractiveControlBar';
 import DigitalTwinSCADA from './components/DigitalTwinSCADA';
 import DatasetBenchmarkView from './components/DatasetBenchmarkView';
+import IncidentPostMortemModal from './components/IncidentPostMortemModal';
 import { CPSSimulator } from './engine/cpsSimulator';
-import { LayoutDashboard, Database } from 'lucide-react';
+import { LayoutDashboard, Database, ShieldCheck } from 'lucide-react';
 
 export default function App() {
   const simRef = useRef(null);
@@ -17,6 +18,19 @@ export default function App() {
   const [selectedScenarioKeys, setSelectedScenarioKeys] = useState(['SENSOR_SPOOF']);
   const [autoStage, setAutoStage] = useState(0);
   const [activeTab, setActiveTab] = useState('lab'); // 'lab' | 'comparison' | 'terminal' | 'dataset'
+  const [showPostMortem, setShowPostMortem] = useState(false);
+  const prevPhaseRef = useRef(simState.phase);
+
+  // Trigger incident summary modal upon resolution
+  useEffect(() => {
+    if (simState.phase === 'RESOLVED' && prevPhaseRef.current !== 'RESOLVED') {
+      const timer = setTimeout(() => {
+        setShowPostMortem(true);
+      }, 700);
+      return () => clearTimeout(timer);
+    }
+    prevPhaseRef.current = simState.phase;
+  }, [simState.phase]);
 
   // Simulation step loop (4 Hz updates)
   useEffect(() => {
@@ -30,6 +44,7 @@ export default function App() {
 
   // Step 1: Launch Attack (single or multiple)
   const handleLaunchAttack = (keys) => {
+    setShowPostMortem(false);
     simRef.current.launchAttack(keys);
     setSimState({ ...simRef.current.getState() });
   };
@@ -131,6 +146,7 @@ export default function App() {
 
   // Reset to Baseline
   const handleReset = () => {
+    setShowPostMortem(false);
     setAutoStage(0);
     simRef.current.restoreBaseline();
     setSimState({ ...simRef.current.getState() });
@@ -248,6 +264,45 @@ export default function App() {
           />
         </div>
       )}
+
+      {/* Floating Reopen Button if in RESOLVED state and modal is dismissed */}
+      {simState.phase === 'RESOLVED' && !showPostMortem && (
+        <button
+          onClick={() => setShowPostMortem(true)}
+          className="glass-panel"
+          style={{
+            position: 'fixed',
+            bottom: '24px',
+            right: '24px',
+            zIndex: 900,
+            background: 'rgba(16, 185, 129, 0.25)',
+            border: '1.5px solid #10b981',
+            borderRadius: '24px',
+            padding: '10px 18px',
+            color: '#34d399',
+            fontSize: '0.82rem',
+            fontWeight: 800,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.5), 0 0 16px rgba(16, 185, 129, 0.35)',
+            transition: 'all 0.2s ease'
+          }}
+        >
+          <ShieldCheck size={18} />
+          <span>Incident Resolution Report</span>
+        </button>
+      )}
+
+      {/* Incident Post-Mortem & Future Prevention Modal */}
+      <IncidentPostMortemModal
+        isOpen={showPostMortem}
+        onClose={() => setShowPostMortem(false)}
+        scenarios={simState.activeScenarios || [simState.activeScenario]}
+        sensors={simState.sensors}
+        sustainability={simState.sustainability}
+      />
 
       {/* Footer */}
       <footer style={{
