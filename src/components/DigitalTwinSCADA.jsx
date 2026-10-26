@@ -28,6 +28,11 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
   const isFirmwareAttacked = scns.some(s => s?.layer === 'FIRMWARE');
   const isActuatorAttacked = scns.some(s => s?.layer === 'ACTUATOR');
 
+  const isTank1Attacked = scns.some(s => s?.targetNode === 'tank1');
+  const isTank3Attacked = scns.some(s => s?.targetNode === 'tank3');
+  const isTank4Attacked = scns.some(s => s?.targetNode === 'tank4');
+  const isPump1Attacked = scns.some(s => s?.targetNode === 'pump1');
+
   const isPipeCompromised = (isAttackActive || isLocalized) && (isNetworkAttacked || isActuatorAttacked);
 
   // Tank levels in %
@@ -594,6 +599,30 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
                 <>
                   <line x1="480" y1="78" x2="455" y2="195" stroke="url(#laserGrad)" strokeWidth="3" className="laser-trace" />
                   <circle cx="455" cy="195" r="20" fill="none" stroke="#ff2a5f" strokeWidth="2.5" className="wave-anim" />
+                </>
+              )}
+              {isTank1Attacked && (
+                <>
+                  <line x1="480" y1="78" x2="125" y2="174" stroke="url(#laserGrad)" strokeWidth="3" className="laser-trace" />
+                  <circle cx="125" cy="174" r="24" fill="none" stroke="#ff2a5f" strokeWidth="2.5" className="wave-anim" />
+                </>
+              )}
+              {isTank3Attacked && (
+                <>
+                  <line x1="480" y1="78" x2="565" y2="174" stroke="url(#laserGrad)" strokeWidth="3" className="laser-trace" />
+                  <circle cx="565" cy="174" r="24" fill="none" stroke="#ff2a5f" strokeWidth="2.5" className="wave-anim" />
+                </>
+              )}
+              {isTank4Attacked && (
+                <>
+                  <line x1="480" y1="78" x2="785" y2="174" stroke="url(#laserGrad)" strokeWidth="3" className="laser-trace" />
+                  <circle cx="785" cy="174" r="24" fill="none" stroke="#ff2a5f" strokeWidth="2.5" className="wave-anim" />
+                </>
+              )}
+              {isPump1Attacked && (
+                <>
+                  <line x1="480" y1="78" x2="235" y2="195" stroke="url(#laserGrad)" strokeWidth="3" className="laser-trace" />
+                  <circle cx="235" cy="195" r="22" fill="none" stroke="#ff2a5f" strokeWidth="2.5" className="wave-anim" />
                 </>
               )}
             </g>

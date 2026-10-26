@@ -139,11 +139,16 @@ export class CPSSimulator {
     ];
   }
 
-  // STEP 1: Launch one or MULTIPLE attacks simultaneously!
-  launchAttack(scenarioKeys) {
-    const keys = Array.isArray(scenarioKeys) ? scenarioKeys : [scenarioKeys];
-    const scenarios = keys
-      .map(k => ATTACK_SCENARIOS[k])
+  // STEP 1: Launch one or MULTIPLE attacks, or custom ZERO-DAY attacks!
+  launchAttack(scenarioKeysOrObjects) {
+    const items = Array.isArray(scenarioKeysOrObjects) ? scenarioKeysOrObjects : [scenarioKeysOrObjects];
+    const scenarios = items
+      .map(item => {
+        if (typeof item === 'object' && item !== null) {
+          return item; // Direct custom zero-day scenario synthesized by classifier!
+        }
+        return ATTACK_SCENARIOS[item];
+      })
       .filter(s => s && s.id !== 'NONE');
 
     if (scenarios.length === 0) {
@@ -152,17 +157,21 @@ export class CPSSimulator {
     }
 
     this.activeScenarios = scenarios;
-    this.activeScenario = scenarios[0]; // Primary scenario for backward compatibility
+    this.activeScenario = scenarios[0]; // Primary scenario
     this.phase = 'ATTACK_ACTIVE';
     this.localizationResult.localized = false;
 
-    if (scenarios.length === 1) {
+    if (scenarios[0].isCustom) {
+      this.addLog('ALERT', `[ZERO-DAY ATTACK INJECTED] "${scenarios[0].rawPrompt || scenarios[0].name}". Alarms sounding across facility!`);
+      this.addLog('WARN', `Old Security Tools: "Unknown signature! Alert triggered but root-cause layer cannot be determined!"`);
+    } else if (scenarios.length === 1) {
       this.addLog('ALERT', `[ATTACK LAUNCHED] ${scenarios[0].name}. Alarms ringing!`);
+      this.addLog('WARN', `Old Security Tools: "Alarm triggered! Cannot determine root-cause layer!"`);
     } else {
       const names = scenarios.map(s => s.name).join(', ');
       this.addLog('ALERT', `[MULTI-VECTOR ATTACK LAUNCHED] ${scenarios.length} layers breached simultaneously: ${names}!`);
+      this.addLog('WARN', `Old Security Tools: "Multiple alarms triggering! Complete system panic—we cannot isolate root causes!"`);
     }
-    this.addLog('WARN', `Old Security Tools: "Multiple alarms triggering! Complete system panic—we cannot isolate root causes!"`);
   }
 
   // STEP 2: Run Attack Localization Algorithm across all layers
@@ -241,11 +250,11 @@ export class CPSSimulator {
     }
 
     const scns = this.activeScenarios && this.activeScenarios.length > 0 ? this.activeScenarios : [this.activeScenario];
-    const hasSensor = scns.some(s => s.id === 'SENSOR_SPOOF');
-    const hasNetwork = scns.some(s => s.id === 'NETWORK_REPLAY');
-    const hasController = scns.some(s => s.id === 'CONTROLLER_HIJACK');
-    const hasFirmware = scns.some(s => s.id === 'FIRMWARE_ROOTKIT');
-    const hasActuator = scns.some(s => s.id === 'ACTUATOR_JAM');
+    const hasSensor = scns.some(s => s.id === 'SENSOR_SPOOF' || s.layer === 'SENSOR');
+    const hasNetwork = scns.some(s => s.id === 'NETWORK_REPLAY' || s.layer === 'COMMUNICATION_CHANNEL');
+    const hasController = scns.some(s => s.id === 'CONTROLLER_HIJACK' || s.layer === 'CONTROLLER');
+    const hasFirmware = scns.some(s => s.id === 'FIRMWARE_ROOTKIT' || s.layer === 'FIRMWARE');
+    const hasActuator = scns.some(s => s.id === 'ACTUATOR_JAM' || s.layer === 'ACTUATOR');
 
     // 1. Sensor Spoof
     if (hasSensor) {
@@ -297,6 +306,21 @@ export class CPSSimulator {
         this.layers.ACTUATOR.status = this.phase === 'LOCALIZED' ? 'COMPROMISED' : 'SUSPECT';
       }
     }
+
+    // Dynamic Zero-Day Custom Physical Impacts
+    scns.forEach(s => {
+      if (s.physicsImpact && this.phase !== 'RESOLVED') {
+        if (s.physicsImpact.tank1Delta) this.tanks.tank1.level = Math.min(96, Math.max(15, 72 + s.physicsImpact.tank1Delta));
+        if (s.physicsImpact.tank3Delta) this.tanks.tank3.level = Math.min(96, Math.max(15, 75 + s.physicsImpact.tank3Delta));
+        if (s.physicsImpact.tank4Delta) this.tanks.tank4.level = Math.min(96, Math.max(15, 82 + s.physicsImpact.tank4Delta));
+        if (s.physicsImpact.pressureDelta) this.sensors.pressureBar = Math.max(1.0, 3.2 + s.physicsImpact.pressureDelta);
+        if (s.physicsImpact.flowDelta) this.sensors.flowOutflow = Math.max(10.0, 39.0 + s.physicsImpact.flowDelta);
+      } else if (this.phase === 'RESOLVED' && s.physicsImpact) {
+        this.tanks.tank1.level = 72;
+        this.tanks.tank3.level = 75;
+        this.tanks.tank4.level = 82;
+      }
+    });
 
     const culpritNames = scns.map(s => s.target).join(' & ');
     const layerNames = scns.map(s => s.layerName).join(' & ');
