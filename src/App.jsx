@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Header from './components/Header';
-import IntroSplash from './components/IntroSplash';
 import InteractiveControlBar from './components/InteractiveControlBar';
 import DigitalTwinSCADA from './components/DigitalTwinSCADA';
 import ComparisonView from './components/ComparisonView';
@@ -18,7 +17,6 @@ export default function App() {
   const [selectedScenarioKeys, setSelectedScenarioKeys] = useState(['SENSOR_SPOOF']);
   const [autoStage, setAutoStage] = useState(0);
   const [activeTab, setActiveTab] = useState('lab'); // 'lab' | 'comparison' | 'terminal'
-  const [showIntro, setShowIntro] = useState(true);
 
   // Simulation step loop (4 Hz updates)
   useEffect(() => {
@@ -57,19 +55,10 @@ export default function App() {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', paddingBottom: '30px' }}>
-      {/* Super Cool Cinematic Intro Splash with Jailer 2 Theme */}
-      {showIntro && (
-        <IntroSplash
-          onEnter={() => setShowIntro(false)}
-          sustainability={simState.sustainability}
-        />
-      )}
-
       {/* Top Header Bar */}
       <Header
         activeScenario={simState.activeScenario}
         phase={simState.phase}
-        onReplayIntro={() => setShowIntro(true)}
       />
 
       {/* Clean Navigation Tabs */}
