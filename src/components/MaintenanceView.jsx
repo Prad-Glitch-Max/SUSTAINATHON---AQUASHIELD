@@ -2,23 +2,25 @@ import React, { useState, useMemo } from 'react';
 import {
   Wrench,
   Activity,
-  AlertTriangle,
   CheckCircle2,
   Clock,
   RotateCcw,
   ShieldCheck,
   Droplets,
-  Gauge,
-  Sliders,
-  ChevronRight,
-  Info,
+  AlertCircle,
   Calendar,
-  AlertCircle
+  UserCheck,
+  Cpu,
+  Sparkles,
+  RefreshCw,
+  Info,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { sound } from '../utils/soundEffects';
 
-// Initial realistic baseline component and sensor catalog
+// Catalog of physical sensors and actuators in the clean water facility
 const INITIAL_COMPONENTS = [
   {
     id: 'AIT_501',
@@ -26,17 +28,16 @@ const INITIAL_COMPONENTS = [
     tag: 'AIT-501',
     category: 'Water Quality Probe',
     location: 'Tank 6 (Potable Export)',
-    type: 'Membrane-covered Amperometric Probe',
+    type: 'Membrane-covered Amperometric Sensor',
     currentWear: 72.4, // %
     hoursInService: 1143.0,
     expectedLifespanHours: 1400,
     replacementThreshold: 75.0,
     criticalThreshold: 85.0,
-    status: 'SERVICE_SOON', // 'NORMAL' | 'SERVICE_SOON' | 'CRITICAL'
-    description: 'Measures residual chlorine (2.05 ppm) to ensure drinking water is completely sterile and pathogen-free.',
-    failureImpact: 'If damaged: Under-chlorination risks bacterial outbreak; over-chlorination creates harmful disinfection byproducts.',
-    wearDrivers: 'Chemical electrolyte depletion and bio-film coating on the permeable membrane head.',
-    liveTelemetry: { metric: 'Chlorine', value: '2.05 ppm', status: 'In Spec' },
+    liveTelemetry: { metric: 'Chlorine', value: '2.05 ppm' },
+    simpleDescription: 'Measures chemical disinfectant in finished drinking water to ensure zero pathogens reach the public.',
+    riskIfDamaged: 'Under-chlorination risks bacteria outbreak; over-chlorination creates toxic chemical byproducts.',
+    physicalWearCause: 'Chloramine deposits coat the permeable membrane and chemical electrolyte slowly depletes.',
     trendPoints: [
       { hour: 0, wear: 0 },
       { hour: 280, wear: 16.5 },
@@ -51,17 +52,16 @@ const INITIAL_COMPONENTS = [
     tag: 'PIT-401',
     category: 'Pressure Sensor',
     location: 'Tank 4 (RO Train-B)',
-    type: 'Piezoresistive Stainless Diaphragm',
+    type: 'Piezoresistive Stainless Steel Diaphragm',
     currentWear: 58.2, // %
     hoursInService: 1143.0,
     expectedLifespanHours: 2200,
     replacementThreshold: 75.0,
     criticalThreshold: 85.0,
-    status: 'NORMAL',
-    description: 'Monitors high-pressure feed (6.5 - 8.2 Bar) across reverse osmosis desalination membranes.',
-    failureImpact: 'If damaged: Cannot detect burst membranes or destructive hydraulic water hammer shocks.',
-    wearDrivers: 'Repeated micro-oscillations from pump pulsations and saline water corrosive pitting.',
-    liveTelemetry: { metric: 'Feed Pressure', value: '7.80 Bar', status: 'High Stress' },
+    liveTelemetry: { metric: 'Feed Pressure', value: '7.80 Bar' },
+    simpleDescription: 'Tracks high-pressure water pushing through desalination membranes to filter out salts and heavy metals.',
+    riskIfDamaged: 'Cannot detect membrane tears or sudden pipe-rupturing pressure spikes.',
+    physicalWearCause: 'Mechanical diaphragm micro-flexing under high saline pressure (6.5 to 8.2 Bar).',
     trendPoints: [
       { hour: 0, wear: 0 },
       { hour: 280, wear: 12.0 },
@@ -76,17 +76,16 @@ const INITIAL_COMPONENTS = [
     tag: 'LIT-201',
     category: 'Water Level Sensor',
     location: 'Tank 2 (Filter / Bio)',
-    type: 'Non-contact Ultrasonic Transducer',
+    type: 'Acoustic Sound-Wave Transducer',
     currentWear: 32.0, // %
     hoursInService: 1143.0,
     expectedLifespanHours: 3200,
     replacementThreshold: 75.0,
     criticalThreshold: 85.0,
-    status: 'NORMAL',
-    description: 'Bounces high-frequency sound waves off the water surface to calculate exact liquid volume and prevent overflows.',
-    failureImpact: 'If damaged: False empty readings trigger pumps to run dry, burning out motor coils.',
-    wearDrivers: 'Condensation vapor on transducer horn and internal crystal acoustic fatigue.',
-    liveTelemetry: { metric: 'Water Level', value: '76% Full', status: 'Optimal' },
+    liveTelemetry: { metric: 'Water Level', value: '76% Full' },
+    simpleDescription: 'Bounces sound pulses off the water surface to know exact water depth and prevent tank overflow.',
+    riskIfDamaged: 'False empty readings cause intake booster pumps to suck air and burn out motors.',
+    physicalWearCause: 'Moisture vapor condensation on ultrasonic acoustic horn and crystal micro-aging.',
     trendPoints: [
       { hour: 0, wear: 0 },
       { hour: 280, wear: 7.2 },
@@ -97,9 +96,9 @@ const INITIAL_COMPONENTS = [
   },
   {
     id: 'FIT_101',
-    name: 'Raw Seawater Magnetic Flowmeter',
+    name: 'Raw Intake Magnetic Flowmeter',
     tag: 'FIT-101',
-    category: 'Flow Sensor',
+    category: 'Flow Rate Sensor',
     location: 'Tank 1 (Raw Intake)',
     type: 'Electromagnetic Induction Sensor',
     currentWear: 18.5, // %
@@ -107,11 +106,10 @@ const INITIAL_COMPONENTS = [
     expectedLifespanHours: 4000,
     replacementThreshold: 75.0,
     criticalThreshold: 85.0,
-    status: 'NORMAL',
-    description: 'Detects inflow velocity without moving parts using Faraday induction to audit plant mass balance equations.',
-    failureImpact: 'If damaged: Plant cannot balance inflow against outflow, masking pipe ruptures or theft.',
-    wearDrivers: 'Abrasive suspended grit and marine micro-organisms coating the electrode lining.',
-    liveTelemetry: { metric: 'Intake Velocity', value: '42.5 L/s', status: 'Optimal' },
+    liveTelemetry: { metric: 'Intake Velocity', value: '42.5 L/s' },
+    simpleDescription: 'Measures raw seawater or river water volume entering the facility to balance overall plant equations.',
+    riskIfDamaged: 'Plant cannot detect hidden pipe leaks or water theft.',
+    physicalWearCause: 'Abrasive suspended grit and sand particles scouring the inner insulating liner.',
     trendPoints: [
       { hour: 0, wear: 0 },
       { hour: 280, wear: 4.0 },
@@ -126,17 +124,16 @@ const INITIAL_COMPONENTS = [
     tag: 'P-101',
     category: 'Mechanical Actuator',
     location: 'Interconnect (Tank 1 → 2)',
-    type: 'Variable Frequency Centrifugal Pump',
+    type: 'Centrifugal Impeller & Electric Motor',
     currentWear: 44.0, // %
     hoursInService: 1143.0,
     expectedLifespanHours: 2600,
     replacementThreshold: 75.0,
     criticalThreshold: 85.0,
-    status: 'NORMAL',
-    description: 'Pumps water continuously from intake basin through secondary multimedia filtration.',
-    failureImpact: 'If damaged: Total loss of forward water conveyance halts drinking water production.',
-    wearDrivers: 'Mechanical shaft seal friction and impeller cavitation wear from cyber throttle spikes.',
-    liveTelemetry: { metric: 'Shaft Speed', value: '1,450 RPM', status: 'Optimal' },
+    liveTelemetry: { metric: 'Shaft Speed', value: '1,450 RPM' },
+    simpleDescription: 'Spins stainless-steel impellers to lift and push heavy water volumes through secondary filtration.',
+    riskIfDamaged: 'Pump seizure halts plant forward intake and cuts off drinking water generation.',
+    physicalWearCause: 'Shaft seal friction, bearing micro-vibration, and cavitation pitting on impeller blades.',
     trendPoints: [
       { hour: 0, wear: 0 },
       { hour: 280, wear: 10.5 },
@@ -157,11 +154,10 @@ const INITIAL_COMPONENTS = [
     expectedLifespanHours: 3500,
     replacementThreshold: 75.0,
     criticalThreshold: 85.0,
-    status: 'NORMAL',
-    description: 'Directs treated effluent either to ultrafiltration or diverts backwash during cleaning cycles.',
-    failureImpact: 'If damaged: Valve jams shut, causing pipe overpressure and halting downstream treatment.',
-    wearDrivers: 'Seat seal elastomer compression and electric motor gearbox micro-backlash.',
-    liveTelemetry: { metric: 'Gate Position', value: '100% Open', status: 'Optimal' },
+    liveTelemetry: { metric: 'Gate Position', value: '100% Open' },
+    simpleDescription: 'Rotates an internal stainless disc to direct water flow into treatment or divert dirty backwash wash-water.',
+    riskIfDamaged: 'Valve jams shut, trapping pressurized water and causing pipe overpressure ruptures.',
+    physicalWearCause: 'Elastomeric seal compression hardening and electric actuator gearbox backlash.',
     trendPoints: [
       { hour: 0, wear: 0 },
       { hour: 280, wear: 6.5 },
@@ -172,42 +168,42 @@ const INITIAL_COMPONENTS = [
   }
 ];
 
-export default function MaintenanceView({ simState }) {
+export default function MaintenanceView() {
   const [components, setComponents] = useState(INITIAL_COMPONENTS);
   const [selectedId, setSelectedId] = useState('AIT_501');
-  const [categoryFilter, setCategoryFilter] = useState('ALL');
-  const [serviceFeedback, setServiceFeedback] = useState(null);
+  const [showExplanation, setShowExplanation] = useState(true);
+  const [notification, setNotification] = useState(null);
 
-  // Power Outage Simulator State
+  // Power Outage / Physical Shock Simulator
   const [outageDuration, setOutageDuration] = useState('30');
   const [outageScenario, setOutageScenario] = useState('POWER_BLACKOUT');
   const [outageReport, setOutageReport] = useState(null);
 
-  // Maintenance Event Log
+  // Maintenance & Service History Log
   const [logs, setLogs] = useState([
     {
       id: 1,
       timestamp: 'Today, 02:45 AM',
       tag: 'AIT-501',
       title: 'Preventive Warning: Chlorine Probe Reached 70% Wear',
-      type: 'ALERT',
-      detail: 'Electrolyte depletion rate is steady. Replacement is recommended within the next 60 operating hours to guarantee safe drinking water.'
+      type: 'PREVENTIVE_ALERT',
+      detail: 'AquaShield AI flagged chemical electrolyte depletion. Human technician dispatched with replacement probe.'
     },
     {
       id: 2,
       timestamp: 'Yesterday, 18:20 PM',
       tag: 'PIT-401',
-      title: 'Hydraulic Pressure Shock Absorbed',
+      title: 'Hydraulic Pressure Surge Deflection',
       type: 'CYBER_WEAR',
-      detail: 'Cyber attack pressure surge (8.2 Bar) produced minor diaphragm deflection. Component wear accelerated by +1.4%.'
+      detail: 'Hacker valve jam triggered 7.8 Bar pressure transient. Diaphragm sustained +1.4% accelerated mechanical fatigue.'
     },
     {
       id: 3,
       timestamp: '3 Days Ago',
       tag: 'LIT-201',
-      title: 'Scheduled Calibration Performed',
-      type: 'SERVICE',
-      detail: 'Routine acoustic horn wipe and 4-20mA loop calibration verified zero drift.'
+      title: 'Human Tech: Routine Acoustic Cleaning',
+      type: 'HUMAN_SERVICE',
+      detail: 'Certified technician wiped transducer face and verified 4-20mA loop accuracy against physical dipstick.'
     }
   ]);
 
@@ -220,18 +216,18 @@ export default function MaintenanceView({ simState }) {
     return Math.round(100 - avgWear);
   }, [components]);
 
-  const urgentCount = useMemo(() => {
-    return components.filter(c => c.currentWear >= c.replacementThreshold).length;
+  const attentionCount = useMemo(() => {
+    return components.filter(c => c.currentWear >= 60).length;
   }, [components]);
 
-  // Handle Replacement Action
+  // ACTION: Replace Individual Component
   const handleReplaceComponent = (componentId) => {
     sound.playSuccess();
     try {
       confetti({
-        particleCount: 90,
+        particleCount: 80,
         spread: 60,
-        origin: { y: 0.7 },
+        origin: { y: 0.65 },
         colors: ['#34d399', '#00f2fe', '#38bdf8']
       });
     } catch {}
@@ -239,7 +235,6 @@ export default function MaintenanceView({ simState }) {
     const comp = components.find(c => c.id === componentId);
     if (!comp) return;
 
-    // Reset component wear to 0%
     setComponents(prev =>
       prev.map(c => {
         if (c.id === componentId) {
@@ -247,10 +242,9 @@ export default function MaintenanceView({ simState }) {
             ...c,
             currentWear: 0.0,
             hoursInService: 0.0,
-            status: 'NORMAL',
             trendPoints: [
               { hour: 0, wear: 0 },
-              { hour: 50, wear: 1.0 }
+              { hour: 40, wear: 0.8 }
             ]
           };
         }
@@ -258,130 +252,143 @@ export default function MaintenanceView({ simState }) {
       })
     );
 
-    // Add log entry
     const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     setLogs(prev => [
       {
         id: Date.now(),
         timestamp: `Just now (${nowTime})`,
         tag: comp.tag,
-        title: `Component Replaced: Fresh ${comp.name} Installed`,
+        title: `Physical Replacement Completed: ${comp.name}`,
         type: 'REPLACED',
-        detail: `Physical replacement confirmed. Sensor calibrated to factory baseline (100% Health restored, 0 hours runtime).`
+        detail: `Human technician installed fresh physical hardware on ${comp.location}. AquaShield digital twin recalibrated to 100% health.`
       },
       ...prev
     ]);
 
-    setServiceFeedback(`Fresh ${comp.name} (${comp.tag}) successfully installed and recalibrated! Component health restored to 100%.`);
-    setTimeout(() => setServiceFeedback(null), 5000);
+    setNotification(`Fresh ${comp.name} (${comp.tag}) installed by technician. Digital twin recalibrated to 100% Health!`);
+    setTimeout(() => setNotification(null), 5000);
   };
 
-  // Handle Power Outage / Stress Simulator
+  // ACTION: Replace All Degraded Components (The user's explicit request!)
+  const handleReplaceAll = () => {
+    sound.playSuccess();
+    try {
+      confetti({
+        particleCount: 140,
+        spread: 90,
+        origin: { y: 0.6 },
+        colors: ['#10b981', '#00f2fe', '#38bdf8', '#34d399', '#a855f7']
+      });
+    } catch {}
+
+    setComponents(prev =>
+      prev.map(c => ({
+        ...c,
+        currentWear: 0.0,
+        hoursInService: 0.0,
+        trendPoints: [
+          { hour: 0, wear: 0 },
+          { hour: 40, wear: 0.8 }
+        ]
+      }))
+    );
+
+    const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    setLogs(prev => [
+      {
+        id: Date.now(),
+        timestamp: `Just now (${nowTime})`,
+        tag: 'ALL-HARDWARE',
+        title: 'Full Facility Overhaul: All Sensors & Actuators Replaced',
+        type: 'REPLACED_ALL',
+        detail: 'On-site maintenance crew completed comprehensive hardware overhaul across all 6 stages. All physical units renewed to 100% baseline.'
+      },
+      ...prev
+    ]);
+
+    setNotification('Full Plant Refurbishment Complete: All 6 sensors & actuators refreshed with new hardware (100% Health restored)!');
+    setTimeout(() => setNotification(null), 6000);
+  };
+
+  // ACTION: Outage & Physical Shock Simulator
   const handleAssessOutageDamage = () => {
     sound.playClick();
     const durationMins = parseInt(outageDuration, 10);
 
-    let severity = 'LOW';
-    let wearIncrease = 2.5;
-    let headline = 'Minor Grid Fluctuation Absorbed';
-    let summary = 'Water plant automated backup batteries absorbed the transient dip without valve damage.';
+    let wearIncrease = 3.5;
+    let headline = 'Moderate Reverse Hydraulic Pressure Wave';
+    let summary = `A ${durationMins}-minute power disruption caused booster pumps to stop while water momentum continued forward, creating an abrupt 4.2 Bar reverse water-hammer oscillation.`;
 
     if (outageScenario === 'POWER_BLACKOUT') {
       if (durationMins >= 60) {
-        severity = 'HIGH';
         wearIncrease = 7.5;
-        headline = 'Severe Pressure Drop & Cavitation Surge';
-        summary = `During the ${durationMins}-minute complete power cutoff, booster pumps stopped abruptly while valves remained in motion. This caused a -0.6 Bar back-siphon shockwave across the piping manifold.`;
-      } else {
-        severity = 'MEDIUM';
-        wearIncrease = 4.2;
-        headline = 'Moderate Reverse Hydraulic Pressure Wave';
-        summary = `A ${durationMins}-minute blackout induced water hammer oscillation. Level sensors remained intact; pump mechanical seals experienced transient thermal shock.`;
+        headline = 'Severe Vacuum & Cavitation Shock';
+        summary = `During the ${durationMins}-minute complete blackout, back-siphoning created negative pressure (-0.6 Bar), straining pump mechanical seals and causing micro-cavitation.`;
       }
     } else if (outageScenario === 'WATER_HAMMER') {
-      severity = durationMins >= 30 ? 'CRITICAL' : 'HIGH';
-      wearIncrease = durationMins >= 30 ? 12.0 : 6.5;
-      headline = 'Extreme Hydraulic Water Hammering';
-      summary = `Sudden gate closure while pumps ran at full speed created an 8.6 Bar shockwave. Diaphragm sensors and pump bearings bore the brunt of the kinetic energy.`;
+      wearIncrease = durationMins >= 30 ? 11.5 : 6.0;
+      headline = 'Destructive Hydraulic Water Hammer Shock';
+      summary = `Sudden valve shut-off while pumps ran at full blast created an 8.6 Bar kinetic shockwave. Piezoresistive pressure diaphragms and pump bearings absorbed peak stress.`;
     } else if (outageScenario === 'CHEMICAL_SURGE') {
-      severity = 'MEDIUM';
       wearIncrease = 5.0;
-      headline = 'Chlorine Analyzer Chemical Saturation';
-      summary = `Over-concentrated chlorine chemical batch coated probe membranes, accelerating chemical degradation of sensitive measurement electrodes.`;
+      headline = 'Chlorine Residual Probe Chemical Saturation';
+      summary = `Over-concentrated chemical dosing batch coated sensor electrodes, accelerating electrolyte consumption by 3.2x.`;
     }
 
-    // Apply incremental wear to relevant components
     setComponents(prev =>
       prev.map(c => {
         let boost = wearIncrease;
-        if (outageScenario === 'CHEMICAL_SURGE' && c.id === 'AIT_501') boost *= 1.8;
-        if (outageScenario === 'WATER_HAMMER' && (c.id === 'PIT_401' || c.id === 'PUMP_101')) boost *= 1.6;
+        if (outageScenario === 'CHEMICAL_SURGE' && c.id === 'AIT_501') boost *= 1.7;
+        if (outageScenario === 'WATER_HAMMER' && (c.id === 'PIT_401' || c.id === 'PUMP_101')) boost *= 1.5;
 
         const newWear = Math.min(100, Math.round((c.currentWear + boost) * 10) / 10);
-        const newStatus = newWear >= c.criticalThreshold ? 'CRITICAL' : newWear >= c.replacementThreshold ? 'SERVICE_SOON' : 'NORMAL';
-
-        return {
-          ...c,
-          currentWear: newWear,
-          status: newStatus
-        };
+        return { ...c, currentWear: newWear };
       })
     );
 
-    // Save report
     setOutageReport({
-      severity,
-      durationMins,
-      wearIncrease,
       headline,
       summary,
+      wearIncrease,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     });
 
-    // Add to logs
     setLogs(prev => [
       {
         id: Date.now(),
         timestamp: 'Just now',
-        tag: 'PLANT-WIDE',
-        title: `Simulated Stress: ${headline}`,
-        type: 'STRESS_TEST',
-        detail: `${summary} (Estimated equipment wear increased by ~${wearIncrease}%).`
+        tag: 'STRESS-TEST',
+        title: `Simulated Shock: ${headline}`,
+        type: 'CYBER_WEAR',
+        detail: `${summary} (Increased physical component wear by +${wearIncrease}%).`
       },
       ...prev
     ]);
   };
 
-  // Filtered components
-  const filteredComponents = useMemo(() => {
-    if (categoryFilter === 'ALL') return components;
-    if (categoryFilter === 'URGENT') return components.filter(c => c.currentWear >= c.replacementThreshold);
-    if (categoryFilter === 'SENSORS') return components.filter(c => c.category.includes('Sensor') || c.category.includes('Probe'));
-    if (categoryFilter === 'ACTUATORS') return components.filter(c => c.category.includes('Actuator') || c.category.includes('Pump'));
-    return components;
-  }, [components, categoryFilter]);
-
-  // Calculate estimated remaining hours for selected component
+  // Forecast Remaining Useful Life (RUL) for selected component
   const remainingHours = Math.max(
     0,
     Math.round(
       ((selectedComponent.replacementThreshold - selectedComponent.currentWear) /
-        (selectedComponent.currentWear > 0 ? selectedComponent.currentWear / selectedComponent.hoursInService : 0.05))
+        (selectedComponent.currentWear > 0 ? selectedComponent.currentWear / (selectedComponent.hoursInService || 1) : 0.05))
     )
   );
   const remainingDays = (remainingHours / 24).toFixed(1);
 
   return (
-    <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div style={{ maxWidth: '1150px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '22px' }}>
       
-      {/* 1. TOP HEADER & HIGH-LEVEL HEALTH METRICS BANNER */}
+      {/* ============================================================== */}
+      {/* 1. TOP HEADER & HIGH-LEVEL OVERVIEW BAR                       */}
+      {/* ============================================================== */}
       <div
         className="glass-panel"
         style={{
           padding: '20px 24px',
           borderRadius: '16px',
           border: '1px solid rgba(255, 255, 255, 0.08)',
-          background: 'rgba(15, 23, 42, 0.78)',
+          background: 'rgba(15, 23, 42, 0.85)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -389,83 +396,99 @@ export default function MaintenanceView({ simState }) {
           gap: '16px'
         }}
       >
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div
-              style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '10px',
-                background: 'rgba(56, 189, 248, 0.15)',
-                border: '1px solid #38bdf8',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              <Wrench size={20} color="#38bdf8" />
-            </div>
-            <div>
-              <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#f8fafc', margin: 0, letterSpacing: '0.02em' }}>
-                MAINTENANCE & SENSOR CONDITION MONITOR
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '10px',
+              background: 'rgba(56, 189, 248, 0.15)',
+              border: '1.5px solid #38bdf8',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Wrench size={22} color="#38bdf8" />
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h2 style={{ fontSize: '1.18rem', fontWeight: 800, color: '#f8fafc', margin: 0 }}>
+                PLANT MAINTENANCE & SENSOR CONDITION LOG
               </h2>
-              <p style={{ fontSize: '0.8rem', color: '#94a3b8', margin: '3px 0 0 0' }}>
-                Track physical sensor wear, estimate time until damage, and prevent plant breakdown before it occurs.
-              </p>
+              <span
+                style={{
+                  fontSize: '0.68rem',
+                  fontWeight: 800,
+                  padding: '2px 8px',
+                  borderRadius: '10px',
+                  background: 'rgba(56, 189, 248, 0.15)',
+                  color: '#38bdf8',
+                  border: '1px solid rgba(56, 189, 248, 0.3)'
+                }}
+              >
+                CPS HARDWARE TELEMETRY
+              </span>
             </div>
+            <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: '4px 0 0 0' }}>
+              Predicts physical sensor damage, schedules human technician repairs, and recalibrates the digital twin.
+            </p>
           </div>
         </div>
 
-        {/* Aggregate Plant Health Score */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
-          <div
+        {/* Action Buttons: Replace All & Learn How it Works */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          {/* Quick Explanation Toggle */}
+          <button
+            onClick={() => setShowExplanation(prev => !prev)}
+            className="glass-panel"
             style={{
-              padding: '10px 18px',
-              borderRadius: '12px',
-              background: aggregateHealth > 80 ? 'rgba(16, 185, 129, 0.12)' : 'rgba(245, 158, 11, 0.12)',
-              border: `1px solid ${aggregateHealth > 80 ? '#10b981' : '#f59e0b'}`,
+              padding: '9px 14px',
+              borderRadius: '10px',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              background: showExplanation ? 'rgba(56, 189, 248, 0.15)' : 'rgba(15, 23, 42, 0.6)',
+              color: showExplanation ? '#38bdf8' : '#94a3b8',
+              fontSize: '0.76rem',
+              fontWeight: 700,
+              cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '10px'
+              gap: '6px'
             }}
           >
-            <Activity size={20} color={aggregateHealth > 80 ? '#34d399' : '#fbbf24'} />
-            <div>
-              <div style={{ fontSize: '0.68rem', textTransform: 'uppercase', color: '#94a3b8', fontWeight: 700 }}>
-                Overall Sensor Health
-              </div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 900, color: aggregateHealth > 80 ? '#34d399' : '#fbbf24' }}>
-                {aggregateHealth}% <span style={{ fontSize: '0.78rem', fontWeight: 600 }}>({aggregateHealth > 80 ? 'Optimal' : 'Service Due'})</span>
-              </div>
-            </div>
-          </div>
+            <Info size={14} />
+            <span>How Replacement Works</span>
+            {showExplanation ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </button>
 
-          <div
+          {/* REPLACE ALL OPTION (Requested by User!) */}
+          <button
+            onClick={handleReplaceAll}
+            className="glass-panel"
             style={{
-              padding: '10px 18px',
-              borderRadius: '12px',
-              background: 'rgba(56, 189, 248, 0.1)',
-              border: '1px solid rgba(56, 189, 248, 0.25)',
+              padding: '9px 18px',
+              borderRadius: '10px',
+              background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(0, 242, 254, 0.25))',
+              border: '1.5px solid #10b981',
+              color: '#34d399',
+              fontSize: '0.8rem',
+              fontWeight: 800,
+              cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '10px'
+              gap: '8px',
+              boxShadow: '0 0 16px rgba(16, 185, 129, 0.3)',
+              transition: 'all 0.2s ease'
             }}
           >
-            <Clock size={20} color="#38bdf8" />
-            <div>
-              <div style={{ fontSize: '0.68rem', textTransform: 'uppercase', color: '#94a3b8', fontWeight: 700 }}>
-                Simulated Operating Run Time
-              </div>
-              <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#38bdf8' }}>
-                1,143.0 hrs <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 500 }}>(~47.6 days)</span>
-              </div>
-            </div>
-          </div>
+            <RefreshCw size={15} />
+            <span>Replace All Degraded Components</span>
+          </button>
         </div>
       </div>
 
-      {/* Service Feedback Toast */}
-      {serviceFeedback && (
+      {/* Confirmation Notification Toast */}
+      {notification && (
         <div
           style={{
             padding: '12px 18px',
@@ -473,619 +496,696 @@ export default function MaintenanceView({ simState }) {
             background: 'rgba(16, 185, 129, 0.2)',
             border: '1px solid #10b981',
             color: '#34d399',
-            fontSize: '0.85rem',
+            fontSize: '0.82rem',
             fontWeight: 700,
             display: 'flex',
             alignItems: 'center',
             gap: '10px',
-            animation: 'fadeIn 0.3s ease'
+            boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+            animation: 'fadeIn 0.25s ease'
           }}
         >
           <CheckCircle2 size={18} />
-          <span>{serviceFeedback}</span>
+          <span>{notification}</span>
         </div>
       )}
 
-      {/* 2. MAIN 2-COLUMN VIEW: (LEFT: COMPONENT HEALTH CARDS | RIGHT: DEEP-DIVE PREDICTIVE DEGRADATION GRAPH) */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.15fr 1fr', gap: '20px' }}>
-        
-        {/* LEFT COLUMN: COMPONENT CARDS & QUICK STATUS */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-          
-          {/* Filter Pills */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
-            <div style={{ display: 'flex', gap: '6px' }}>
-              {[
-                { key: 'ALL', label: `All Components (${components.length})` },
-                { key: 'SENSORS', label: 'Sensors (4)' },
-                { key: 'ACTUATORS', label: 'Pumps & Valves (2)' },
-                { key: 'URGENT', label: `Needs Attention (${urgentCount})`, highlight: urgentCount > 0 }
-              ].map(tab => (
-                <button
-                  key={tab.key}
-                  onClick={() => setCategoryFilter(tab.key)}
-                  className="glass-panel"
-                  style={{
-                    padding: '6px 12px',
-                    borderRadius: '8px',
-                    fontSize: '0.74rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    background: categoryFilter === tab.key ? 'rgba(0, 242, 254, 0.2)' : 'rgba(15, 23, 42, 0.5)',
-                    border: categoryFilter === tab.key ? '1px solid #00f2fe' : tab.highlight ? '1px solid #f59e0b' : '1px solid rgba(255,255,255,0.08)',
-                    color: categoryFilter === tab.key ? '#00f2fe' : tab.highlight ? '#fbbf24' : '#94a3b8',
-                    transition: 'all 0.15s ease'
-                  }}
-                >
-                  {tab.label}
-                </button>
-              ))}
+      {/* ============================================================== */}
+      {/* 2. "HOW REPLACEMENT WORKS: HUMANS VS SYSTEM" (Answers User Confusion!) */}
+      {/* ============================================================== */}
+      {showExplanation && (
+        <div
+          className="glass-panel"
+          style={{
+            padding: '18px 22px',
+            borderRadius: '14px',
+            border: '1px solid rgba(0, 242, 254, 0.2)',
+            background: 'rgba(15, 23, 42, 0.9)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+            animation: 'fadeIn 0.3s ease'
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Sparkles size={16} color="#00f2fe" />
+              <h3 style={{ fontSize: '0.88rem', fontWeight: 800, color: '#00f2fe', margin: 0, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                How Sensor Replacement Works (Who Does What?)
+              </h3>
             </div>
-
             <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
-              Click any card to inspect degradation graph
+              Cyber-Physical Systems (CPS) Maintenance Workflow
             </span>
           </div>
 
-          {/* Cards List */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {filteredComponents.map(comp => {
-              const isSelected = comp.id === selectedId;
-              const isUrgent = comp.currentWear >= comp.replacementThreshold;
-              const isCritical = comp.currentWear >= comp.criticalThreshold;
-              const healthScore = Math.round(100 - comp.currentWear);
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
+            {/* Step 1: System Watches */}
+            <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '12px 14px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                <Cpu size={16} color="#38bdf8" />
+                <strong style={{ fontSize: '0.8rem', color: '#f8fafc' }}>1. AquaShield AI (The System)</strong>
+              </div>
+              <p style={{ fontSize: '0.74rem', color: '#cbd5e1', margin: 0, lineHeight: 1.45 }}>
+                The software continuously computes fluid friction and pressure shocks. It sounds a warning <strong style={{ color: '#38bdf8' }}>48+ hours before</strong> a physical sensor burns out. If damaged, AI runs virtual math estimators so clean drinking water never stops.
+              </p>
+            </div>
 
-              let badgeColor = '#34d399';
-              let badgeBg = 'rgba(16, 185, 129, 0.12)';
-              let badgeText = 'OPTIMAL';
+            {/* Step 2: Human Replaces */}
+            <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '12px 14px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                <UserCheck size={16} color="#fbbf24" />
+                <strong style={{ fontSize: '0.8rem', color: '#f8fafc' }}>2. Certified Field Crew (Humans)</strong>
+              </div>
+              <p style={{ fontSize: '0.74rem', color: '#cbd5e1', margin: 0, lineHeight: 1.45 }}>
+                Sensors are real stainless-steel hardware in water tanks. Software cannot unscrew bolts! A <strong style={{ color: '#fbbf24' }}>human technician</strong> physically visits the tank, unplugs the fouled or cracked sensor, and installs a brand-new factory unit.
+              </p>
+            </div>
 
-              if (comp.currentWear >= comp.criticalThreshold) {
-                badgeColor = '#ff2a5f';
-                badgeBg = 'rgba(255, 42, 95, 0.18)';
-                badgeText = 'CRITICAL WEAR';
-              } else if (comp.currentWear >= comp.replacementThreshold) {
-                badgeColor = '#fbbf24';
-                badgeBg = 'rgba(245, 158, 11, 0.15)';
-                badgeText = 'REPLACEMENT REQUIRED';
-              } else if (comp.currentWear >= 60) {
-                badgeColor = '#f59e0b';
-                badgeBg = 'rgba(245, 158, 11, 0.15)';
-                badgeText = 'SERVICE RECOMMENDED';
-              } else if (comp.currentWear >= 35) {
-                badgeColor = '#38bdf8';
-                badgeBg = 'rgba(56, 189, 248, 0.12)';
-                badgeText = 'NORMAL WEAR';
-              }
+            {/* Step 3: Digital Sync */}
+            <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '12px 14px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                <RotateCcw size={16} color="#34d399" />
+                <strong style={{ fontSize: '0.8rem', color: '#f8fafc' }}>3. Digital Calibration ("Replace")</strong>
+              </div>
+              <p style={{ fontSize: '0.74rem', color: '#cbd5e1', margin: 0, lineHeight: 1.45 }}>
+                Clicking <strong style={{ color: '#34d399' }}>"Confirm Replacement"</strong> tells the digital twin that fresh physical hardware is now in place. AquaShield recalibrates its mass-balance equations and resets the wear counter to 100% Health.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
-              return (
-                <div
-                  key={comp.id}
-                  onClick={() => setSelectedId(comp.id)}
-                  className="glass-panel"
-                  style={{
-                    padding: '14px 18px',
-                    borderRadius: '12px',
-                    border: isSelected ? '1.5px solid #00f2fe' : '1px solid rgba(255, 255, 255, 0.08)',
-                    background: isSelected ? 'rgba(0, 242, 254, 0.07)' : 'rgba(15, 23, 42, 0.65)',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    boxShadow: isSelected ? '0 0 14px rgba(0, 242, 254, 0.15)' : 'none'
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span
-                          style={{
-                            fontSize: '0.7rem',
-                            fontWeight: 800,
-                            padding: '2px 8px',
-                            borderRadius: '6px',
-                            background: 'rgba(56, 189, 248, 0.15)',
-                            color: '#38bdf8',
-                            border: '1px solid rgba(56, 189, 248, 0.3)'
-                          }}
-                        >
-                          {comp.tag}
-                        </span>
-                        <h4 style={{ fontSize: '0.88rem', fontWeight: 800, color: '#f8fafc', margin: 0 }}>
-                          {comp.name}
-                        </h4>
-                      </div>
-                      <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '3px' }}>
-                        {comp.location} • {comp.category}
-                      </div>
-                    </div>
+      {/* ============================================================== */}
+      {/* 3. PHYSICAL HARDWARE CARDS GRID (3 COLUMNS x 2 ROWS)           */}
+      {/* ============================================================== */}
+      <div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <div>
+            <h3 style={{ fontSize: '0.96rem', fontWeight: 800, color: '#f8fafc', margin: 0 }}>
+              PHYSICAL EQUIPMENT CONDITION & DAMAGE FORECAST
+            </h3>
+            <span style={{ fontSize: '0.74rem', color: '#94a3b8' }}>
+              Select any card to view its wear curve, or click "Confirm Replacement" to simulate on-site technician hardware swap.
+            </span>
+          </div>
 
-                    <div style={{ textAlign: 'right' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ fontSize: '0.74rem', color: '#94a3b8' }}>
+              Facility Status: <strong style={{ color: aggregateHealth > 75 ? '#34d399' : '#fbbf24' }}>{aggregateHealth}% Overall Health</strong>
+            </span>
+            {attentionCount > 0 && (
+              <span style={{ fontSize: '0.7rem', padding: '3px 8px', borderRadius: '6px', background: 'rgba(245, 158, 11, 0.15)', color: '#fbbf24', border: '1px solid #f59e0b', fontWeight: 700 }}>
+                {attentionCount} Action(s) Advised
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
+          {components.map(comp => {
+            const isSelected = comp.id === selectedId;
+            const healthScore = Math.max(0, Math.round(100 - comp.currentWear));
+            const isBrandNew = comp.currentWear <= 1.0;
+
+            let badgeColor = '#34d399';
+            let badgeBg = 'rgba(16, 185, 129, 0.15)';
+            let badgeText = 'OPTIMAL';
+
+            if (comp.currentWear >= comp.criticalThreshold) {
+              badgeColor = '#ff2a5f';
+              badgeBg = 'rgba(255, 42, 95, 0.18)';
+              badgeText = 'CRITICAL WEAR';
+            } else if (comp.currentWear >= comp.replacementThreshold) {
+              badgeColor = '#fbbf24';
+              badgeBg = 'rgba(245, 158, 11, 0.18)';
+              badgeText = 'REPLACE SOON';
+            } else if (comp.currentWear >= 60) {
+              badgeColor = '#f59e0b';
+              badgeBg = 'rgba(245, 158, 11, 0.12)';
+              badgeText = 'SERVICE DUE';
+            } else if (comp.currentWear >= 35) {
+              badgeColor = '#38bdf8';
+              badgeBg = 'rgba(56, 189, 248, 0.12)';
+              badgeText = 'NORMAL WEAR';
+            }
+
+            // Remaining hours
+            const compRemainingHours = Math.max(
+              0,
+              Math.round(
+                ((comp.replacementThreshold - comp.currentWear) /
+                  (comp.currentWear > 0 ? comp.currentWear / (comp.hoursInService || 1) : 0.05))
+              )
+            );
+            const compRemainingDays = (compRemainingHours / 24).toFixed(1);
+
+            return (
+              <div
+                key={comp.id}
+                onClick={() => setSelectedId(comp.id)}
+                className="glass-panel"
+                style={{
+                  padding: '16px',
+                  borderRadius: '14px',
+                  border: isSelected ? '1.5px solid #00f2fe' : '1px solid rgba(255, 255, 255, 0.08)',
+                  background: isSelected ? 'rgba(0, 242, 254, 0.06)' : 'rgba(15, 23, 42, 0.75)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  gap: '12px',
+                  transition: 'all 0.2s ease',
+                  boxShadow: isSelected ? '0 0 16px rgba(0, 242, 254, 0.18)' : 'none'
+                }}
+              >
+                <div>
+                  {/* Card Top: Tag + Badge */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <span
                         style={{
-                          fontSize: '0.68rem',
+                          fontSize: '0.7rem',
                           fontWeight: 800,
-                          padding: '3px 8px',
-                          borderRadius: '12px',
-                          background: badgeBg,
-                          color: badgeColor,
-                          border: `1px solid ${badgeColor}`
+                          padding: '2px 7px',
+                          borderRadius: '6px',
+                          background: 'rgba(56, 189, 248, 0.15)',
+                          color: '#38bdf8',
+                          border: '1px solid rgba(56, 189, 248, 0.3)'
                         }}
                       >
-                        {badgeText}
+                        {comp.tag}
                       </span>
-                      <div style={{ fontSize: '1.05rem', fontWeight: 900, color: badgeColor, marginTop: '4px' }}>
-                        {healthScore}% <span style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 500 }}>Health</span>
-                      </div>
+                      <span style={{ fontSize: '0.68rem', color: '#94a3b8' }}>
+                        {comp.location}
+                      </span>
                     </div>
+
+                    <span
+                      style={{
+                        fontSize: '0.66rem',
+                        fontWeight: 800,
+                        padding: '2px 8px',
+                        borderRadius: '10px',
+                        background: badgeBg,
+                        color: badgeColor,
+                        border: `1px solid ${badgeColor}`
+                      }}
+                    >
+                      {badgeText}
+                    </span>
                   </div>
 
-                  {/* Visual Wear Progress Bar */}
-                  <div style={{ marginTop: '12px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.68rem', color: '#94a3b8', marginBottom: '4px' }}>
-                      <span>Wear: <strong>{comp.currentWear.toFixed(1)}%</strong></span>
-                      <span>Service threshold: {comp.replacementThreshold}%</span>
+                  {/* Component Title */}
+                  <h4 style={{ fontSize: '0.88rem', fontWeight: 800, color: '#f8fafc', margin: '8px 0 2px 0' }}>
+                    {comp.name}
+                  </h4>
+
+                  {/* Plain English Summary */}
+                  <p style={{ fontSize: '0.72rem', color: '#94a3b8', margin: '2px 0 8px 0', lineHeight: 1.4, minHeight: '32px' }}>
+                    {comp.simpleDescription}
+                  </p>
+
+                  {/* Health Gauge & Wear Bar */}
+                  <div style={{ background: 'rgba(255,255,255,0.02)', padding: '8px 10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
+                      <span style={{ fontSize: '0.68rem', color: '#94a3b8' }}>Condition</span>
+                      <span style={{ fontSize: '0.95rem', fontWeight: 900, color: badgeColor }}>
+                        {healthScore}% <span style={{ fontSize: '0.68rem', color: '#94a3b8', fontWeight: 500 }}>Health</span>
+                      </span>
                     </div>
-                    <div style={{ width: '100%', height: '7px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: '4px', overflow: 'hidden' }}>
+
+                    {/* Progress Bar */}
+                    <div style={{ width: '100%', height: '6px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: '3px', overflow: 'hidden' }}>
                       <div
                         style={{
                           width: `${Math.min(100, comp.currentWear)}%`,
                           height: '100%',
-                          background: isCritical
+                          background: comp.currentWear >= 75
                             ? 'linear-gradient(90deg, #f59e0b, #ff2a5f)'
-                            : isUrgent
+                            : comp.currentWear >= 50
                             ? 'linear-gradient(90deg, #10b981, #f59e0b)'
                             : 'linear-gradient(90deg, #00f2fe, #10b981)',
-                          borderRadius: '4px',
                           transition: 'width 0.4s ease'
                         }}
                       />
                     </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.66rem', color: '#64748b', marginTop: '4px' }}>
+                      <span>Wear: {comp.currentWear.toFixed(1)}%</span>
+                      <span>Service threshold: {comp.replacementThreshold}%</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Action: Replace Sensor */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '8px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span style={{ fontSize: '0.64rem', color: '#94a3b8' }}>Est. Remaining:</span>
+                    <span style={{ fontSize: '0.74rem', fontWeight: 700, color: comp.currentWear >= 75 ? '#fbbf24' : '#f8fafc' }}>
+                      {isBrandNew ? 'Full Life (1,400+ h)' : `${compRemainingHours} hrs (~${compRemainingDays} d)`}
+                    </span>
                   </div>
 
-                  {/* Bottom details */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', paddingTop: '8px', borderTop: '1px solid rgba(255,255,255,0.05)', fontSize: '0.72rem' }}>
-                    <span style={{ color: '#cbd5e1' }}>
-                      Telemetry: <strong style={{ color: '#00f2fe' }}>{comp.liveTelemetry.metric}: {comp.liveTelemetry.value}</strong>
-                    </span>
-                    <span style={{ color: isUrgent ? '#fbbf24' : '#94a3b8', fontWeight: isUrgent ? 700 : 500 }}>
-                      {isUrgent ? 'Replace soon' : `${Math.round((comp.expectedLifespanHours - comp.hoursInService))} hrs remaining`}
-                    </span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleReplaceComponent(comp.id);
+                    }}
+                    className="glass-panel"
+                    style={{
+                      padding: '6px 12px',
+                      borderRadius: '8px',
+                      background: isBrandNew ? 'rgba(16, 185, 129, 0.1)' : 'rgba(16, 185, 129, 0.2)',
+                      border: '1px solid #10b981',
+                      color: '#34d399',
+                      fontSize: '0.72rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    <UserCheck size={13} />
+                    <span>{isBrandNew ? 'Refreshed' : 'Confirm Replace'}</span>
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ============================================================== */}
+      {/* 4. DEEP-DIVE DEGRADATION GRAPH FOR SELECTED SENSOR             */}
+      {/* ============================================================== */}
+      <div
+        className="glass-panel"
+        style={{
+          padding: '20px 24px',
+          borderRadius: '16px',
+          border: '1px solid rgba(0, 242, 254, 0.25)',
+          background: 'rgba(15, 23, 42, 0.85)',
+          display: 'grid',
+          gridTemplateColumns: '1.2fr 1fr',
+          gap: '20px'
+        }}
+      >
+        {/* Left: Interactive SVG Degradation Chart */}
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+            <div>
+              <span style={{ fontSize: '0.68rem', color: '#00f2fe', fontWeight: 800, textTransform: 'uppercase' }}>
+                Failure Horizon Prediction
+              </span>
+              <h4 style={{ fontSize: '0.98rem', fontWeight: 800, color: '#f8fafc', margin: '2px 0 0 0' }}>
+                Degradation Trend Curve: {selectedComponent.name} ({selectedComponent.tag})
+              </h4>
+            </div>
+
+            <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+              Current Wear: <strong style={{ color: selectedComponent.currentWear >= 75 ? '#fbbf24' : '#34d399' }}>{selectedComponent.currentWear.toFixed(1)}%</strong>
+            </span>
+          </div>
+
+          {/* SVG Chart */}
+          <div style={{ background: 'rgba(2, 6, 23, 0.65)', padding: '14px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <svg viewBox="0 0 450 160" style={{ width: '100%', height: 'auto', display: 'block' }}>
+              {/* Horizontal Grid Lines */}
+              <line x1="40" y1="20" x2="430" y2="20" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+              <line x1="40" y1="60" x2="430" y2="60" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+              <line x1="40" y1="100" x2="430" y2="100" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+              <line x1="40" y1="140" x2="430" y2="140" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+
+              {/* Y Axis Labels */}
+              <text x="32" y="24" fill="#94a3b8" fontSize="8.5" textAnchor="end">100%</text>
+              <text x="32" y="64" fill="#94a3b8" fontSize="8.5" textAnchor="end">75%</text>
+              <text x="32" y="104" fill="#94a3b8" fontSize="8.5" textAnchor="end">50%</text>
+              <text x="32" y="144" fill="#94a3b8" fontSize="8.5" textAnchor="end">0%</text>
+
+              {/* Critical Failure Danger Zone (85%) */}
+              <line x1="40" y1="38" x2="430" y2="38" stroke="#ff2a5f" strokeDasharray="4 4" strokeWidth="1.2" opacity="0.8" />
+              <text x="428" y="34" fill="#ff2a5f" fontSize="8" textAnchor="end" fontWeight="700">85% · Critical Failure Danger</text>
+
+              {/* Replacement Required Line (75%) */}
+              <line x1="40" y1="50" x2="430" y2="50" stroke="#fbbf24" strokeDasharray="4 4" strokeWidth="1.2" opacity="0.8" />
+              <text x="428" y="47" fill="#fbbf24" fontSize="8" textAnchor="end" fontWeight="700">75% · Replacement Required</text>
+
+              {/* Preventive Service Line (70%) */}
+              <line x1="40" y1="56" x2="430" y2="56" stroke="#f59e0b" strokeDasharray="2 3" strokeWidth="1" opacity="0.6" />
+              <text x="428" y="66" fill="#f59e0b" fontSize="7.5" textAnchor="end">70% · Preventive Inspection</text>
+
+              {/* Trend Curve & Data Points */}
+              {(() => {
+                const maxH = 1400;
+                const pts = selectedComponent.trendPoints || [
+                  { hour: 0, wear: 0 },
+                  { hour: selectedComponent.hoursInService, wear: selectedComponent.currentWear }
+                ];
+
+                const coords = pts.map(p => {
+                  const x = 40 + (p.hour / maxH) * (430 - 40);
+                  const y = 140 - (p.wear / 100) * (140 - 20);
+                  return { x, y, hour: p.hour, wear: p.wear };
+                });
+
+                const pathStr = coords.reduce((acc, pt, idx) => {
+                  return idx === 0 ? `M ${pt.x} ${pt.y}` : `${acc} L ${pt.x} ${pt.y}`;
+                }, '');
+
+                const currentPt = coords[coords.length - 1];
+
+                return (
+                  <g>
+                    {/* Shaded Area Under Curve */}
+                    <path
+                      d={`${pathStr} L ${currentPt.x} 140 L 40 140 Z`}
+                      fill="url(#trendGradient2)"
+                      opacity="0.3"
+                    />
+                    {/* Glowing Line */}
+                    <path
+                      d={pathStr}
+                      fill="none"
+                      stroke="#00f2fe"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                    />
+                    {/* Points */}
+                    {coords.map((pt, i) => (
+                      <circle
+                        key={i}
+                        cx={pt.x}
+                        cy={pt.y}
+                        r={i === coords.length - 1 ? 5 : 3}
+                        fill={i === coords.length - 1 ? (selectedComponent.currentWear >= 75 ? '#fbbf24' : '#ff2a5f') : '#00f2fe'}
+                        stroke="#ffffff"
+                        strokeWidth="1.5"
+                      />
+                    ))}
+                  </g>
+                );
+              })()}
+
+              <defs>
+                <linearGradient id="trendGradient2" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#00f2fe" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="#00f2fe" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+
+              {/* X Axis Time Labels */}
+              <text x="40" y="154" fill="#94a3b8" fontSize="8" textAnchor="start">0h</text>
+              <text x="137" y="154" fill="#94a3b8" fontSize="8" textAnchor="middle">350h</text>
+              <text x="235" y="154" fill="#94a3b8" fontSize="8" textAnchor="middle">700h</text>
+              <text x="332" y="154" fill="#94a3b8" fontSize="8" textAnchor="middle">1050h</text>
+              <text x="430" y="154" fill="#94a3b8" fontSize="8" textAnchor="end">1400h</text>
+            </svg>
+
+            <div style={{ textAlign: 'center', fontSize: '0.7rem', color: '#94a3b8', marginTop: '4px' }}>
+              Simulated Plant Run-Time (Operating Hours Since Commissioning)
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Plain-English Diagnostic Card */}
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '10px' }}>
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#38bdf8' }}>
+                DIAGNOSTIC & REPLACEMENT ADVISORY
+              </span>
+              <button
+                onClick={() => handleReplaceComponent(selectedComponent.id)}
+                className="badge badge-emerald"
+                style={{
+                  padding: '7px 14px',
+                  borderRadius: '8px',
+                  fontSize: '0.74rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  border: '1px solid #10b981',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                <UserCheck size={14} />
+                <span>Replace This Component</span>
+              </button>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginTop: '10px' }}>
+              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '8px 10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                <div style={{ fontSize: '0.64rem', color: '#94a3b8' }}>CURRENT WEAR</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: selectedComponent.currentWear >= 75 ? '#fbbf24' : '#34d399', marginTop: '2px' }}>
+                  {selectedComponent.currentWear.toFixed(1)}%
+                </div>
+              </div>
+
+              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '8px 10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                <div style={{ fontSize: '0.64rem', color: '#94a3b8' }}>EST. REMAINING</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#38bdf8', marginTop: '2px' }}>
+                  {remainingHours} h
+                </div>
+              </div>
+
+              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '8px 10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                <div style={{ fontSize: '0.64rem', color: '#94a3b8' }}>HOURS ACTIVE</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#f8fafc', marginTop: '2px' }}>
+                  {selectedComponent.hoursInService.toFixed(0)} h
+                </div>
+              </div>
+            </div>
+
+            {/* Why Is It Degrading? */}
+            <div style={{ background: 'rgba(255, 255, 255, 0.02)', padding: '10px 12px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.05)', marginTop: '10px' }}>
+              <strong style={{ fontSize: '0.72rem', color: '#f8fafc' }}>Why does this component degrade?</strong>
+              <p style={{ fontSize: '0.72rem', color: '#cbd5e1', margin: '2px 0 0 0', lineHeight: 1.4 }}>
+                {selectedComponent.physicalWearCause}
+              </p>
+            </div>
+
+            {/* Risk if ignored */}
+            <div style={{ background: 'rgba(239, 68, 68, 0.06)', padding: '10px 12px', borderRadius: '8px', border: '1px solid rgba(239, 68, 68, 0.2)', marginTop: '8px' }}>
+              <strong style={{ fontSize: '0.72rem', color: '#f87171' }}>Consequence if not replaced:</strong>
+              <p style={{ fontSize: '0.72rem', color: '#cbd5e1', margin: '2px 0 0 0', lineHeight: 1.4 }}>
+                {selectedComponent.riskIfDamaged}
+              </p>
+            </div>
+          </div>
+
+          {/* Plain English Forecast Box */}
+          <div style={{ background: 'rgba(0, 242, 254, 0.05)', padding: '10px 12px', borderRadius: '8px', border: '1px solid rgba(0, 242, 254, 0.15)' }}>
+            <div style={{ fontSize: '0.73rem', color: '#cbd5e1', lineHeight: 1.4 }}>
+              <strong style={{ color: '#00f2fe' }}>Layman Forecast:</strong> At normal 24/7 operating load, this unit degrades at approx. <strong style={{ color: '#00f2fe' }}>{(selectedComponent.currentWear / (selectedComponent.hoursInService || 1)).toFixed(3)}% per hour</strong>. Replacing it before 75% wear ensures clean water safety with 0 downtime.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ============================================================== */}
+      {/* 5. PHYSICAL STRESS SIMULATION & ACTIVITY LOG                   */}
+      {/* ============================================================== */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px' }}>
+        
+        {/* Outage / Physical Shock Simulator */}
+        <div
+          className="glass-panel"
+          style={{
+            padding: '18px 20px',
+            borderRadius: '14px',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'rgba(15, 23, 42, 0.75)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            gap: '12px'
+          }}
+        >
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <AlertCircle size={16} color="#fbbf24" />
+              <h4 style={{ fontSize: '0.92rem', fontWeight: 800, color: '#f8fafc', margin: 0 }}>
+                Simulate Physical Shock & Power Failure
+              </h4>
+            </div>
+            <p style={{ fontSize: '0.74rem', color: '#94a3b8', margin: '3px 0 10px 0' }}>
+              Test how sudden blackouts or water hammer pressure shockwaves accelerate physical sensor wear.
+            </p>
+
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <select
+                value={outageScenario}
+                onChange={(e) => setOutageScenario(e.target.value)}
+                className="glass-panel"
+                style={{
+                  padding: '7px 10px',
+                  borderRadius: '8px',
+                  background: 'rgba(15, 23, 42, 0.9)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  color: '#f8fafc',
+                  fontSize: '0.76rem',
+                  fontWeight: 600
+                }}
+              >
+                <option value="POWER_BLACKOUT">Grid Power Blackout (0V Dip)</option>
+                <option value="WATER_HAMMER">Hydraulic Water Hammer Shock</option>
+                <option value="CHEMICAL_SURGE">Chemical Over-Dosing Surge</option>
+              </select>
+
+              <select
+                value={outageDuration}
+                onChange={(e) => setOutageDuration(e.target.value)}
+                className="glass-panel"
+                style={{
+                  padding: '7px 10px',
+                  borderRadius: '8px',
+                  background: 'rgba(15, 23, 42, 0.9)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  color: '#f8fafc',
+                  fontSize: '0.76rem',
+                  fontWeight: 600
+                }}
+              >
+                <option value="15">15 min duration</option>
+                <option value="30">30 min duration</option>
+                <option value="60">1 hour duration</option>
+              </select>
+
+              <button
+                onClick={handleAssessOutageDamage}
+                className="glass-panel"
+                style={{
+                  padding: '7px 14px',
+                  borderRadius: '8px',
+                  background: 'rgba(245, 158, 11, 0.18)',
+                  border: '1px solid #f59e0b',
+                  color: '#fbbf24',
+                  fontSize: '0.76rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                <Activity size={13} />
+                <span>Simulate Shock</span>
+              </button>
+            </div>
+          </div>
+
+          {outageReport && (
+            <div
+              style={{
+                padding: '10px 12px',
+                borderRadius: '8px',
+                background: 'rgba(245, 158, 11, 0.1)',
+                border: '1px solid #f59e0b',
+                marginTop: '6px'
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.76rem', fontWeight: 800, color: '#fbbf24' }}>
+                <span>{outageReport.headline}</span>
+                <span>+{outageReport.wearIncrease}% Wear</span>
+              </div>
+              <p style={{ fontSize: '0.72rem', color: '#cbd5e1', margin: '2px 0 0 0', lineHeight: 1.4 }}>
+                {outageReport.summary}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Maintenance Event Log */}
+        <div
+          className="glass-panel"
+          style={{
+            padding: '18px 20px',
+            borderRadius: '14px',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'rgba(15, 23, 42, 0.75)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px'
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Calendar size={15} color="#38bdf8" />
+              <h4 style={{ fontSize: '0.92rem', fontWeight: 800, color: '#f8fafc', margin: 0 }}>
+                Maintenance & Repair History Log
+              </h4>
+            </div>
+            <span style={{ fontSize: '0.7rem', color: '#64748b' }}>
+              {logs.length} Logged Entries
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '185px', overflowY: 'auto' }}>
+            {logs.map(log => {
+              let tagColor = '#38bdf8';
+              let tagBg = 'rgba(56, 189, 248, 0.12)';
+
+              if (log.type === 'REPLACED' || log.type === 'REPLACED_ALL') {
+                tagColor = '#34d399';
+                tagBg = 'rgba(16, 185, 129, 0.15)';
+              } else if (log.type === 'PREVENTIVE_ALERT') {
+                tagColor = '#fbbf24';
+                tagBg = 'rgba(245, 158, 11, 0.15)';
+              } else if (log.type === 'CYBER_WEAR') {
+                tagColor = '#ff2a5f';
+                tagBg = 'rgba(255, 42, 95, 0.15)';
+              }
+
+              return (
+                <div
+                  key={log.id}
+                  style={{
+                    padding: '8px 10px',
+                    borderRadius: '8px',
+                    background: 'rgba(255, 255, 255, 0.02)',
+                    border: '1px solid rgba(255, 255, 255, 0.04)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    gap: '10px'
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span
+                        style={{
+                          fontSize: '0.62rem',
+                          fontWeight: 800,
+                          padding: '1px 5px',
+                          borderRadius: '4px',
+                          background: tagBg,
+                          color: tagColor,
+                          border: `1px solid ${tagColor}`
+                        }}
+                      >
+                        {log.type}
+                      </span>
+                      <strong style={{ fontSize: '0.74rem', color: '#f8fafc' }}>
+                        {log.title}
+                      </strong>
+                    </div>
+                    <p style={{ fontSize: '0.7rem', color: '#94a3b8', margin: '2px 0 0 0', lineHeight: 1.35 }}>
+                      {log.detail}
+                    </p>
                   </div>
+                  <span style={{ fontSize: '0.66rem', color: '#64748b', whiteSpace: 'nowrap' }}>
+                    {log.timestamp}
+                  </span>
                 </div>
               );
             })}
           </div>
         </div>
 
-        {/* RIGHT COLUMN: DETAIL INSPECTION, GRAPH & ACTIONS */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          
-          {/* Detailed Component Inspector Card */}
-          <div
-            className="glass-panel"
-            style={{
-              padding: '20px',
-              borderRadius: '16px',
-              border: '1px solid rgba(0, 242, 254, 0.25)',
-              background: 'rgba(15, 23, 42, 0.85)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '14px'
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px' }}>
-              <div>
-                <span style={{ fontSize: '0.72rem', color: '#00f2fe', fontWeight: 800, textTransform: 'uppercase' }}>
-                  Detailed Sensor Diagnostic
-                </span>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc', margin: '2px 0 0 0' }}>
-                  {selectedComponent.name} ({selectedComponent.tag})
-                </h3>
-                <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '2px' }}>
-                  {selectedComponent.type} • {selectedComponent.location}
-                </div>
-              </div>
-
-              {/* Physical Replacement Button */}
-              <button
-                onClick={() => handleReplaceComponent(selectedComponent.id)}
-                className="badge badge-emerald"
-                style={{
-                  padding: '9px 16px',
-                  borderRadius: '10px',
-                  fontSize: '0.78rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  border: '1px solid #10b981',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  boxShadow: '0 0 12px rgba(16, 185, 129, 0.25)',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                <RotateCcw size={14} />
-                <span>Confirm Component Replacement</span>
-              </button>
-            </div>
-
-            {/* Quick Metrics Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
-              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
-                <div style={{ fontSize: '0.68rem', color: '#94a3b8', fontWeight: 700 }}>CURRENT WEAR</div>
-                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: selectedComponent.currentWear >= 75 ? '#fbbf24' : '#34d399', marginTop: '2px' }}>
-                  {selectedComponent.currentWear.toFixed(1)}%
-                </div>
-                <div style={{ fontSize: '0.65rem', color: '#94a3b8' }}>
-                  Replace at {selectedComponent.replacementThreshold}%
-                </div>
-              </div>
-
-              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
-                <div style={{ fontSize: '0.68rem', color: '#94a3b8', fontWeight: 700 }}>REMAINING LIFE</div>
-                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#38bdf8', marginTop: '2px' }}>
-                  {remainingHours} h
-                </div>
-                <div style={{ fontSize: '0.65rem', color: '#94a3b8' }}>
-                  approx. ~{remainingDays} days
-                </div>
-              </div>
-
-              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
-                <div style={{ fontSize: '0.68rem', color: '#94a3b8', fontWeight: 700 }}>HOURS IN SERVICE</div>
-                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#f8fafc', marginTop: '2px' }}>
-                  {selectedComponent.hoursInService.toFixed(0)} h
-                </div>
-                <div style={{ fontSize: '0.65rem', color: '#94a3b8' }}>
-                  Max: {selectedComponent.expectedLifespanHours} h
-                </div>
-              </div>
-            </div>
-
-            {/* Simple Layman Explanation */}
-            <div style={{ background: 'rgba(0, 242, 254, 0.05)', padding: '12px 14px', borderRadius: '10px', border: '1px solid rgba(0, 242, 254, 0.15)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.74rem', fontWeight: 800, color: '#00f2fe' }}>
-                <Info size={14} />
-                <span>What This Sensor Does (Simple English):</span>
-              </div>
-              <p style={{ fontSize: '0.76rem', color: '#cbd5e1', margin: '4px 0 0 0', lineHeight: 1.45 }}>
-                {selectedComponent.description}
-              </p>
-              <div style={{ fontSize: '0.73rem', color: '#f87171', marginTop: '6px', lineHeight: 1.4 }}>
-                <strong>Risk if ignored:</strong> {selectedComponent.failureImpact}
-              </div>
-            </div>
-
-            {/* 3. VISUAL DEGRADATION TREND GRAPH (CLEAN SVG WITH THRESHOLD LINES) */}
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Activity size={14} color="#00f2fe" />
-                  <span>Degradation Trend Over Operating Time (Di(t))</span>
-                </span>
-                <span style={{ fontSize: '0.7rem', color: '#94a3b8' }}>
-                  Current Wear: <strong style={{ color: selectedComponent.currentWear >= 75 ? '#fbbf24' : '#34d399' }}>{selectedComponent.currentWear.toFixed(1)}%</strong>
-                </span>
-              </div>
-
-              {/* Responsive SVG Chart */}
-              <div style={{ background: 'rgba(2, 6, 23, 0.65)', padding: '14px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)' }}>
-                <svg viewBox="0 0 450 160" style={{ width: '100%', height: 'auto', display: 'block' }}>
-                  {/* Grid Lines */}
-                  <line x1="40" y1="20" x2="430" y2="20" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
-                  <line x1="40" y1="60" x2="430" y2="60" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
-                  <line x1="40" y1="100" x2="430" y2="100" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
-                  <line x1="40" y1="140" x2="430" y2="140" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
-
-                  {/* Y Axis Labels */}
-                  <text x="32" y="24" fill="#94a3b8" fontSize="9" textAnchor="end">100%</text>
-                  <text x="32" y="64" fill="#94a3b8" fontSize="9" textAnchor="end">75%</text>
-                  <text x="32" y="104" fill="#94a3b8" fontSize="9" textAnchor="end">50%</text>
-                  <text x="32" y="144" fill="#94a3b8" fontSize="9" textAnchor="end">0%</text>
-
-                  {/* Critical Threshold Line (85%) */}
-                  <line x1="40" y1="38" x2="430" y2="38" stroke="#ff2a5f" strokeDasharray="4 4" strokeWidth="1.2" opacity="0.8" />
-                  <text x="428" y="34" fill="#ff2a5f" fontSize="8" textAnchor="end" fontWeight="700">85% · Critical Failure</text>
-
-                  {/* Replacement Threshold Line (75%) */}
-                  <line x1="40" y1="50" x2="430" y2="50" stroke="#fbbf24" strokeDasharray="4 4" strokeWidth="1.2" opacity="0.8" />
-                  <text x="428" y="47" fill="#fbbf24" fontSize="8" textAnchor="end" fontWeight="700">75% · Replacement Required</text>
-
-                  {/* 70% Preventive Service Line */}
-                  <line x1="40" y1="56" x2="430" y2="56" stroke="#f59e0b" strokeDasharray="2 3" strokeWidth="1" opacity="0.6" />
-                  <text x="428" y="65" fill="#f59e0b" fontSize="7.5" textAnchor="end">70% · Preventive Service</text>
-
-                  {/* Trend Curve */}
-                  {(() => {
-                    const maxH = 1400;
-                    const pts = selectedComponent.trendPoints || [
-                      { hour: 0, wear: 0 },
-                      { hour: selectedComponent.hoursInService, wear: selectedComponent.currentWear }
-                    ];
-
-                    const coords = pts.map(p => {
-                      const x = 40 + (p.hour / maxH) * (430 - 40);
-                      const y = 140 - (p.wear / 100) * (140 - 20);
-                      return { x, y, hour: p.hour, wear: p.wear };
-                    });
-
-                    const pathStr = coords.reduce((acc, pt, idx) => {
-                      return idx === 0 ? `M ${pt.x} ${pt.y}` : `${acc} L ${pt.x} ${pt.y}`;
-                    }, '');
-
-                    const currentPt = coords[coords.length - 1];
-
-                    return (
-                      <g>
-                        {/* Shaded Area Under Curve */}
-                        <path
-                          d={`${pathStr} L ${currentPt.x} 140 L 40 140 Z`}
-                          fill="url(#trendGradient)"
-                          opacity="0.3"
-                        />
-                        {/* Glowing Line */}
-                        <path
-                          d={pathStr}
-                          fill="none"
-                          stroke="#00f2fe"
-                          strokeWidth="2.5"
-                          strokeLinecap="round"
-                        />
-                        {/* Data dots */}
-                        {coords.map((pt, i) => (
-                          <circle
-                            key={i}
-                            cx={pt.x}
-                            cy={pt.y}
-                            r={i === coords.length - 1 ? 5 : 3}
-                            fill={i === coords.length - 1 ? (selectedComponent.currentWear >= 75 ? '#fbbf24' : '#ff2a5f') : '#00f2fe'}
-                            stroke="#ffffff"
-                            strokeWidth="1.5"
-                          />
-                        ))}
-                      </g>
-                    );
-                  })()}
-
-                  {/* Gradient Definition */}
-                  <defs>
-                    <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#00f2fe" stopOpacity="0.8" />
-                      <stop offset="100%" stopColor="#00f2fe" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-
-                  {/* X Axis Time Labels */}
-                  <text x="40" y="154" fill="#94a3b8" fontSize="8" textAnchor="start">0h</text>
-                  <text x="137" y="154" fill="#94a3b8" fontSize="8" textAnchor="middle">350h</text>
-                  <text x="235" y="154" fill="#94a3b8" fontSize="8" textAnchor="middle">700h</text>
-                  <text x="332" y="154" fill="#94a3b8" fontSize="8" textAnchor="middle">1050h</text>
-                  <text x="430" y="154" fill="#94a3b8" fontSize="8" textAnchor="end">1400h</text>
-                </svg>
-                
-                <div style={{ textAlign: 'center', fontSize: '0.7rem', color: '#94a3b8', marginTop: '4px' }}>
-                  Simulated Operating Run Time (Hours Since Commissioning)
-                </div>
-              </div>
-            </div>
-
-            {/* Plain English Wear Forecast Box (Replaces Confusing Mathematical Formula) */}
-            <div style={{ background: 'rgba(255, 255, 255, 0.02)', padding: '10px 14px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
-              <div style={{ fontSize: '0.72rem', color: '#94a3b8', lineHeight: 1.45 }}>
-                <strong style={{ color: '#f8fafc' }}>Forecast Summary:</strong> At the current steady operational load, this component is wearing at approximately <strong style={{ color: '#00f2fe' }}>{(selectedComponent.currentWear / (selectedComponent.hoursInService || 1)).toFixed(3)}% per hour</strong>. Based on continuous plant throughput, it will reach the 75% service threshold in <strong style={{ color: '#fbbf24' }}>approx. {remainingHours} hours ({remainingDays} days)</strong>.
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 4. PHYSICAL STRESS & POWER OUTAGE SIMULATOR (REPLACED CONFUSING FORMULAS WITH AN INTUITIVE OPERATOR TOOL) */}
-      <div
-        className="glass-panel"
-        style={{
-          padding: '20px 24px',
-          borderRadius: '16px',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-          background: 'rgba(15, 23, 42, 0.75)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '14px'
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <AlertCircle size={18} color="#f59e0b" />
-              <h3 style={{ fontSize: '1.02rem', fontWeight: 800, color: '#f8fafc', margin: 0 }}>
-                PHYSICAL STRESS & POWER OUTAGE DAMAGE ASSESSMENT
-              </h3>
-            </div>
-            <p style={{ fontSize: '0.76rem', color: '#94a3b8', margin: '3px 0 0 0' }}>
-              Simulate how unexpected electrical blackouts or hydraulic pressure shocks damage physical sensors and actuators.
-            </p>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-            {/* Scenario Selector */}
-            <select
-              value={outageScenario}
-              onChange={(e) => setOutageScenario(e.target.value)}
-              className="glass-panel"
-              style={{
-                padding: '8px 12px',
-                borderRadius: '8px',
-                background: 'rgba(15, 23, 42, 0.9)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                color: '#f8fafc',
-                fontSize: '0.78rem',
-                fontWeight: 600
-              }}
-            >
-              <option value="POWER_BLACKOUT">Grid Power Blackout (0V Surge)</option>
-              <option value="WATER_HAMMER">Hydraulic Water Hammer Shock</option>
-              <option value="CHEMICAL_SURGE">Chemical Over-Dosing Shock</option>
-            </select>
-
-            {/* Duration Selector */}
-            <select
-              value={outageDuration}
-              onChange={(e) => setOutageDuration(e.target.value)}
-              className="glass-panel"
-              style={{
-                padding: '8px 12px',
-                borderRadius: '8px',
-                background: 'rgba(15, 23, 42, 0.9)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                color: '#f8fafc',
-                fontSize: '0.78rem',
-                fontWeight: 600
-              }}
-            >
-              <option value="15">15 min outage</option>
-              <option value="30">30 min outage</option>
-              <option value="60">60 min outage</option>
-              <option value="120">2 hour outage</option>
-            </select>
-
-            {/* Run Assessment Button */}
-            <button
-              onClick={handleAssessOutageDamage}
-              className="glass-panel"
-              style={{
-                padding: '8px 18px',
-                borderRadius: '8px',
-                background: 'rgba(245, 158, 11, 0.18)',
-                border: '1px solid #f59e0b',
-                color: '#fbbf24',
-                fontSize: '0.78rem',
-                fontWeight: 800,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
-              }}
-            >
-              <Activity size={14} />
-              <span>Assess Physical Damage Impact</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Damage Assessment Result Report */}
-        {outageReport && (
-          <div
-            style={{
-              padding: '14px 18px',
-              borderRadius: '12px',
-              background: outageReport.severity === 'CRITICAL' ? 'rgba(255, 42, 95, 0.12)' : 'rgba(245, 158, 11, 0.12)',
-              border: `1px solid ${outageReport.severity === 'CRITICAL' ? '#ff2a5f' : '#f59e0b'}`,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '6px',
-              animation: 'fadeIn 0.25s ease'
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.86rem', fontWeight: 800, color: outageReport.severity === 'CRITICAL' ? '#ff2a5f' : '#fbbf24' }}>
-                {outageReport.headline}
-              </span>
-              <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
-                Modeled Impact: <strong style={{ color: '#f8fafc' }}>+{outageReport.wearIncrease}% Equipment Wear</strong>
-              </span>
-            </div>
-            <p style={{ fontSize: '0.78rem', color: '#cbd5e1', margin: 0, lineHeight: 1.45 }}>
-              {outageReport.summary}
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* 5. MAINTENANCE & SENSOR REPLACEMENT HISTORY LOG */}
-      <div
-        className="glass-panel"
-        style={{
-          padding: '20px 24px',
-          borderRadius: '16px',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-          background: 'rgba(15, 23, 42, 0.75)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px'
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Calendar size={16} color="#38bdf8" />
-            <h3 style={{ fontSize: '0.96rem', fontWeight: 800, color: '#f8fafc', margin: 0 }}>
-              MAINTENANCE & SENSOR REPLACEMENT HISTORY
-            </h3>
-          </div>
-          <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
-            {logs.length} Logged Events
-          </span>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {logs.map(log => {
-            let tagColor = '#38bdf8';
-            let tagBg = 'rgba(56, 189, 248, 0.12)';
-
-            if (log.type === 'REPLACED') {
-              tagColor = '#34d399';
-              tagBg = 'rgba(16, 185, 129, 0.15)';
-            } else if (log.type === 'ALERT') {
-              tagColor = '#fbbf24';
-              tagBg = 'rgba(245, 158, 11, 0.15)';
-            } else if (log.type === 'CYBER_WEAR' || log.type === 'STRESS_TEST') {
-              tagColor = '#ff2a5f';
-              tagBg = 'rgba(255, 42, 95, 0.15)';
-            }
-
-            return (
-              <div
-                key={log.id}
-                style={{
-                  padding: '10px 14px',
-                  borderRadius: '10px',
-                  background: 'rgba(255, 255, 255, 0.02)',
-                  border: '1px solid rgba(255, 255, 255, 0.05)',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'flex-start',
-                  gap: '12px'
-                }}
-              >
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span
-                      style={{
-                        fontSize: '0.66rem',
-                        fontWeight: 800,
-                        padding: '2px 6px',
-                        borderRadius: '4px',
-                        background: tagBg,
-                        color: tagColor,
-                        border: `1px solid ${tagColor}`
-                      }}
-                    >
-                      {log.type}
-                    </span>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#f8fafc' }}>
-                      {log.title}
-                    </span>
-                  </div>
-                  <p style={{ fontSize: '0.74rem', color: '#94a3b8', margin: 0, lineHeight: 1.4 }}>
-                    {log.detail}
-                  </p>
-                </div>
-
-                <div style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
-                  <span style={{ fontSize: '0.7rem', color: '#64748b' }}>
-                    {log.timestamp}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
       </div>
 
     </div>
