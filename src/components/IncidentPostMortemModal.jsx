@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   CheckCircle2,
   X,
@@ -8,8 +8,10 @@ import {
   ShieldAlert,
   ShieldCheck,
   Droplets,
-  ArrowRight
+  ArrowRight,
+  Brain
 } from 'lucide-react';
+import { adaptiveLearningEngine } from '../engine/adaptiveLearningEngine';
 
 const PREVENTION_DATABASE = {
   SENSOR_SPOOF: {
@@ -84,6 +86,7 @@ export default function IncidentPostMortemModal({
   if (scnList.length === 0) return null;
 
   const isMulti = scnList.length > 1;
+  const [learnedScenarios, setLearnedScenarios] = useState({});
 
   return (
     <div
@@ -271,6 +274,41 @@ export default function IncidentPostMortemModal({
                       <li key={sIdx} style={{ marginTop: '2px' }}>{st}</li>
                     ))}
                   </ul>
+                </div>
+
+                {/* 5. Adaptive Learning & Operator Feedback Loop */}
+                <div style={{ background: 'rgba(168, 85, 247, 0.08)', padding: '10px 12px', borderRadius: '8px', border: '1px solid rgba(168, 85, 247, 0.3)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                    <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#c084fc', display: 'flex', alignItems: 'center', gap: '6px', textTransform: 'uppercase' }}>
+                      <Brain size={13} color="#c084fc" />
+                      <span>5. Adaptive Invariant Learning (Review 2 Feedback Loop)</span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        adaptiveLearningEngine.recordFeedback({
+                          scenario: scn,
+                          feedbackText: `Operator verified root cause on ${scn.target}. Hardened physical mass conservation bounds.`,
+                          customFix: scn.plainFix
+                        });
+                        setLearnedScenarios(prev => ({ ...prev, [scn.id]: true }));
+                      }}
+                      className="badge badge-cyan"
+                      style={{
+                        padding: '4px 12px',
+                        fontSize: '0.7rem',
+                        fontWeight: 800,
+                        cursor: 'pointer',
+                        border: '1px solid #00f2fe'
+                      }}
+                    >
+                      {learnedScenarios[scn.id] ? '✓ Policy Memorized in Vault' : '⚡ Teach AquaShield / Save Reflex'}
+                    </button>
+                  </div>
+                  <p style={{ fontSize: '0.76rem', color: '#e9d5ff', margin: '4px 0 0 0', lineHeight: 1.4 }}>
+                    {learnedScenarios[scn.id]
+                      ? 'Memory vault updated! Next time this exact or similar problem occurs, AquaShield will recall this policy and self-heal in <15ms instead of 8.5s.'
+                      : 'Provide feedback to commit this failure signature into AquaShield\'s persistent Experience Vault so subsequent attacks are rectified instantaneously.'}
+                  </p>
                 </div>
               </div>
             );

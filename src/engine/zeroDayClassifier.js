@@ -119,6 +119,16 @@ export function classifyCustomHackerPrompt(promptText) {
     target = 'Drinking Water Distribution Tank 4';
     componentType = 'tank';
     tank4Delta = p.includes('drain') || p.includes('leak') ? -22 : 18;
+  } else if (p.includes('tank 5') || p.includes('tank5') || p.includes('remineral') || p.includes('calcite') || p.includes('effluent') || p.includes('polishing')) {
+    targetNode = 'tank5';
+    target = 'Remineralization & Polishing Tank 5';
+    componentType = 'tank';
+    tank2Delta = 0;
+  } else if (p.includes('tank 6') || p.includes('tank6') || p.includes('export reservoir') || p.includes('pure export') || p.includes('seawater export')) {
+    targetNode = 'tank6';
+    target = 'Pure Potable Export Reservoir Tank 6';
+    componentType = 'tank';
+    tank2Delta = 0;
   } else if (p.includes('pump 1') || p.includes('pump1') || p.includes('intake pump') || p.includes('turbine 1')) {
     targetNode = 'pump1';
     target = 'Raw Water Intake Motor (Pump 1)';
