@@ -40,7 +40,7 @@ AquaShield introduces **Physics-Informed Digital Twins** and **Multi-Layer Cross
 
 ---
 
-## ⚡ Key Features
+## Key Features
 
 1. **Zero-Day Hacker Prompt Console (Out-of-the-Box Attacks):** Judges and operators can enter **ANY natural language cyber-physical attack prompt** (e.g. *"Inject chlorine chemical overdose into Tank 3"* or *"Cavitation air lock in Pump 1"*). AquaShield parses physical kinematics, derives the broken conservation law, and self-heals in real-time.
 2. **Real-World SWaT Dataset Validation (Kaggle Benchmark):** Empirically verified against **946,722 rows of continuous operational telemetry** and **36 physical attack penetrations** from the *Secure Water Treatment (SWaT)* testbed (iTrust, Singapore University of Technology & Design / Kaggle).

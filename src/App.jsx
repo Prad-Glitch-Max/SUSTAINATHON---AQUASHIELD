@@ -87,6 +87,8 @@ export default function App() {
     const swatScenario = {
       id: swatAttack.id,
       isCustom: true,
+      isSwatReplay: true,
+      swatAttack,
       name: swatAttack.name,
       layer,
       layerName,
@@ -109,6 +111,10 @@ export default function App() {
 
     setActiveTab('lab');
     handleLaunchCustomAttack(swatScenario);
+
+    setTimeout(() => {
+      document.getElementById('scada-facility-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 150);
   };
 
   // Step 2: Localize Root-Cause

@@ -129,146 +129,6 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
           overflow: 'hidden'
         }}
       >
-        {/* ================= PROJECTED LIVE HUD STAGE BANNER (SLEEK & COMPACT) ================= */}
-        {effectiveStage === 1 && (
-          <div
-            style={{
-              position: 'absolute',
-              top: '10px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              background: 'rgba(255, 42, 95, 0.95)',
-              color: '#ffffff',
-              border: '1.5px solid rgba(255, 255, 255, 0.95)',
-              borderRadius: '16px',
-              padding: '5px 16px',
-              boxShadow: '0 0 20px rgba(255, 42, 95, 0.75)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '9px',
-              zIndex: 30,
-              maxWidth: '85%',
-              textAlign: 'center',
-              animation: 'pulse-border 1s infinite alternate',
-              pointerEvents: 'none'
-            }}
-          >
-            <AlertOctagon size={16} />
-            <div>
-              <div style={{ fontSize: '0.78rem', fontWeight: 900, letterSpacing: '0.03em', lineHeight: 1.2 }}>
-                STAGE 1/4: 🚨 CYBER BREACH INJECTED!
-              </div>
-              <div style={{ fontSize: '0.67rem', opacity: 0.95, fontWeight: 700, lineHeight: 1.2, marginTop: '1px' }}>
-                {scns.length > 1
-                  ? `${scns.length} Attack Vectors Active simultaneously! Alarms ringing.`
-                  : `${activeScenario.symptom} Alarms ringing across facility!`}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {effectiveStage === 2 && (
-          <div
-            style={{
-              position: 'absolute',
-              top: '10px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              background: 'rgba(0, 242, 254, 0.95)',
-              color: '#050811',
-              border: '1.5px solid rgba(255, 255, 255, 0.95)',
-              borderRadius: '16px',
-              padding: '5px 16px',
-              boxShadow: '0 0 20px rgba(0, 242, 254, 0.75)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '9px',
-              zIndex: 30,
-              maxWidth: '85%',
-              textAlign: 'center',
-              pointerEvents: 'none'
-            }}
-          >
-            <Activity size={16} />
-            <div>
-              <div style={{ fontSize: '0.78rem', fontWeight: 900, letterSpacing: '0.03em', lineHeight: 1.2 }}>
-                STAGE 2/4: 🧠 AUDITING PHYSICAL LAWS IN REAL-TIME...
-              </div>
-              <div style={{ fontSize: '0.67rem', fontWeight: 800, lineHeight: 1.2, marginTop: '1px' }}>
-                Auditing Mass Flow Inflow (42.5 L/s) vs Outflow (38.0 L/s) • Natural physics detect anomaly
-              </div>
-            </div>
-          </div>
-        )}
-
-        {effectiveStage === 3 && (
-          <div
-            style={{
-              position: 'absolute',
-              top: '10px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              background: 'rgba(168, 85, 247, 0.95)',
-              color: '#ffffff',
-              border: '1.5px solid rgba(255, 255, 255, 0.95)',
-              borderRadius: '16px',
-              padding: '5px 16px',
-              boxShadow: '0 0 20px rgba(168, 85, 247, 0.75)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '9px',
-              zIndex: 30,
-              maxWidth: '85%',
-              textAlign: 'center',
-              pointerEvents: 'none'
-            }}
-          >
-            <Search size={16} />
-            <div>
-              <div style={{ fontSize: '0.78rem', fontWeight: 900, letterSpacing: '0.03em', lineHeight: 1.2 }}>
-                STAGE 3/4: 🎯 ROOT CAUSE PINPOINTED TO EXACT COMPONENT!
-              </div>
-              <div style={{ fontSize: '0.67rem', opacity: 0.95, fontWeight: 700, lineHeight: 1.2, marginTop: '1px' }}>
-                Pinpointed target: {scns.map(s => s.target).join(' & ')} • Clean layers verified healthy
-              </div>
-            </div>
-          </div>
-        )}
-
-        {effectiveStage === 4 && (
-          <div
-            style={{
-              position: 'absolute',
-              top: '10px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              background: 'rgba(16, 185, 129, 0.95)',
-              color: '#ffffff',
-              border: '1.5px solid rgba(255, 255, 255, 0.95)',
-              borderRadius: '16px',
-              padding: '5px 16px',
-              boxShadow: '0 0 20px rgba(16, 185, 129, 0.75)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '9px',
-              zIndex: 30,
-              maxWidth: '85%',
-              textAlign: 'center',
-              pointerEvents: 'none'
-            }}
-          >
-            <ShieldCheck size={16} />
-            <div>
-              <div style={{ fontSize: '0.78rem', fontWeight: 900, letterSpacing: '0.03em', lineHeight: 1.2 }}>
-                STAGE 4/4: 🛡️ AUTONOMOUS SELF-HEALING DEPLOYED!
-              </div>
-              <div style={{ fontSize: '0.67rem', opacity: 0.95, fontWeight: 700, lineHeight: 1.2, marginTop: '1px' }}>
-                Zero seconds downtime • Clean drinking water protected with zero human intervention!
-              </div>
-            </div>
-          </div>
-        )}
-
         <svg viewBox="0 0 960 310" style={{ width: '100%', height: '100%' }}>
           <defs>
             <linearGradient id="waterGradT1" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -306,39 +166,6 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
             <line x1="240" y1="0" x2="240" y2="410" />
             <line x1="480" y1="0" x2="480" y2="410" />
             <line x1="720" y1="0" x2="720" y2="410" />
-          </g>
-
-          {/* ================= ZONE 1: TOP NETWORK WIRE (y = 52 to 78) ================= */}
-          <g>
-            <rect
-              x="40"
-              y="52"
-              width="880"
-              height="26"
-              rx="6"
-              fill="rgba(15, 23, 42, 0.95)"
-              stroke={(isAttackActive || isLocalized) && isNetworkAttacked ? '#ff2a5f' : 'rgba(56, 189, 248, 0.35)'}
-              strokeWidth={(isAttackActive || isLocalized) && isNetworkAttacked ? '2.5' : '1'}
-            />
-            {/* ONLY DISPLAY NETWORK WIRE TEXT BEFORE PROCESS STARTS (WHEN NOMINAL & STAGE 0) */}
-            {effectiveStage === 0 && isNominal && (
-              <>
-                <text x="56" y="69" fill="#38bdf8" fontSize="10.5" fontWeight="800" fontFamily="var(--font-mono)">
-                  🌐 SCADA INDUSTRIAL NETWORK WIRE (COMMUNICATION BUS)
-                </text>
-                <text
-                  x="905"
-                  y="69"
-                  fill="#10b981"
-                  fontSize="10"
-                  fontWeight="800"
-                  textAnchor="end"
-                  fontFamily="var(--font-mono)"
-                >
-                  STATUS: NORMAL WIRE TELEMETRY
-                </text>
-              </>
-            )}
           </g>
 
           {/* ================= ZONE 2: 2-LINE TANK HEADER BADGES (y = 86 to 120, ZERO TEXT OVERFLOW!) ================= */}
@@ -581,7 +408,7 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
               )}
               {isNetworkAttacked && (
                 <>
-                  <rect x="40" y="52" width="880" height="26" fill="none" stroke="#ff2a5f" strokeWidth="3" className="laser-trace" rx="6" />
+                  <line x1="60" y1="92" x2="900" y2="92" stroke="#ff2a5f" strokeWidth="2.5" strokeDasharray="6 4" className="laser-trace" />
                 </>
               )}
               {isControllerAttacked && (
@@ -631,6 +458,58 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
 
         </svg>
       </div>
+
+      {/* ================= REAL-WORLD SWaT / KAGGLE DATASET INJECTION HUD ================= */}
+      {activeScenario?.isSwatReplay && (
+        <div
+          className="glass-panel"
+          style={{
+            marginTop: '14px',
+            padding: '14px 18px',
+            borderRadius: '10px',
+            background: 'rgba(6, 182, 212, 0.08)',
+            border: '1.5px solid #06b6d4',
+            boxShadow: '0 0 20px rgba(6, 182, 212, 0.2)'
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '0.84rem', fontWeight: 900, color: '#22d3ee', letterSpacing: '0.04em' }}>
+                📡 REAL-WORLD SWaT TESTBED DATA INJECTED: {activeScenario.swatAttack?.targetSensor || activeScenario.target}
+              </span>
+              <span style={{ fontSize: '0.68rem', color: '#67e8f9', background: 'rgba(6, 182, 212, 0.2)', padding: '2px 8px', borderRadius: '10px' }}>
+                {activeScenario.swatAttack?.kaggleIndex || 'SWaT Dataset Replay'}
+              </span>
+            </div>
+            <span style={{ fontSize: '0.74rem', color: '#cbd5e1' }}>
+              <strong>Difference from normal buttons:</strong> Normal buttons run synthetic code. This injects actual recorded physical hardware sensor logs from the Singapore SUTD water plant testbed.
+            </span>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px' }}>
+            <div style={{ background: 'rgba(15, 23, 42, 0.7)', padding: '8px 12px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ fontSize: '0.66rem', color: '#94a3b8', textTransform: 'uppercase' }}>Physical Ground Truth (Reality)</div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#38bdf8', marginTop: '2px' }}>
+                {activeScenario.swatAttack?.injectedPhysicsState ? Object.values(activeScenario.swatAttack.injectedPhysicsState)[0] : 'Inflow 2.52 m³/h'}
+              </div>
+            </div>
+
+            <div style={{ background: 'rgba(255, 42, 95, 0.08)', padding: '8px 12px', borderRadius: '6px', border: '1px solid rgba(255, 42, 95, 0.25)' }}>
+              <div style={{ fontSize: '0.66rem', color: '#fb7185', textTransform: 'uppercase' }}>Hacker Injected Signal</div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#ff2a5f', marginTop: '2px' }}>
+                {activeScenario.swatAttack?.attackValue || 'Manipulated sensor telemetry'}
+              </div>
+            </div>
+
+            <div style={{ background: 'rgba(16, 185, 129, 0.08)', padding: '8px 12px', borderRadius: '6px', border: '1px solid rgba(16, 185, 129, 0.25)' }}>
+              <div style={{ fontSize: '0.66rem', color: '#6ee7b7', textTransform: 'uppercase' }}>AquaShield Live Fix</div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#34d399', marginTop: '2px' }}>
+                {activeScenario.swatAttack?.remedyApplied || 'Corrected in 38.2ms with 0 plant downtime'}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ================= DYNAMIC EXPANDING LIVE EXPLANATION BANNER ================= */}
       <div

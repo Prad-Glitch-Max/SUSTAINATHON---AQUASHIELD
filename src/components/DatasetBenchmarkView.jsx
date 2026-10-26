@@ -321,7 +321,7 @@ export default function DatasetBenchmarkView({
               }}
             >
               <Play size={14} />
-              <span>⚡ Replay this in SCADA Digital Twin</span>
+              <span>Replay in SCADA Digital Twin</span>
             </button>
           </div>
         </div>

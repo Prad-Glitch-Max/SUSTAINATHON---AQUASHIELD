@@ -35,8 +35,7 @@ const SCENARIOS = [
 const PRESETS = [
   { label: 'Single Attack', keys: ['SENSOR_SPOOF'] },
   { label: 'Dual Combo (Sensor + Valve)', keys: ['SENSOR_SPOOF', 'ACTUATOR_JAM'] },
-  { label: 'Triple Threat (Sensor + Cable + Brain)', keys: ['SENSOR_SPOOF', 'NETWORK_REPLAY', 'CONTROLLER_HIJACK'] },
-  { label: '⚡ All 5 Layers (Full System Assault)', keys: ['SENSOR_SPOOF', 'NETWORK_REPLAY', 'CONTROLLER_HIJACK', 'FIRMWARE_ROOTKIT', 'ACTUATOR_JAM'] }
+  { label: 'All 5 Layers (Full System Assault)', keys: ['SENSOR_SPOOF', 'NETWORK_REPLAY', 'CONTROLLER_HIJACK', 'FIRMWARE_ROOTKIT', 'ACTUATOR_JAM'] }
 ];
 
 const STAGE_DETAILS = {
@@ -252,6 +251,11 @@ export default function InteractiveControlBar({
     sound.playAlarm();
     onLaunchAttack(selectedScenarioKeys);
 
+    // Auto-scroll down to SCADA tank animation
+    setTimeout(() => {
+      document.getElementById('scada-facility-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+
     // Elapsed timer tick (updates every 100ms for smooth progress animation)
     const startTime = Date.now();
     const intervalId = setInterval(() => {
@@ -305,6 +309,10 @@ export default function InteractiveControlBar({
     if (onChangeAutoStage) onChangeAutoStage(1);
     setProgressPercent(33);
     onLaunchAttack(selectedScenarioKeys);
+
+    setTimeout(() => {
+      document.getElementById('scada-facility-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   const handleManualLocalize = () => {
@@ -382,20 +390,17 @@ export default function InteractiveControlBar({
                 border: isAutoPilot ? '1px solid #00f2fe' : '1px solid rgba(255,255,255,0.15)'
               }}
             >
-              {isAutoPilot ? '⚡ AUTONOMOUS AI (AUTOMATIC)' : '👆 MANUAL STEP-BY-STEP'}
+              {isAutoPilot ? 'AUTONOMOUS AI (AUTOMATIC)' : 'MANUAL STEP-BY-STEP'}
             </span>
             {isMulti && (
               <span
                 className="badge badge-rose"
                 style={{ fontSize: '0.72rem', fontWeight: 900, padding: '4px 10px' }}
               >
-                🔥 {selectedScenarioKeys.length} ATTACKS SELECTED (MULTI-VECTOR)
+                {selectedScenarioKeys.length} ATTACKS SELECTED (MULTI-VECTOR)
               </span>
             )}
           </div>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '3px' }}>
-            Select one or <strong>multiple attack layers simultaneously</strong> below to simulate complex multi-vector cyber incidents.
-          </p>
         </div>
 
         {/* Mode Switcher */}
@@ -420,7 +425,6 @@ export default function InteractiveControlBar({
               transition: 'all 0.2s ease'
             }}
           >
-            <Zap size={14} />
             <span>Autonomous AI (Automatic)</span>
           </button>
 
@@ -451,10 +455,7 @@ export default function InteractiveControlBar({
       </div>
 
       {/* Multi-Attack Quick Presets */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
-        <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-          Quick Combos:
-        </span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', flexWrap: 'wrap' }}>
         {PRESETS.map((p, idx) => {
           const isPresetActive =
             p.keys.length === selectedScenarioKeys.length &&
@@ -485,10 +486,7 @@ export default function InteractiveControlBar({
 
       {/* 5 Scenario Selector Cards with Multi-Select Toggles */}
       <div style={{ marginBottom: '18px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-          <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-            Select Which Layers The Hacker Targets (Click to toggle multiple):
-          </span>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '6px' }}>
           <span style={{ fontSize: '0.72rem', color: '#38bdf8', fontWeight: 700 }}>
             {selectedScenarioKeys.length} Layer{selectedScenarioKeys.length > 1 ? 's' : ''} Selected
           </span>
@@ -931,106 +929,6 @@ export default function InteractiveControlBar({
           )}
         </div>
       )}
-
-      {/* DETAILED PLAIN-ENGLISH NARRATIVE CARD */}
-      <div
-        style={{
-          marginTop: '16px',
-          padding: '16px 20px',
-          borderRadius: '10px',
-          background: autoStage === 1 || isAttackActive
-            ? 'rgba(255, 42, 95, 0.08)'
-            : autoStage === 2
-            ? 'rgba(0, 242, 254, 0.08)'
-            : autoStage === 3 || isLocalized
-            ? 'rgba(168, 85, 247, 0.08)'
-            : autoStage === 4 || isResolved
-            ? 'rgba(16, 185, 129, 0.08)'
-            : 'rgba(0, 0, 0, 0.25)',
-          border: autoStage === 1 || isAttackActive
-            ? '1.5px solid rgba(255, 42, 95, 0.35)'
-            : autoStage === 2
-            ? '1.5px solid rgba(0, 242, 254, 0.35)'
-            : autoStage === 3 || isLocalized
-            ? '1.5px solid rgba(168, 85, 247, 0.35)'
-            : autoStage === 4 || isResolved
-            ? '1.5px solid rgba(16, 185, 129, 0.35)'
-            : '1px solid rgba(255,255,255,0.06)'
-        }}
-      >
-        {isNominal && autoStage === 0 && (
-          <div style={{ color: '#cbd5e1', fontSize: '0.86rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#10b981', fontWeight: 800, marginBottom: '4px' }}>
-              <CheckCircle2 size={16} />
-              <span>Plant Operating Normally</span>
-            </div>
-            Clean drinking water is currently circulating through all 4 treatment tanks. Select your target layers above, then click the launch button to watch AquaShield protect the plant automatically.
-          </div>
-        )}
-
-        {(autoStage > 0 || !isNominal) && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            {activeKeys.map((key) => {
-              const details = STAGE_DETAILS[key];
-              if (!details) return null;
-              const step =
-                autoStage === 1 || isAttackActive
-                  ? details.step1
-                  : autoStage === 2
-                  ? details.step2
-                  : autoStage === 3 || isLocalized
-                  ? details.step3
-                  : details.step4;
-
-              return (
-                <div key={key} style={{ borderBottom: isMulti ? '1px solid rgba(255,255,255,0.08)' : 'none', paddingBottom: isMulti ? '10px' : '0' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                    <span
-                      className={`badge ${
-                        autoStage === 1 || isAttackActive
-                          ? 'badge-rose'
-                          : autoStage === 2
-                          ? 'badge-cyan'
-                          : autoStage === 3 || isLocalized
-                          ? 'badge-purple'
-                          : 'badge-emerald'
-                      }`}
-                      style={{ fontSize: '0.7rem', padding: '3px 10px', fontWeight: 800 }}
-                    >
-                      {step.badge}
-                    </span>
-                    <strong style={{ color: '#ffffff', fontSize: '0.9rem' }}>
-                      {step.title}
-                    </strong>
-                  </div>
-                  <p style={{ color: '#e2e8f0', fontSize: '0.82rem', lineHeight: '1.45', margin: '4px 0' }}>
-                    {step.detail}
-                  </p>
-                  <div
-                    style={{
-                      marginTop: '6px',
-                      padding: '6px 12px',
-                      background: autoStage === 1 || isAttackActive
-                        ? 'rgba(255, 42, 95, 0.1)'
-                        : autoStage === 2
-                        ? 'rgba(0, 242, 254, 0.1)'
-                        : autoStage === 3 || isLocalized
-                        ? 'rgba(168, 85, 247, 0.1)'
-                        : 'rgba(16, 185, 129, 0.1)',
-                      borderRadius: '6px',
-                      fontSize: '0.76rem',
-                      color: autoStage === 1 || isAttackActive ? '#fda4af' : autoStage === 2 ? '#7dd3fc' : autoStage === 3 || isLocalized ? '#e9d5ff' : '#a7f3d0'
-                    }}
-                  >
-                    <strong>Key Insight: </strong>
-                    {step.contrast}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
     </div>
   );
 }

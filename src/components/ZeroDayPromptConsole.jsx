@@ -5,7 +5,7 @@ import { sound } from '../utils/soundEffects';
 
 const QUICK_ZERO_DAY_CHIPS = [
   { label: '🧪 Chlorine Chemical Overdose (Tank 3)', prompt: 'Inject 6.8 ppm chlorine chemical overdose into Tank 3 disinfectant' },
-  { label: '⚡ Pump 1 Voltage Drop & Turbine Cavitation', prompt: 'Slashing electrical voltage to Pump 1 motor causing severe hydraulic cavitation' },
+  { label: 'Pump 1 Voltage Drop & Turbine Cavitation', prompt: 'Slashing electrical voltage to Pump 1 motor causing severe hydraulic cavitation' },
   { label: '🌐 Modbus TCP SYN-Flood Delay on Network Wire', prompt: 'Flooding Modbus TCP industrial bus with 50,000 delayed packets per second' },
   { label: '🌊 Tank 4 Reverse Back-Pressure Hydraulic Surge', prompt: 'Tank 4 municipal delivery line experiencing reverse back-pressure wave of 8.5 bar' },
   { label: '💾 Zero-Day PLC Firmware Logic Bomb', prompt: 'Deploying zero-day Stuxnet rootkit into PLC flash memory creating 120Hz hidden vibration' },
@@ -93,7 +93,7 @@ export default function ZeroDayPromptConsole({
         }}
       >
         <Terminal size={15} color="#00f2fe" />
-        <span>{isOpen ? 'Close Hacker Prompt Box' : '⚡ Enter Custom Hacker Attack Prompt'}</span>
+        <span>{isOpen ? 'Close Hacker Prompt Box' : 'Enter Custom Hacker Attack Prompt'}</span>
         <div
           style={{
             background: 'rgba(0, 242, 254, 0.2)',
@@ -133,18 +133,6 @@ export default function ZeroDayPromptConsole({
             animation: 'fadeIn 0.25s ease'
           }}
         >
-          {/* Header */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span className="badge badge-rose" style={{ fontSize: '0.65rem', padding: '3px 8px' }}>
-                JUDGE FREE-FORM ATTACK INPUT
-              </span>
-              <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
-                Type <strong>any out-of-the-box cyber-physical attack</strong>. AquaShield will parse the kinematics, prove the broken physics, and auto-scroll to the live simulation.
-              </span>
-            </div>
-          </div>
-
           {/* Form */}
           <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '10px', marginBottom: '12px', flexWrap: 'wrap' }}>
             <div style={{ position: 'relative', flex: 1, minWidth: '260px' }}>
@@ -152,7 +140,7 @@ export default function ZeroDayPromptConsole({
                 type="text"
                 value={promptInput}
                 onChange={(e) => setPromptInput(e.target.value)}
-                placeholder="Type ANY custom attack (e.g. 'Inject chlorine overdose in tank 3' or 'Cut power to pump 1 while faking sensor')..."
+                placeholder="Type ANY custom attack (e.g. 'Inject chlorine overdose in tank 3' or 'Cut power to pump 1')..."
                 autoFocus
                 style={{
                   width: '100%',
@@ -189,15 +177,12 @@ export default function ZeroDayPromptConsole({
               }}
             >
               <Flame size={15} />
-              <span>Launch & Watch SCADA Fix</span>
+              <span>Launch Attack</span>
             </button>
           </form>
 
           {/* Quick Clickable Chips */}
           <div>
-            <div style={{ fontSize: '0.66rem', color: '#64748b', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
-              Or click one of these common out-of-the-box scenarios:
-            </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
               {QUICK_ZERO_DAY_CHIPS.map((chip, idx) => (
                 <button
