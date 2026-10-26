@@ -43,6 +43,7 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
 
   return (
     <div
+      id="scada-facility-section"
       className="glass-panel"
       style={{
         padding: '24px',
@@ -120,7 +121,7 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
         style={{
           position: 'relative',
           width: '100%',
-          height: '410px',
+          height: '315px',
           background: 'rgba(5, 10, 22, 0.94)',
           borderRadius: '12px',
           border: '1px solid rgba(56, 189, 248, 0.25)',
@@ -268,7 +269,7 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
           </div>
         )}
 
-        <svg viewBox="0 0 960 410" style={{ width: '100%', height: '100%' }}>
+        <svg viewBox="0 0 960 310" style={{ width: '100%', height: '100%' }}>
           <defs>
             <linearGradient id="waterGradT1" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.85" />
@@ -628,69 +629,182 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
             </g>
           )}
 
-          {/* ================= ZONE 5: BOTTOM STATUS CONSOLE BANNER (y = 330 to 395) ================= */}
-          {isNominal && (
-            <g transform="translate(40, 335)">
-              <rect x="0" y="0" width="880" height="52" rx="10" fill="rgba(16, 185, 129, 0.12)" stroke="rgba(16, 185, 129, 0.4)" strokeWidth="1.5" />
-              <circle cx="30" cy="26" r="12" fill="#10b981" opacity="0.25" />
-              <text x="30" y="31" fill="#10b981" fontSize="14" fontWeight="900" textAnchor="middle">✓</text>
-              <text x="55" y="24" fill="#ffffff" fontSize="12" fontWeight="800" style={{ fontFamily: 'system-ui, sans-serif' }}>
-                NORMAL FACILITY OPERATION: ALL 4 TANKS BALANCED & CLEAN
-              </text>
-              <text x="55" y="41" fill="#94a3b8" fontSize="10" fontWeight="600" style={{ fontFamily: 'system-ui, sans-serif' }}>
-                Continuous fluid conservation satisfied (Inflow = Outflow). All 5 CPS layers safe.
-              </text>
-            </g>
-          )}
+        </svg>
+      </div>
 
-          {isAttackActive && (
-            <g transform="translate(40, 335)">
-              <rect x="0" y="0" width="880" height="52" rx="10" fill="rgba(255, 42, 95, 0.15)" stroke="#ff2a5f" strokeWidth="2" />
-              <circle cx="30" cy="26" r="12" fill="#ff2a5f" opacity="0.25" />
-              <text x="30" y="31" fill="#ff2a5f" fontSize="14" fontWeight="900" textAnchor="middle">!</text>
-              <text x="55" y="24" fill="#ffffff" fontSize="12" fontWeight="900" style={{ fontFamily: 'system-ui, sans-serif' }}>
-                ⚠️ FACILITY ALARM TRIGGERED ({scns.length} BREACH{scns.length > 1 ? 'ES' : ''} DETECTED)
-              </text>
-              <text x="55" y="41" fill="#fecdd3" fontSize="10" fontWeight="700" style={{ fontFamily: 'system-ui, sans-serif' }}>
-                Old security tools are confused and cannot pinpoint the root cause. AquaShield AI is auditing physics...
-              </text>
-            </g>
+      {/* ================= DYNAMIC EXPANDING LIVE EXPLANATION BANNER ================= */}
+      <div
+        className="glass-panel"
+        style={{
+          marginTop: '14px',
+          padding: '16px 20px',
+          borderRadius: '12px',
+          background: isAttackActive
+            ? 'rgba(255, 42, 95, 0.12)'
+            : isLocalized
+            ? 'rgba(0, 242, 254, 0.12)'
+            : isResolved
+            ? 'rgba(16, 185, 129, 0.12)'
+            : 'rgba(15, 23, 42, 0.85)',
+          border: isAttackActive
+            ? '1.5px solid #ff2a5f'
+            : isLocalized
+            ? '1.5px solid #00f2fe'
+            : isResolved
+            ? '1.5px solid #10b981'
+            : '1px solid rgba(56, 189, 248, 0.25)',
+          boxShadow: isAttackActive
+            ? '0 0 20px rgba(255, 42, 95, 0.2)'
+            : isResolved
+            ? '0 0 20px rgba(16, 185, 129, 0.2)'
+            : 'none',
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '14px',
+          width: '100%',
+          minHeight: '64px',
+          height: 'auto',
+          wordBreak: 'break-word',
+          whiteSpace: 'normal',
+          boxSizing: 'border-box',
+          transition: 'all 0.3s ease'
+        }}
+      >
+        <div
+          style={{
+            width: '38px',
+            height: '38px',
+            borderRadius: '10px',
+            background: isAttackActive
+              ? 'rgba(255, 42, 95, 0.2)'
+              : isLocalized
+              ? 'rgba(0, 242, 254, 0.2)'
+              : isResolved
+              ? 'rgba(16, 185, 129, 0.2)'
+              : 'rgba(16, 185, 129, 0.15)',
+            border: `1px solid ${
+              isAttackActive ? '#ff2a5f' : isLocalized ? '#00f2fe' : '#10b981'
+            }`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+            marginTop: '2px'
+          }}
+        >
+          {isAttackActive ? (
+            <AlertOctagon size={20} color="#ff2a5f" />
+          ) : isLocalized ? (
+            <Search size={20} color="#00f2fe" />
+          ) : isResolved ? (
+            <ShieldCheck size={20} color="#10b981" />
+          ) : (
+            <CheckCircle2 size={20} color="#10b981" />
           )}
+        </div>
 
-          {isLocalized && (
-            <g transform="translate(40, 335)">
-              <rect x="0" y="0" width="880" height="52" rx="10" fill="rgba(0, 242, 254, 0.15)" stroke="#00f2fe" strokeWidth="2" />
-              <circle cx="30" cy="26" r="12" fill="#00f2fe" opacity="0.25" />
-              <text x="30" y="31" fill="#00f2fe" fontSize="13" fontWeight="900" textAnchor="middle">🎯</text>
-              <text x="55" y="24" fill="#ffffff" fontSize="12" fontWeight="900" style={{ fontFamily: 'system-ui, sans-serif' }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div
+            style={{
+              fontSize: '0.88rem',
+              fontWeight: 900,
+              letterSpacing: '0.03em',
+              color: isAttackActive
+                ? '#ff7185'
+                : isLocalized
+                ? '#38bdf8'
+                : isResolved
+                ? '#34d399'
+                : '#ffffff',
+              display: 'flex',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '8px'
+            }}
+          >
+            <span>
+              {isNominal && 'NORMAL OPERATION: ALL 4 TANKS BALANCED & CLEAN'}
+              {isAttackActive &&
+                `⚠️ FACILITY ALARM: ${
+                  scns.length > 1
+                    ? `${scns.length} ATTACK VECTORS ACTIVE`
+                    : (scns[0]?.name || 'ANOMALY DETECTED').toUpperCase()
+                }`}
+              {isLocalized &&
+                `🎯 TARGET PINPOINTED IN 38ms: ${scns
+                  .map((s) => s.target)
+                  .join(' & ')}`}
+              {isResolved &&
+                '🛡️ AUTONOMOUS SELF-HEALING COMPLETE (ZERO DOWNTIME)'}
+            </span>
+            <span
+              className={
+                isAttackActive
+                  ? 'badge badge-rose'
+                  : isLocalized
+                  ? 'badge badge-cyan'
+                  : 'badge badge-emerald'
+              }
+              style={{ fontSize: '0.66rem', padding: '2px 8px' }}
+            >
+              {isNominal && 'PHYSICS IN SYNC'}
+              {isAttackActive && 'PHYSICAL LAW AUDIT RUNNING'}
+              {isLocalized && 'ROOT CAUSE ISOLATED'}
+              {isResolved && '100% OPERATIONAL'}
+            </span>
+          </div>
+
+          <p
+            style={{
+              fontSize: '0.82rem',
+              lineHeight: 1.55,
+              color: '#e2e8f0',
+              margin: '6px 0 0 0',
+              fontWeight: 500
+            }}
+          >
+            {isNominal && (
+              <>
+                All 4 filtration tanks are operating at full efficiency with water flowing steadily at 42.5 Liters/second. Continuous fluid mass conservation (Inflow = Outflow) is satisfied with zero anomalies.
+              </>
+            )}
+
+            {isAttackActive && (
+              <>
+                <strong>What happened:</strong>{' '}
                 {scns.length === 1
-                  ? `TARGET PINPOINTED: ${scns[0].target} (${scns[0].layerName})`
-                  : `MULTI-VECTOR TARGETS PINPOINTED: ${scns.length} LAYERS COMPROMISED`}
-              </text>
-              <text x="55" y="41" fill="#7dd3fc" fontSize="10" fontWeight="700" style={{ fontFamily: 'system-ui, sans-serif' }}>
-                {scns.length === 1
-                  ? `Math Proof: ${scns[0].plainMathProof}`
-                  : `Physics Audit Proof: Inflow vs Outflow conservation laws isolated ${scns.map(s => s.target).join(', ')} without false alarms!`}
-              </text>
-            </g>
-          )}
+                  ? scns[0].symptom
+                  : `Multiple breaches injected across facility: ${scns.map(s => s.symptom).join(' | ')}.`}
+                {' '}Old security tools are confused and cannot pinpoint whether a sensor is broken or if pipes are physically ruptured. AquaShield AI is auditing fluid dynamics equations in real-time.
+              </>
+            )}
 
-          {isResolved && (
-            <g transform="translate(40, 335)">
-              <rect x="0" y="0" width="880" height="52" rx="10" fill="rgba(16, 185, 129, 0.2)" stroke="#10b981" strokeWidth="2" />
-              <circle cx="30" cy="26" r="12" fill="#10b981" opacity="0.3" />
-              <text x="30" y="31" fill="#10b981" fontSize="13" fontWeight="900" textAnchor="middle">🛡️</text>
-              <text x="55" y="24" fill="#ffffff" fontSize="12" fontWeight="900" style={{ fontFamily: 'system-ui, sans-serif' }}>
-                AUTONOMOUS SELF-HEALING COMPLETE • 0 SECONDS FACILITY DOWNTIME
-              </text>
-              <text x="55" y="41" fill="#6ee7b7" fontSize="10" fontWeight="700" style={{ fontFamily: 'system-ui, sans-serif' }}>
+            {isLocalized && (
+              <>
+                <strong>Root Cause Isolated:</strong>{' '}
+                AquaShield cross-verified physical mass balance without trusting the compromised reading.
+                {' '}Target pinpointed to{' '}
+                <strong style={{ color: '#00f2fe' }}>
+                  {scns.map(s => `${s.target} (${s.layerName})`).join(' and ')}
+                </strong>
+                .{' '}
+                {scns.length === 1
+                  ? scns[0].plainMathProof
+                  : 'Mass flow conservation equations identified the exact faulty points while verifying all remaining stages are completely safe.'}
+              </>
+            )}
+
+            {isResolved && (
+              <>
+                <strong>Autonomous Fix Deployed:</strong>{' '}
                 {scns.length === 1
                   ? scns[0].plainFix
-                  : `All ${scns.length} attack vectors autonomously neutralized in parallel: ${scns.map(s => s.target).join(', ')} safe & operating.`}
-              </text>
-            </g>
-          )}
-        </svg>
+                  : `All ${scns.length} compromised layers autonomously neutralized in parallel: physical backup flow estimation engaged and bypass valves rerouted clean water.`}
+                {' '}Drinking water supply continues uninterrupted without human intervention or plant shutdown.
+              </>
+            )}
+          </p>
+        </div>
       </div>
 
       {/* DEDICATED SENSOR TELEMETRY COMPARISON STRIP */}
