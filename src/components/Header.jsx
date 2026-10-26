@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Droplets, Volume2, VolumeX, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { Droplets, Volume2, VolumeX, AlertTriangle, ShieldCheck, Sparkles } from 'lucide-react';
 import { sound } from '../utils/soundEffects';
 
-export default function Header({ activeScenario, phase }) {
+export default function Header({ activeScenario, phase, onReplayIntro }) {
   const [timeStr, setTimeStr] = useState('');
   const [isMuted, setIsMuted] = useState(sound.muted);
 
@@ -97,6 +97,31 @@ export default function Header({ activeScenario, phase }) {
         <div className="font-mono" style={{ fontSize: '0.85rem', color: '#94a3b8', background: 'rgba(0,0,0,0.3)', padding: '5px 10px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.06)' }}>
           {timeStr}
         </div>
+
+        {/* Replay Intro Button */}
+        {onReplayIntro && (
+          <button
+            onClick={onReplayIntro}
+            className="glass-panel"
+            style={{
+              padding: '6px 12px',
+              borderRadius: '8px',
+              border: '1px solid rgba(0,242,254,0.3)',
+              background: 'rgba(0,242,254,0.1)',
+              color: '#00f2fe',
+              fontSize: '0.75rem',
+              fontWeight: 800,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+            title="Replay Cinematic Intro"
+          >
+            <Sparkles size={14} />
+            <span>Intro Cinematic</span>
+          </button>
+        )}
 
         {/* Sound Toggle */}
         <button

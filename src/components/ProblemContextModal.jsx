@@ -95,6 +95,37 @@ export default function ProblemContextModal({ isOpen, onClose }) {
           <p style={{ marginTop: '6px' }}>
             <strong style={{ color: '#f59e0b' }}>Sustainability Connection:</strong> By eliminating false emergency dumps and unnecessary plant shutdowns, AquaShield preserves over 140,000 Liters of drinking water and eliminates costly hardware burnout.
           </p>
+
+          {/* ================= REVIEW 1 JUDGE DEFENSE Q&A ================= */}
+          <div style={{ marginTop: '10px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '12px' }}>
+            <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#00f2fe', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span>⚖️ REVIEW 1 JUDGE DEFENSE CHEAT-SHEET</span>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ background: 'rgba(255, 42, 95, 0.08)', padding: '10px', borderRadius: '6px', border: '1px solid rgba(255,42,95,0.25)' }}>
+                <div style={{ fontWeight: 800, color: '#fb7185', fontSize: '0.78rem' }}>
+                  Q1: What if the hacker blocks all alternate pathways?
+                </div>
+                <div style={{ fontSize: '0.72rem', color: '#cbd5e1', marginTop: '3px', lineHeight: 1.4 }}>
+                  <strong>1. Upstream Mass-Flow Throttling:</strong> AquaShield detects 0 L/s outflow and instantly shuts down Pump 1 within 30ms, stopping incoming water so tanks cannot overflow.<br/>
+                  <strong>2. Zero-Power Mechanical Springs:</strong> Spring-loaded pressure relief valves physically open under fluid head pressure into closed buffer retention tanks without needing electricity or software.<br/>
+                  <strong>3. Hardware Air-Gap Lockout:</strong> Control power to actuators is severed via safety relays, locking them in neutral state.
+                </div>
+              </div>
+
+              <div style={{ background: 'rgba(245, 158, 11, 0.08)', padding: '10px', borderRadius: '6px', border: '1px solid rgba(245,158,11,0.25)' }}>
+                <div style={{ fontWeight: 800, color: '#fbbf24', fontSize: '0.78rem' }}>
+                  Q2: What if there is a widespread blackout or power loss?
+                </div>
+                <div style={{ fontSize: '0.72rem', color: '#cbd5e1', marginTop: '3px', lineHeight: 1.4 }}>
+                  <strong>1. Passive Mechanical Default (De-Energize to Safe):</strong> Chemical valves are Normally Closed (heavy springs snap them shut without power). Gravity bypass valves are Normally Open.<br/>
+                  <strong>2. 24V DC Battery UPS:</strong> AquaShield edge computer & sensors run on backup batteries for 4–8 hours of black-sky telemetry recording.<br/>
+                  <strong>3. Cryptographic Black-Start:</strong> When power returns, AquaShield audits all PLC firmware SHA-256 hashes against read-only ROM before allowing high-voltage pumps to re-energize.
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div style={{ marginTop: '20px', textAlign: 'right' }}>

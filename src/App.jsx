@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Header from './components/Header';
-import SustainabilityMetrics from './components/SustainabilityMetrics';
+import IntroSplash from './components/IntroSplash';
 import InteractiveControlBar from './components/InteractiveControlBar';
 import DigitalTwinSCADA from './components/DigitalTwinSCADA';
-import AttackMatrix from './components/AttackMatrix';
 import ComparisonView from './components/ComparisonView';
 import LiveAuditTerminal from './components/LiveAuditTerminal';
 import { CPSSimulator } from './engine/cpsSimulator';
@@ -19,6 +18,7 @@ export default function App() {
   const [selectedScenarioKeys, setSelectedScenarioKeys] = useState(['SENSOR_SPOOF']);
   const [autoStage, setAutoStage] = useState(0);
   const [activeTab, setActiveTab] = useState('lab'); // 'lab' | 'comparison' | 'terminal'
+  const [showIntro, setShowIntro] = useState(true);
 
   // Simulation step loop (4 Hz updates)
   useEffect(() => {
@@ -57,17 +57,19 @@ export default function App() {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', paddingBottom: '30px' }}>
-      {/* Top Header Bar (Clean, without extra buttons) */}
+      {/* Super Cool Cinematic Intro Splash with Jailer 2 Theme */}
+      {showIntro && (
+        <IntroSplash
+          onEnter={() => setShowIntro(false)}
+          sustainability={simState.sustainability}
+        />
+      )}
+
+      {/* Top Header Bar */}
       <Header
         activeScenario={simState.activeScenario}
         phase={simState.phase}
-      />
-
-      {/* Sustainability Metrics Scorecard */}
-      <SustainabilityMetrics
-        sustainability={simState.sustainability}
-        localizationResult={simState.localizationResult}
-        activeScenario={simState.activeScenario}
+        onReplayIntro={() => setShowIntro(true)}
       />
 
       {/* Clean Navigation Tabs */}
@@ -172,15 +174,6 @@ export default function App() {
               state={simState}
               autoStage={autoStage}
               selectedScenarioKeys={selectedScenarioKeys}
-            />
-          </section>
-
-          {/* 2. The 5-Layer CPS Hierarchy (Positioned BELOW SCADA, Spacious!) */}
-          <section>
-            <AttackMatrix
-              activeScenario={simState.activeScenario}
-              localizationResult={simState.localizationResult}
-              phase={simState.phase}
             />
           </section>
         </div>
