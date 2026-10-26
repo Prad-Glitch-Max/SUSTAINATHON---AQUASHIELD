@@ -84,6 +84,7 @@ export class CPSSimulator {
   }
 
   reset() {
+    this.activeScenarios = [];
     this.activeScenario = ATTACK_SCENARIOS.NONE;
     this.phase = 'NOMINAL'; // 'NOMINAL' | 'ATTACK_ACTIVE' | 'LOCALIZED' | 'RESOLVED'
     this.time = 0;
@@ -118,6 +119,7 @@ export class CPSSimulator {
 
     this.localizationResult = {
       localized: false,
+      localizedLayers: [],
       localizedLayer: null,
       culpritNode: null,
       plainProof: null,
@@ -137,48 +139,70 @@ export class CPSSimulator {
     ];
   }
 
-  // STEP 1: Launch an attack
-  launchAttack(scenarioKey) {
-    const scn = ATTACK_SCENARIOS[scenarioKey] || ATTACK_SCENARIOS.NONE;
-    if (scn.id === 'NONE') {
+  // STEP 1: Launch one or MULTIPLE attacks simultaneously!
+  launchAttack(scenarioKeys) {
+    const keys = Array.isArray(scenarioKeys) ? scenarioKeys : [scenarioKeys];
+    const scenarios = keys
+      .map(k => ATTACK_SCENARIOS[k])
+      .filter(s => s && s.id !== 'NONE');
+
+    if (scenarios.length === 0) {
       this.reset();
       return;
     }
-    this.activeScenario = scn;
+
+    this.activeScenarios = scenarios;
+    this.activeScenario = scenarios[0]; // Primary scenario for backward compatibility
     this.phase = 'ATTACK_ACTIVE';
     this.localizationResult.localized = false;
 
-    this.addLog('ALERT', `[ATTACK LAUNCHED] ${scn.name}. Alarms ringing!`);
-    this.addLog('WARN', `Old Security Tools: "Something is wrong! But we don't know where the attack came from!"`);
+    if (scenarios.length === 1) {
+      this.addLog('ALERT', `[ATTACK LAUNCHED] ${scenarios[0].name}. Alarms ringing!`);
+    } else {
+      const names = scenarios.map(s => s.name).join(', ');
+      this.addLog('ALERT', `[MULTI-VECTOR ATTACK LAUNCHED] ${scenarios.length} layers breached simultaneously: ${names}!`);
+    }
+    this.addLog('WARN', `Old Security Tools: "Multiple alarms triggering! Complete system panic—we cannot isolate root causes!"`);
   }
 
-  // STEP 2: Run Attack Localization Algorithm
+  // STEP 2: Run Attack Localization Algorithm across all layers
   localizeAttack() {
     if (this.phase !== 'ATTACK_ACTIVE') return;
     this.phase = 'LOCALIZED';
     this.localizationResult.localized = true;
-    const scn = this.activeScenario;
 
-    this.addLog('INFO', `[CHECKING LAWS OF PHYSICS] Comparing incoming water vs outgoing water...`);
-    this.addLog('ALERT', `[FOUND THE PROBLEM] Root cause is in ${scn.layerName} -> ${scn.target}! Other 4 layers are completely safe.`);
+    const layers = this.activeScenarios.map(s => s.layer);
+    const layerNames = this.activeScenarios.map(s => s.layerName).join(' & ');
+    const targets = this.activeScenarios.map(s => s.target).join(' & ');
+    const proofs = this.activeScenarios.map(s => s.plainMathProof).join(' • ');
+
+    this.localizationResult.localizedLayers = layers;
+    this.localizationResult.localizedLayer = this.activeScenario.layer;
+    this.localizationResult.culpritNode = targets;
+    this.localizationResult.plainProof = proofs;
+
+    this.addLog('INFO', `[PHYSICS & TELEMETRY AUDIT] Auditing mass conservation, network timestamps, memory hashes, and actuator discharge...`);
+    this.addLog('ALERT', `[ROOT CAUSE ISOLATED] ${this.activeScenarios.length} compromised component(s) pinpointed: ${targets} (${layerNames}). All other layers verified 100% clean!`);
   }
 
-  // STEP 3: Deploy Resilient Self-Healing Fix
+  // STEP 3: Deploy Resilient Self-Healing Fix for all active breaches
   deployFix() {
     if (this.phase !== 'LOCALIZED') return;
     this.phase = 'RESOLVED';
-    const scn = this.activeScenario;
 
-    this.sustainability.litersProtected += 250;
-    this.sustainability.energySavedKwh += 1.2;
+    const fixes = this.activeScenarios.map(s => s.plainFix).join(' • ');
+    this.localizationResult.recoveryMsg = fixes;
 
-    this.addLog('INFO', `[SELF-HEALED] ${scn.plainFix}`);
-    this.addLog('INFO', `Clean water never stopped flowing. Zero seconds of downtime!`);
+    this.sustainability.litersProtected += 250 * this.activeScenarios.length;
+    this.sustainability.energySavedKwh += 1.2 * this.activeScenarios.length;
+
+    this.addLog('INFO', `[AUTONOMOUS SELF-HEALING COMPLETE] ${fixes}`);
+    this.addLog('INFO', `All ${this.activeScenarios.length} breaches mitigated in parallel. Clean drinking water protected with ZERO seconds downtime!`);
   }
 
   restoreBaseline() {
     this.reset();
-    this.addLog('INFO', 'Plant reset to clean baseline operation. Everything is safe.');
+    this.addLog('INFO', 'Plant reset to clean baseline operation. All 5 layers safe.');
   }
 
   step(dt = 0.5) {
@@ -203,11 +227,10 @@ export class CPSSimulator {
       this.layers[layerKey].integrity = 100;
     });
 
-    const scn = this.activeScenario;
-
     if (this.phase === 'NOMINAL') {
       this.localizationResult = {
         localized: false,
+        localizedLayers: [],
         localizedLayer: null,
         culpritNode: null,
         plainProof: 'All 5 layers are checked and healthy.',
@@ -217,7 +240,15 @@ export class CPSSimulator {
       return this.getState();
     }
 
-    if (scn.id === 'SENSOR_SPOOF') {
+    const scns = this.activeScenarios && this.activeScenarios.length > 0 ? this.activeScenarios : [this.activeScenario];
+    const hasSensor = scns.some(s => s.id === 'SENSOR_SPOOF');
+    const hasNetwork = scns.some(s => s.id === 'NETWORK_REPLAY');
+    const hasController = scns.some(s => s.id === 'CONTROLLER_HIJACK');
+    const hasFirmware = scns.some(s => s.id === 'FIRMWARE_ROOTKIT');
+    const hasActuator = scns.some(s => s.id === 'ACTUATOR_JAM');
+
+    // 1. Sensor Spoof
+    if (hasSensor) {
       if (this.phase === 'RESOLVED') {
         this.sensors.levelT2_observed = this.sensors.levelT2_true;
         this.layers.SENSOR.status = 'HEALED_WITH_MATH';
@@ -225,13 +256,19 @@ export class CPSSimulator {
         this.sensors.levelT2_observed = 32.0;
         this.layers.SENSOR.status = this.phase === 'LOCALIZED' ? 'COMPROMISED' : 'SUSPECT';
       }
-    } else if (scn.id === 'NETWORK_REPLAY') {
+    }
+
+    // 2. Network Cable
+    if (hasNetwork) {
       if (this.phase === 'RESOLVED') {
         this.layers.COMMUNICATION_CHANNEL.status = 'BACKUP_WIRE_ACTIVE';
       } else {
         this.layers.COMMUNICATION_CHANNEL.status = this.phase === 'LOCALIZED' ? 'COMPROMISED' : 'SUSPECT';
       }
-    } else if (scn.id === 'CONTROLLER_HIJACK') {
+    }
+
+    // 3. Controller Brain
+    if (hasController) {
       if (this.phase === 'RESOLVED') {
         this.sensors.pressureBar = 3.2;
         this.layers.CONTROLLER.status = 'SAFETY_CLAMPED';
@@ -239,13 +276,19 @@ export class CPSSimulator {
         this.sensors.pressureBar = 8.2;
         this.layers.CONTROLLER.status = this.phase === 'LOCALIZED' ? 'COMPROMISED' : 'SUSPECT';
       }
-    } else if (scn.id === 'FIRMWARE_ROOTKIT') {
+    }
+
+    // 4. Firmware Rootkit
+    if (hasFirmware) {
       if (this.phase === 'RESOLVED') {
         this.layers.FIRMWARE.status = 'ORIGINAL_RESTORED';
       } else {
         this.layers.FIRMWARE.status = this.phase === 'LOCALIZED' ? 'COMPROMISED' : 'SUSPECT';
       }
-    } else if (scn.id === 'ACTUATOR_JAM') {
+    }
+
+    // 5. Actuator Jam
+    if (hasActuator) {
       if (this.phase === 'RESOLVED') {
         this.sensors.flowOutflow = 39.0;
         this.layers.ACTUATOR.status = 'BACKUP_PIPE_OPEN';
@@ -255,32 +298,40 @@ export class CPSSimulator {
       }
     }
 
+    const culpritNames = scns.map(s => s.target).join(' & ');
+    const layerNames = scns.map(s => s.layerName).join(' & ');
+    const proofs = scns.map(s => s.plainMathProof).join(' • ');
+    const fixes = scns.map(s => s.plainFix).join(' • ');
+
     if (this.phase === 'ATTACK_ACTIVE') {
       this.localizationResult = {
         localized: false,
+        localizedLayers: [],
         localizedLayer: null,
-        culpritNode: 'Unknown! (Checking all 5 layers...)',
-        plainProof: 'Alarms are ringing! But no one knows which layer broke.',
-        traditionalResult: scn.traditionalMistake,
-        recoveryMsg: 'Click "Localize Attack" or use Auto-Pilot to find the problem.'
+        culpritNode: `Unknown! (Scanning ${scns.length} active disturbance[s] across 5 layers...)`,
+        plainProof: 'Alarms ringing! Traditional monitoring cannot identify which layer is failing.',
+        traditionalResult: scns.map(s => s.traditionalMistake).join(' • '),
+        recoveryMsg: 'Click "Localize Attack" or use Auto-Pilot to pinpoint root causes.'
       };
     } else if (this.phase === 'LOCALIZED') {
       this.localizationResult = {
         localized: true,
-        localizedLayer: scn.layer,
-        culpritNode: scn.target,
-        plainProof: scn.plainMathProof,
-        traditionalResult: scn.traditionalMistake,
+        localizedLayers: scns.map(s => s.layer),
+        localizedLayer: scns[0].layer,
+        culpritNode: culpritNames,
+        plainProof: proofs,
+        traditionalResult: scns.map(s => s.traditionalMistake).join(' • '),
         recoveryMsg: 'Ready to fix!'
       };
     } else if (this.phase === 'RESOLVED') {
       this.localizationResult = {
         localized: true,
-        localizedLayer: scn.layer,
-        culpritNode: scn.target,
-        plainProof: 'Fixed! ' + scn.plainFix,
-        traditionalResult: scn.traditionalMistake,
-        recoveryMsg: scn.plainFix
+        localizedLayers: scns.map(s => s.layer),
+        localizedLayer: scns[0].layer,
+        culpritNode: culpritNames,
+        plainProof: 'Fixed! ' + fixes,
+        traditionalResult: 'Recovered autonomously',
+        recoveryMsg: fixes
       };
     }
 
@@ -307,6 +358,7 @@ export class CPSSimulator {
       time: this.time,
       phase: this.phase,
       activeScenario: this.activeScenario,
+      activeScenarios: this.activeScenarios && this.activeScenarios.length > 0 ? this.activeScenarios : [this.activeScenario],
       tanks: this.tanks,
       sensors: this.sensors,
       layers: this.layers,

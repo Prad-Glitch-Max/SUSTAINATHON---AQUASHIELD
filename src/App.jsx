@@ -16,7 +16,8 @@ export default function App() {
   }
 
   const [simState, setSimState] = useState(() => simRef.current.getState());
-  const [selectedScenarioKey, setSelectedScenarioKey] = useState('SENSOR_SPOOF');
+  const [selectedScenarioKeys, setSelectedScenarioKeys] = useState(['SENSOR_SPOOF']);
+  const [autoStage, setAutoStage] = useState(0);
   const [activeTab, setActiveTab] = useState('lab'); // 'lab' | 'comparison' | 'terminal'
 
   // Simulation step loop (4 Hz updates)
@@ -29,9 +30,9 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
-  // Step 1: Launch Attack
-  const handleLaunchAttack = (key) => {
-    simRef.current.launchAttack(key);
+  // Step 1: Launch Attack (single or multiple)
+  const handleLaunchAttack = (keys) => {
+    simRef.current.launchAttack(keys);
     setSimState({ ...simRef.current.getState() });
   };
 
@@ -49,6 +50,7 @@ export default function App() {
 
   // Reset to Baseline
   const handleReset = () => {
+    setAutoStage(0);
     simRef.current.restoreBaseline();
     setSimState({ ...simRef.current.getState() });
   };
@@ -153,8 +155,11 @@ export default function App() {
           <InteractiveControlBar
             phase={simState.phase}
             activeScenario={simState.activeScenario}
-            selectedScenarioKey={selectedScenarioKey}
-            onSelectScenarioKey={setSelectedScenarioKey}
+            activeScenarios={simState.activeScenarios}
+            selectedScenarioKeys={selectedScenarioKeys}
+            onSelectScenarioKeys={setSelectedScenarioKeys}
+            autoStage={autoStage}
+            onChangeAutoStage={setAutoStage}
             onLaunchAttack={handleLaunchAttack}
             onLocalize={handleLocalize}
             onDeployFix={handleDeployFix}
@@ -163,7 +168,11 @@ export default function App() {
 
           {/* 1. SCADA Digital Twin Facility (Full Width, Spacious!) */}
           <section>
-            <DigitalTwinSCADA state={simState} />
+            <DigitalTwinSCADA
+              state={simState}
+              autoStage={autoStage}
+              selectedScenarioKeys={selectedScenarioKeys}
+            />
           </section>
 
           {/* 2. The 5-Layer CPS Hierarchy (Positioned BELOW SCADA, Spacious!) */}

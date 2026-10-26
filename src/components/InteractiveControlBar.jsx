@@ -16,7 +16,10 @@ import {
   Activity,
   Sparkles,
   Timer,
-  ShieldAlert
+  ShieldAlert,
+  Layers,
+  CheckSquare,
+  Square
 } from 'lucide-react';
 import { sound } from '../utils/soundEffects';
 import confetti from 'canvas-confetti';
@@ -27,6 +30,13 @@ const SCENARIOS = [
   { key: 'CONTROLLER_HIJACK', label: '3. Computer Brain', target: 'Hacked PLC Controller', icon: Cpu, color: '#a855f7' },
   { key: 'FIRMWARE_ROOTKIT', label: '4. Software Code', target: 'Corrupted Motor Firmware', icon: Binary, color: '#f59e0b' },
   { key: 'ACTUATOR_JAM', label: '5. Stuck Valve', target: 'Jammed Physical Valve', icon: Cog, color: '#ff2a5f' }
+];
+
+const PRESETS = [
+  { label: 'Single Attack', keys: ['SENSOR_SPOOF'] },
+  { label: 'Dual Combo (Sensor + Valve)', keys: ['SENSOR_SPOOF', 'ACTUATOR_JAM'] },
+  { label: 'Triple Threat (Sensor + Cable + Brain)', keys: ['SENSOR_SPOOF', 'NETWORK_REPLAY', 'CONTROLLER_HIJACK'] },
+  { label: '⚡ All 5 Layers (Full System Assault)', keys: ['SENSOR_SPOOF', 'NETWORK_REPLAY', 'CONTROLLER_HIJACK', 'FIRMWARE_ROOTKIT', 'ACTUATOR_JAM'] }
 ];
 
 const STAGE_DETAILS = {
@@ -175,15 +185,17 @@ const STAGE_DETAILS = {
 export default function InteractiveControlBar({
   phase,
   activeScenario,
-  selectedScenarioKey,
-  onSelectScenarioKey,
+  activeScenarios = [],
+  selectedScenarioKeys = ['SENSOR_SPOOF'],
+  onSelectScenarioKeys,
+  autoStage = 0,
+  onChangeAutoStage,
   onLaunchAttack,
   onLocalize,
   onDeployFix,
   onReset
 }) {
   const [isAutoPilot, setIsAutoPilot] = useState(true);
-  const [autoStage, setAutoStage] = useState(0); // 0: Idle, 1: Attack, 2: Physics Audit, 3: Localized, 4: Healed
   const [progressPercent, setProgressPercent] = useState(0);
   const [elapsedSec, setElapsedSec] = useState(0);
 
@@ -203,25 +215,42 @@ export default function InteractiveControlBar({
     return () => clearAllTimers();
   }, []);
 
-  // When manually resetting or changing scenario from outside, keep UI synchronized
   useEffect(() => {
     if (isNominal) {
-      setAutoStage(0);
+      if (onChangeAutoStage) onChangeAutoStage(0);
       setProgressPercent(0);
       setElapsedSec(0);
     }
   }, [isNominal]);
 
+  // Multi-Select Toggle Function
+  const toggleScenario = (key) => {
+    if (!isNominal && !isResolved) return;
+    if (selectedScenarioKeys.includes(key)) {
+      if (selectedScenarioKeys.length > 1) {
+        onSelectScenarioKeys(selectedScenarioKeys.filter(k => k !== key));
+      }
+    } else {
+      onSelectScenarioKeys([...selectedScenarioKeys, key]);
+    }
+  };
+
+  // Preset Selection
+  const applyPreset = (keys) => {
+    if (!isNominal && !isResolved) return;
+    onSelectScenarioKeys(keys);
+  };
+
   // DRAMATIC, SLOWER 4-STAGE AUTONOMOUS TIMELINE (~9.5 SECONDS)
   const handleAutoPilotLaunch = () => {
     clearAllTimers();
-    setAutoStage(1);
+    if (onChangeAutoStage) onChangeAutoStage(1);
     setProgressPercent(25);
     setElapsedSec(0.0);
 
     // Stage 1 (T = 0s): Attack Injected + Alarm Sounds
     sound.playAlarm();
-    onLaunchAttack(selectedScenarioKey);
+    onLaunchAttack(selectedScenarioKeys);
 
     // Elapsed timer tick (updates every 100ms for smooth progress animation)
     const startTime = Date.now();
@@ -234,7 +263,7 @@ export default function InteractiveControlBar({
     // Stage 2 (T = 2.8s): AI Starts Physics & Mass Balance Audit
     const timerStage2 = setTimeout(() => {
       sound.playScan();
-      setAutoStage(2);
+      if (onChangeAutoStage) onChangeAutoStage(2);
       setProgressPercent(55);
     }, 2800);
     timersRef.current.push(timerStage2);
@@ -243,7 +272,7 @@ export default function InteractiveControlBar({
     const timerStage3 = setTimeout(() => {
       sound.playScan();
       onLocalize();
-      setAutoStage(3);
+      if (onChangeAutoStage) onChangeAutoStage(3);
       setProgressPercent(80);
     }, 5800);
     timersRef.current.push(timerStage3);
@@ -253,7 +282,7 @@ export default function InteractiveControlBar({
       sound.playSuccess();
       try {
         confetti({
-          particleCount: 110,
+          particleCount: 120,
           spread: 80,
           origin: { y: 0.65 },
           colors: ['#00f2fe', '#10b981', '#38bdf8', '#34d399']
@@ -262,7 +291,7 @@ export default function InteractiveControlBar({
         // safe fallback
       }
       onDeployFix();
-      setAutoStage(4);
+      if (onChangeAutoStage) onChangeAutoStage(4);
       setProgressPercent(100);
       clearInterval(intervalId);
       setElapsedSec(9.5);
@@ -273,14 +302,14 @@ export default function InteractiveControlBar({
   const handleManualLaunch = () => {
     clearAllTimers();
     sound.playAlarm();
-    setAutoStage(1);
+    if (onChangeAutoStage) onChangeAutoStage(1);
     setProgressPercent(33);
-    onLaunchAttack(selectedScenarioKey);
+    onLaunchAttack(selectedScenarioKeys);
   };
 
   const handleManualLocalize = () => {
     sound.playScan();
-    setAutoStage(3);
+    if (onChangeAutoStage) onChangeAutoStage(3);
     setProgressPercent(66);
     onLocalize();
   };
@@ -297,7 +326,7 @@ export default function InteractiveControlBar({
     } catch {
       // safe fallback
     }
-    setAutoStage(4);
+    if (onChangeAutoStage) onChangeAutoStage(4);
     setProgressPercent(100);
     onDeployFix();
   };
@@ -305,13 +334,14 @@ export default function InteractiveControlBar({
   const handleReset = () => {
     clearAllTimers();
     sound.playClick();
-    setAutoStage(0);
+    if (onChangeAutoStage) onChangeAutoStage(0);
     setProgressPercent(0);
     setElapsedSec(0);
     onReset();
   };
 
-  const currentDetails = STAGE_DETAILS[selectedScenarioKey] || STAGE_DETAILS.SENSOR_SPOOF;
+  const activeKeys = selectedScenarioKeys.length > 0 ? selectedScenarioKeys : ['SENSOR_SPOOF'];
+  const isMulti = activeKeys.length > 1;
 
   return (
     <div
@@ -354,9 +384,17 @@ export default function InteractiveControlBar({
             >
               {isAutoPilot ? '⚡ AUTONOMOUS AI (AUTOMATIC)' : '👆 MANUAL STEP-BY-STEP'}
             </span>
+            {isMulti && (
+              <span
+                className="badge badge-rose"
+                style={{ fontSize: '0.72rem', fontWeight: 900, padding: '4px 10px' }}
+              >
+                🔥 {selectedScenarioKeys.length} ATTACKS SELECTED (MULTI-VECTOR)
+              </span>
+            )}
           </div>
           <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '3px' }}>
-            Select an attack layer below, then trigger the demonstration to observe root-cause localization.
+            Select one or <strong>multiple attack layers simultaneously</strong> below to simulate complex multi-vector cyber incidents.
           </p>
         </div>
 
@@ -412,26 +450,60 @@ export default function InteractiveControlBar({
         </div>
       </div>
 
-      {/* 5 Scenario Selector Cards */}
+      {/* Multi-Attack Quick Presets */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
+        <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          Quick Combos:
+        </span>
+        {PRESETS.map((p, idx) => {
+          const isPresetActive =
+            p.keys.length === selectedScenarioKeys.length &&
+            p.keys.every(k => selectedScenarioKeys.includes(k));
+          return (
+            <button
+              key={idx}
+              onClick={() => applyPreset(p.keys)}
+              disabled={!isNominal && !isResolved}
+              style={{
+                background: isPresetActive ? 'rgba(0,242,254,0.2)' : 'rgba(15, 23, 42, 0.65)',
+                border: isPresetActive ? '1px solid #00f2fe' : '1px solid rgba(255,255,255,0.08)',
+                color: isPresetActive ? '#00f2fe' : '#cbd5e1',
+                padding: '4px 12px',
+                borderRadius: '16px',
+                fontSize: '0.72rem',
+                fontWeight: 700,
+                cursor: !isNominal && !isResolved ? 'not-allowed' : 'pointer',
+                opacity: !isNominal && !isResolved ? 0.4 : 1,
+                transition: 'all 0.2s ease'
+              }}
+            >
+              {p.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* 5 Scenario Selector Cards with Multi-Select Toggles */}
       <div style={{ marginBottom: '18px' }}>
-        <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginBottom: '8px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-          Select Cyber Attack Scenario:
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+          <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            Select Which Layers The Hacker Targets (Click to toggle multiple):
+          </span>
+          <span style={{ fontSize: '0.72rem', color: '#38bdf8', fontWeight: 700 }}>
+            {selectedScenarioKeys.length} Layer{selectedScenarioKeys.length > 1 ? 's' : ''} Selected
+          </span>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(185px, 1fr))', gap: '8px' }}>
           {SCENARIOS.map((scn) => {
             const Icon = scn.icon;
-            const isSelected = selectedScenarioKey === scn.key;
+            const isSelected = selectedScenarioKeys.includes(scn.key);
             return (
               <button
                 key={scn.key}
-                onClick={() => {
-                  if (isNominal || isResolved) {
-                    onSelectScenarioKey(scn.key);
-                  }
-                }}
+                onClick={() => toggleScenario(scn.key)}
                 disabled={!isNominal && !isResolved}
                 style={{
-                  background: isSelected ? 'rgba(0, 242, 254, 0.22)' : 'rgba(15, 23, 42, 0.7)',
+                  background: isSelected ? 'rgba(0, 242, 254, 0.2)' : 'rgba(15, 23, 42, 0.7)',
                   border: isSelected ? '2px solid #00f2fe' : '1px solid rgba(56, 189, 248, 0.15)',
                   borderRadius: '10px',
                   padding: '10px 14px',
@@ -445,6 +517,11 @@ export default function InteractiveControlBar({
                   boxShadow: isSelected ? '0 0 16px rgba(0,242,254,0.3)' : 'none'
                 }}
               >
+                {/* Checkbox Icon */}
+                <div style={{ color: isSelected ? '#00f2fe' : '#64748b' }}>
+                  {isSelected ? <CheckSquare size={18} /> : <Square size={18} />}
+                </div>
+
                 <div
                   style={{
                     width: '32px',
@@ -481,11 +558,15 @@ export default function InteractiveControlBar({
             onClick={handleAutoPilotLaunch}
             disabled={!isNominal && !isResolved}
             style={{
-              background: isNominal || isResolved ? 'linear-gradient(135deg, #00f2fe, #0284c7)' : 'rgba(30, 41, 59, 0.45)',
+              background: isNominal || isResolved
+                ? isMulti
+                  ? 'linear-gradient(135deg, #ff2a5f, #00f2fe)'
+                  : 'linear-gradient(135deg, #00f2fe, #0284c7)'
+                : 'rgba(30, 41, 59, 0.45)',
               border: isNominal || isResolved ? '1px solid #00f2fe' : '1px solid rgba(255,255,255,0.05)',
               borderRadius: '12px',
               padding: '16px 24px',
-              color: isNominal || isResolved ? '#050811' : '#64748b',
+              color: isNominal || isResolved ? '#ffffff' : '#64748b',
               cursor: isNominal || isResolved ? 'pointer' : 'not-allowed',
               opacity: isNominal || isResolved ? 1 : 0.45,
               display: 'flex',
@@ -498,8 +579,12 @@ export default function InteractiveControlBar({
               transition: 'all 0.25s ease'
             }}
           >
-            <Zap size={22} />
-            <span>Launch Cyber Attack & Watch AquaShield Fix It Automatically</span>
+            <Zap size={22} color={isMulti ? '#ff2a5f' : '#ffffff'} />
+            <span>
+              {isMulti
+                ? `Launch ${selectedScenarioKeys.length} Cyber Attacks & Watch AquaShield Fix All Simultaneously`
+                : 'Launch Cyber Attack & Watch AquaShield Fix It Automatically'}
+            </span>
           </button>
 
           <button
@@ -546,7 +631,7 @@ export default function InteractiveControlBar({
             }}
           >
             <Flame size={18} />
-            <span>1. Launch Attack</span>
+            <span>1. Launch {isMulti ? `${selectedScenarioKeys.length} Attacks` : 'Attack'}</span>
           </button>
 
           <button
@@ -570,7 +655,7 @@ export default function InteractiveControlBar({
             }}
           >
             <Search size={18} />
-            <span>2. Find Root Cause</span>
+            <span>2. Find Root Cause(s)</span>
           </button>
 
           <button
@@ -594,7 +679,7 @@ export default function InteractiveControlBar({
             }}
           >
             <ShieldCheck size={18} />
-            <span>3. Fix & Heal Plant</span>
+            <span>3. Fix All & Heal</span>
           </button>
 
           <button
@@ -667,7 +752,9 @@ export default function InteractiveControlBar({
                 <div style={{ fontSize: '0.74rem', fontWeight: 800, color: autoStage === 1 || isAttackActive ? '#ff2a5f' : '#ffffff' }}>
                   Breach Injected
                 </div>
-                <div style={{ fontSize: '0.65rem', color: '#94a3b8' }}>Alarm Sounding</div>
+                <div style={{ fontSize: '0.65rem', color: '#94a3b8' }}>
+                  {isMulti ? `${selectedScenarioKeys.length} Breaches Active` : 'Alarms Ringing'}
+                </div>
               </div>
             </div>
 
@@ -713,7 +800,7 @@ export default function InteractiveControlBar({
                 <div style={{ fontSize: '0.74rem', fontWeight: 800, color: autoStage === 2 ? '#00f2fe' : '#ffffff' }}>
                   Physics Audit
                 </div>
-                <div style={{ fontSize: '0.65rem', color: '#94a3b8' }}>Mass Conservation</div>
+                <div style={{ fontSize: '0.65rem', color: '#94a3b8' }}>Cross-Layer Math</div>
               </div>
             </div>
 
@@ -757,9 +844,11 @@ export default function InteractiveControlBar({
               </div>
               <div>
                 <div style={{ fontSize: '0.74rem', fontWeight: 800, color: autoStage === 3 || isLocalized ? '#c084fc' : '#ffffff' }}>
-                  Root Cause Pinpointed
+                  Pinpointed
                 </div>
-                <div style={{ fontSize: '0.65rem', color: '#94a3b8' }}>Laser Lock on Layer</div>
+                <div style={{ fontSize: '0.65rem', color: '#94a3b8' }}>
+                  {isMulti ? `${selectedScenarioKeys.length} Culprits Isolated` : 'Laser Lock'}
+                </div>
               </div>
             </div>
 
@@ -801,7 +890,7 @@ export default function InteractiveControlBar({
                 <div style={{ fontSize: '0.74rem', fontWeight: 800, color: autoStage === 4 || isResolved ? '#34d399' : '#ffffff' }}>
                   Self-Healed
                 </div>
-                <div style={{ fontSize: '0.65rem', color: '#94a3b8' }}>0s Downtime</div>
+                <div style={{ fontSize: '0.65rem', color: '#94a3b8' }}>0s Plant Downtime</div>
               </div>
             </div>
           </div>
@@ -833,10 +922,10 @@ export default function InteractiveControlBar({
                 <span>Sequence Time: <strong style={{ color: '#ffffff' }}>{elapsedSec.toFixed(1)}s</strong> / ~9.5s</span>
               </div>
               <div>
-                {autoStage === 1 && <span style={{ color: '#ff2a5f', fontWeight: 700 }}>Injecting Breach & Sounding Alarms...</span>}
-                {autoStage === 2 && <span style={{ color: '#00f2fe', fontWeight: 700 }}>AI Auditing Fluid Inflow vs Outflow...</span>}
-                {autoStage === 3 && <span style={{ color: '#c084fc', fontWeight: 700 }}>Laser Locking onto Root Cause...</span>}
-                {autoStage === 4 && <span style={{ color: '#34d399', fontWeight: 700 }}>Autonomous Self-Healing Active!</span>}
+                {autoStage === 1 && <span style={{ color: '#ff2a5f', fontWeight: 700 }}>Injecting {selectedScenarioKeys.length} Breach(es) & Sounding Alarms...</span>}
+                {autoStage === 2 && <span style={{ color: '#00f2fe', fontWeight: 700 }}>AI Auditing Fluid Inflow vs Outflow & Network Telemetry...</span>}
+                {autoStage === 3 && <span style={{ color: '#c084fc', fontWeight: 700 }}>Laser Locking onto Root Causes...</span>}
+                {autoStage === 4 && <span style={{ color: '#34d399', fontWeight: 700 }}>Autonomous Self-Healing Active for All Breaches!</span>}
               </div>
             </div>
           )}
@@ -875,87 +964,70 @@ export default function InteractiveControlBar({
               <CheckCircle2 size={16} />
               <span>Plant Operating Normally</span>
             </div>
-            Clean drinking water is currently circulating through all 4 treatment tanks. Click the big cyan button above to watch AquaShield handle an attack automatically.
+            Clean drinking water is currently circulating through all 4 treatment tanks. Select your target layers above, then click the launch button to watch AquaShield protect the plant automatically.
           </div>
         )}
 
-        {(autoStage === 1 || (isAttackActive && autoStage === 0)) && (
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-              <span className="badge badge-rose" style={{ fontSize: '0.72rem', padding: '3px 10px', fontWeight: 800 }}>
-                {currentDetails.step1.badge}
-              </span>
-              <strong style={{ color: '#ffffff', fontSize: '0.92rem' }}>
-                {currentDetails.step1.title}
-              </strong>
-            </div>
-            <p style={{ color: '#e2e8f0', fontSize: '0.84rem', lineHeight: '1.45', margin: '4px 0' }}>
-              {currentDetails.step1.detail}
-            </p>
-            <div style={{ marginTop: '8px', padding: '8px 12px', background: 'rgba(255, 42, 95, 0.12)', borderRadius: '6px', fontSize: '0.78rem', color: '#fda4af' }}>
-              <strong style={{ color: '#ff2a5f' }}>⚠️ The Danger with Old Tools: </strong>
-              {currentDetails.step1.contrast}
-            </div>
-          </div>
-        )}
+        {(autoStage > 0 || !isNominal) && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            {activeKeys.map((key) => {
+              const details = STAGE_DETAILS[key];
+              if (!details) return null;
+              const step =
+                autoStage === 1 || isAttackActive
+                  ? details.step1
+                  : autoStage === 2
+                  ? details.step2
+                  : autoStage === 3 || isLocalized
+                  ? details.step3
+                  : details.step4;
 
-        {autoStage === 2 && (
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-              <span className="badge badge-cyan" style={{ fontSize: '0.72rem', padding: '3px 10px', fontWeight: 800 }}>
-                {currentDetails.step2.badge}
-              </span>
-              <strong style={{ color: '#ffffff', fontSize: '0.92rem' }}>
-                {currentDetails.step2.title}
-              </strong>
-            </div>
-            <p style={{ color: '#e2e8f0', fontSize: '0.84rem', lineHeight: '1.45', margin: '4px 0' }}>
-              {currentDetails.step2.detail}
-            </p>
-            <div style={{ marginTop: '8px', padding: '8px 12px', background: 'rgba(0, 242, 254, 0.1)', borderRadius: '6px', fontSize: '0.78rem', color: '#7dd3fc' }}>
-              <strong style={{ color: '#00f2fe' }}>🧠 Physical Math Proof: </strong>
-              {currentDetails.step2.contrast}
-            </div>
-          </div>
-        )}
-
-        {(autoStage === 3 || (isLocalized && autoStage === 0)) && (
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-              <span className="badge" style={{ background: 'rgba(168, 85, 247, 0.25)', color: '#c084fc', border: '1px solid #a855f7', fontSize: '0.72rem', padding: '3px 10px', fontWeight: 800 }}>
-                {currentDetails.step3.badge}
-              </span>
-              <strong style={{ color: '#ffffff', fontSize: '0.92rem' }}>
-                {currentDetails.step3.title}
-              </strong>
-            </div>
-            <p style={{ color: '#e2e8f0', fontSize: '0.84rem', lineHeight: '1.45', margin: '4px 0' }}>
-              {currentDetails.step3.detail}
-            </p>
-            <div style={{ marginTop: '8px', padding: '8px 12px', background: 'rgba(168, 85, 247, 0.12)', borderRadius: '6px', fontSize: '0.78rem', color: '#e9d5ff' }}>
-              <strong style={{ color: '#c084fc' }}>🎯 Precision Localization: </strong>
-              {currentDetails.step3.contrast}
-            </div>
-          </div>
-        )}
-
-        {(autoStage === 4 || (isResolved && autoStage === 0)) && (
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-              <span className="badge badge-emerald" style={{ fontSize: '0.72rem', padding: '3px 10px', fontWeight: 800 }}>
-                {currentDetails.step4.badge}
-              </span>
-              <strong style={{ color: '#ffffff', fontSize: '0.92rem' }}>
-                {currentDetails.step4.title}
-              </strong>
-            </div>
-            <p style={{ color: '#e2e8f0', fontSize: '0.84rem', lineHeight: '1.45', margin: '4px 0' }}>
-              {currentDetails.step4.detail}
-            </p>
-            <div style={{ marginTop: '8px', padding: '8px 12px', background: 'rgba(16, 185, 129, 0.12)', borderRadius: '6px', fontSize: '0.78rem', color: '#a7f3d0' }}>
-              <strong style={{ color: '#10b981' }}>🛡️ Zero Downtime Self-Healing: </strong>
-              {currentDetails.step4.contrast}
-            </div>
+              return (
+                <div key={key} style={{ borderBottom: isMulti ? '1px solid rgba(255,255,255,0.08)' : 'none', paddingBottom: isMulti ? '10px' : '0' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                    <span
+                      className={`badge ${
+                        autoStage === 1 || isAttackActive
+                          ? 'badge-rose'
+                          : autoStage === 2
+                          ? 'badge-cyan'
+                          : autoStage === 3 || isLocalized
+                          ? 'badge-purple'
+                          : 'badge-emerald'
+                      }`}
+                      style={{ fontSize: '0.7rem', padding: '3px 10px', fontWeight: 800 }}
+                    >
+                      {step.badge}
+                    </span>
+                    <strong style={{ color: '#ffffff', fontSize: '0.9rem' }}>
+                      {step.title}
+                    </strong>
+                  </div>
+                  <p style={{ color: '#e2e8f0', fontSize: '0.82rem', lineHeight: '1.45', margin: '4px 0' }}>
+                    {step.detail}
+                  </p>
+                  <div
+                    style={{
+                      marginTop: '6px',
+                      padding: '6px 12px',
+                      background: autoStage === 1 || isAttackActive
+                        ? 'rgba(255, 42, 95, 0.1)'
+                        : autoStage === 2
+                        ? 'rgba(0, 242, 254, 0.1)'
+                        : autoStage === 3 || isLocalized
+                        ? 'rgba(168, 85, 247, 0.1)'
+                        : 'rgba(16, 185, 129, 0.1)',
+                      borderRadius: '6px',
+                      fontSize: '0.76rem',
+                      color: autoStage === 1 || isAttackActive ? '#fda4af' : autoStage === 2 ? '#7dd3fc' : autoStage === 3 || isLocalized ? '#e9d5ff' : '#a7f3d0'
+                    }}
+                  >
+                    <strong>Key Insight: </strong>
+                    {step.contrast}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
