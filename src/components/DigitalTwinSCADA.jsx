@@ -123,37 +123,38 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
           overflow: 'hidden'
         }}
       >
-        {/* ================= PROJECTED LIVE HUD STAGE BANNER (DIRECTLY ON SCREEN) ================= */}
+        {/* ================= PROJECTED LIVE HUD STAGE BANNER (SLEEK & COMPACT) ================= */}
         {effectiveStage === 1 && (
           <div
             style={{
               position: 'absolute',
-              top: '12px',
+              top: '10px',
               left: '50%',
               transform: 'translateX(-50%)',
               background: 'rgba(255, 42, 95, 0.95)',
               color: '#ffffff',
-              border: '2px solid #ffffff',
-              borderRadius: '24px',
-              padding: '8px 24px',
-              boxShadow: '0 0 25px rgba(255, 42, 95, 0.8)',
+              border: '1.5px solid rgba(255, 255, 255, 0.95)',
+              borderRadius: '16px',
+              padding: '5px 16px',
+              boxShadow: '0 0 20px rgba(255, 42, 95, 0.75)',
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
+              gap: '9px',
               zIndex: 30,
-              maxWidth: '90%',
+              maxWidth: '85%',
               textAlign: 'center',
-              animation: 'pulse-border 1s infinite alternate'
+              animation: 'pulse-border 1s infinite alternate',
+              pointerEvents: 'none'
             }}
           >
-            <AlertOctagon size={20} />
+            <AlertOctagon size={16} />
             <div>
-              <div style={{ fontSize: '0.86rem', fontWeight: 900, letterSpacing: '0.04em' }}>
+              <div style={{ fontSize: '0.78rem', fontWeight: 900, letterSpacing: '0.03em', lineHeight: 1.2 }}>
                 STAGE 1/4: 🚨 CYBER BREACH INJECTED!
               </div>
-              <div style={{ fontSize: '0.74rem', opacity: 0.95, fontWeight: 700 }}>
+              <div style={{ fontSize: '0.67rem', opacity: 0.95, fontWeight: 700, lineHeight: 1.2, marginTop: '1px' }}>
                 {scns.length > 1
-                  ? `${scns.length} Attack Vectors Active simultaneously! Alarms ringing. Old tools cannot isolate root cause.`
+                  ? `${scns.length} Attack Vectors Active simultaneously! Alarms ringing.`
                   : `${activeScenario.symptom} Alarms ringing across facility!`}
               </div>
             </div>
@@ -164,30 +165,31 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
           <div
             style={{
               position: 'absolute',
-              top: '12px',
+              top: '10px',
               left: '50%',
               transform: 'translateX(-50%)',
               background: 'rgba(0, 242, 254, 0.95)',
               color: '#050811',
-              border: '2px solid #ffffff',
-              borderRadius: '24px',
-              padding: '8px 24px',
-              boxShadow: '0 0 25px rgba(0, 242, 254, 0.85)',
+              border: '1.5px solid rgba(255, 255, 255, 0.95)',
+              borderRadius: '16px',
+              padding: '5px 16px',
+              boxShadow: '0 0 20px rgba(0, 242, 254, 0.75)',
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
+              gap: '9px',
               zIndex: 30,
-              maxWidth: '90%',
-              textAlign: 'center'
+              maxWidth: '85%',
+              textAlign: 'center',
+              pointerEvents: 'none'
             }}
           >
-            <Activity size={20} />
+            <Activity size={16} />
             <div>
-              <div style={{ fontSize: '0.86rem', fontWeight: 900, letterSpacing: '0.04em' }}>
-                STAGE 2/4: 🧠 AQUASHIELD AI RUNNING REAL-TIME PHYSICS AUDIT...
+              <div style={{ fontSize: '0.78rem', fontWeight: 900, letterSpacing: '0.03em', lineHeight: 1.2 }}>
+                STAGE 2/4: 🧠 AUDITING PHYSICAL LAWS IN REAL-TIME...
               </div>
-              <div style={{ fontSize: '0.74rem', fontWeight: 800 }}>
-                Auditing Mass Flow Inflow (42.5 L/s) vs Outflow (38.0 L/s) • Natural laws of physics catch anomalies!
+              <div style={{ fontSize: '0.67rem', fontWeight: 800, lineHeight: 1.2, marginTop: '1px' }}>
+                Auditing Mass Flow Inflow (42.5 L/s) vs Outflow (38.0 L/s) • Natural physics detect anomaly
               </div>
             </div>
           </div>
@@ -197,30 +199,31 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
           <div
             style={{
               position: 'absolute',
-              top: '12px',
+              top: '10px',
               left: '50%',
               transform: 'translateX(-50%)',
               background: 'rgba(168, 85, 247, 0.95)',
               color: '#ffffff',
-              border: '2px solid #ffffff',
-              borderRadius: '24px',
-              padding: '8px 24px',
-              boxShadow: '0 0 25px rgba(168, 85, 247, 0.85)',
+              border: '1.5px solid rgba(255, 255, 255, 0.95)',
+              borderRadius: '16px',
+              padding: '5px 16px',
+              boxShadow: '0 0 20px rgba(168, 85, 247, 0.75)',
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
+              gap: '9px',
               zIndex: 30,
-              maxWidth: '90%',
-              textAlign: 'center'
+              maxWidth: '85%',
+              textAlign: 'center',
+              pointerEvents: 'none'
             }}
           >
-            <Search size={20} />
+            <Search size={16} />
             <div>
-              <div style={{ fontSize: '0.86rem', fontWeight: 900, letterSpacing: '0.04em' }}>
+              <div style={{ fontSize: '0.78rem', fontWeight: 900, letterSpacing: '0.03em', lineHeight: 1.2 }}>
                 STAGE 3/4: 🎯 ROOT CAUSE PINPOINTED TO EXACT COMPONENT!
               </div>
-              <div style={{ fontSize: '0.74rem', opacity: 0.95, fontWeight: 700 }}>
-                Laser targeting: {scns.map(s => s.target).join(' & ')} • Other layers certified 100% healthy!
+              <div style={{ fontSize: '0.67rem', opacity: 0.95, fontWeight: 700, lineHeight: 1.2, marginTop: '1px' }}>
+                Pinpointed target: {scns.map(s => s.target).join(' & ')} • Clean layers verified healthy
               </div>
             </div>
           </div>
@@ -230,29 +233,30 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
           <div
             style={{
               position: 'absolute',
-              top: '12px',
+              top: '10px',
               left: '50%',
               transform: 'translateX(-50%)',
               background: 'rgba(16, 185, 129, 0.95)',
               color: '#ffffff',
-              border: '2px solid #ffffff',
-              borderRadius: '24px',
-              padding: '8px 24px',
-              boxShadow: '0 0 25px rgba(16, 185, 129, 0.85)',
+              border: '1.5px solid rgba(255, 255, 255, 0.95)',
+              borderRadius: '16px',
+              padding: '5px 16px',
+              boxShadow: '0 0 20px rgba(16, 185, 129, 0.75)',
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
+              gap: '9px',
               zIndex: 30,
-              maxWidth: '90%',
-              textAlign: 'center'
+              maxWidth: '85%',
+              textAlign: 'center',
+              pointerEvents: 'none'
             }}
           >
-            <ShieldCheck size={20} />
+            <ShieldCheck size={16} />
             <div>
-              <div style={{ fontSize: '0.86rem', fontWeight: 900, letterSpacing: '0.04em' }}>
+              <div style={{ fontSize: '0.78rem', fontWeight: 900, letterSpacing: '0.03em', lineHeight: 1.2 }}>
                 STAGE 4/4: 🛡️ AUTONOMOUS SELF-HEALING DEPLOYED!
               </div>
-              <div style={{ fontSize: '0.74rem', opacity: 0.95, fontWeight: 700 }}>
+              <div style={{ fontSize: '0.67rem', opacity: 0.95, fontWeight: 700, lineHeight: 1.2, marginTop: '1px' }}>
                 Zero seconds downtime • Clean drinking water protected with zero human intervention!
               </div>
             </div>
@@ -310,26 +314,25 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
               stroke={(isAttackActive || isLocalized) && isNetworkAttacked ? '#ff2a5f' : 'rgba(56, 189, 248, 0.35)'}
               strokeWidth={(isAttackActive || isLocalized) && isNetworkAttacked ? '2.5' : '1'}
             />
-            <text x="56" y="69" fill="#38bdf8" fontSize="10.5" fontWeight="800" fontFamily="var(--font-mono)">
-              🌐 SCADA INDUSTRIAL NETWORK WIRE (COMMUNICATION BUS)
-            </text>
-            <text
-              x="905"
-              y="69"
-              fill={isAttackActive && isNetworkAttacked ? '#ff2a5f' : isLocalized && isNetworkAttacked ? '#00f2fe' : '#10b981'}
-              fontSize="10"
-              fontWeight="800"
-              textAnchor="end"
-              fontFamily="var(--font-mono)"
-            >
-              {(isAttackActive || isLocalized) && isNetworkAttacked
-                ? '⚠️ CABLE DELAY DETECTED'
-                : isAttackActive
-                ? 'ALARM SOUNDING'
-                : isLocalized
-                ? 'BREACH PINPOINTED'
-                : 'STATUS: NORMAL WIRE TELEMETRY'}
-            </text>
+            {/* ONLY DISPLAY NETWORK WIRE TEXT BEFORE PROCESS STARTS (WHEN NOMINAL & STAGE 0) */}
+            {effectiveStage === 0 && isNominal && (
+              <>
+                <text x="56" y="69" fill="#38bdf8" fontSize="10.5" fontWeight="800" fontFamily="var(--font-mono)">
+                  🌐 SCADA INDUSTRIAL NETWORK WIRE (COMMUNICATION BUS)
+                </text>
+                <text
+                  x="905"
+                  y="69"
+                  fill="#10b981"
+                  fontSize="10"
+                  fontWeight="800"
+                  textAnchor="end"
+                  fontFamily="var(--font-mono)"
+                >
+                  STATUS: NORMAL WIRE TELEMETRY
+                </text>
+              </>
+            )}
           </g>
 
           {/* ================= ZONE 2: 2-LINE TANK HEADER BADGES (y = 86 to 120, ZERO TEXT OVERFLOW!) ================= */}
@@ -475,12 +478,12 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
             {/* PROJECTED CALLOUT ON TANK 2 DURING ATTACK / AUDIT */}
             {isSensorAttacked && effectiveStage > 0 && (
               <g transform="translate(345, 236)">
-                <rect x="-85" y="0" width="170" height="20" rx="4" fill={effectiveStage === 4 ? '#10b981' : '#ff2a5f'} opacity="0.95" />
-                <text x="0" y="13" fill="#ffffff" fontSize="8.5" fontWeight="900" textAnchor="middle" style={{ fontFamily: 'system-ui, sans-serif' }}>
-                  {effectiveStage === 1 && '⚠️ FROZEN AT 32%'}
-                  {effectiveStage === 2 && '🧠 INFLOW > OUTFLOW (+10L/s)'}
-                  {effectiveStage === 3 && '🎯 LYING SENSOR PINPOINTED'}
-                  {effectiveStage === 4 && '🛡️ VIRTUAL ESTIMATOR ACTIVE'}
+                <rect x="-46" y="0" width="92" height="19" rx="4" fill={effectiveStage === 4 ? '#10b981' : '#ff2a5f'} opacity="0.95" />
+                <text x="0" y="13" fill="#ffffff" fontSize="8" fontWeight="900" textAnchor="middle" style={{ fontFamily: 'system-ui, sans-serif' }}>
+                  {effectiveStage === 1 && '⚠️ FROZEN 32%'}
+                  {effectiveStage === 2 && '🧠 +10L/s INFLOW'}
+                  {effectiveStage === 3 && '🎯 SENSOR ISOLATED'}
+                  {effectiveStage === 4 && '🛡️ ESTIMATOR ON'}
                 </text>
               </g>
             )}
@@ -501,13 +504,13 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
             </text>
             {/* Projected callout if valve is attacked */}
             {isActuatorAttacked && effectiveStage > 0 && (
-              <g transform="translate(0, 42)">
-                <rect x="-65" y="0" width="130" height="18" rx="4" fill={effectiveStage === 4 ? '#10b981' : '#ff2a5f'} opacity="0.95" />
-                <text x="0" y="12" fill="#ffffff" fontSize="8" fontWeight="900" textAnchor="middle" style={{ fontFamily: 'system-ui, sans-serif' }}>
-                  {effectiveStage === 1 && '⚠️ JAMMED AT 100%'}
-                  {effectiveStage === 2 && '🧠 LEAKING 65 L/s'}
-                  {effectiveStage === 3 && '🎯 VALVE JAM ISOLATED'}
-                  {effectiveStage === 4 && '🛡️ DIVERTER ENGAGED'}
+              <g transform="translate(0, 41)">
+                <rect x="-46" y="0" width="92" height="19" rx="4" fill={effectiveStage === 4 ? '#10b981' : '#ff2a5f'} opacity="0.95" />
+                <text x="0" y="13" fill="#ffffff" fontSize="8" fontWeight="900" textAnchor="middle" style={{ fontFamily: 'system-ui, sans-serif' }}>
+                  {effectiveStage === 1 && '⚠️ JAMMED 100%'}
+                  {effectiveStage === 2 && '🧠 DRAIN LEAK 65L'}
+                  {effectiveStage === 3 && '🎯 VALVE ISOLATED'}
+                  {effectiveStage === 4 && '🛡️ DIVERTER ON'}
                 </text>
               </g>
             )}
@@ -536,13 +539,13 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
             <text x="0" y="28" fill="#94a3b8" fontSize="9" fontWeight="700" textAnchor="middle" fontFamily="var(--font-mono)">PUMP 2</text>
             {/* Projected callout if firmware is attacked */}
             {isFirmwareAttacked && effectiveStage > 0 && (
-              <g transform="translate(0, 42)">
-                <rect x="-65" y="0" width="130" height="18" rx="4" fill={effectiveStage === 4 ? '#10b981' : '#f59e0b'} opacity="0.95" />
-                <text x="0" y="12" fill="#ffffff" fontSize="8" fontWeight="900" textAnchor="middle" style={{ fontFamily: 'system-ui, sans-serif' }}>
-                  {effectiveStage === 1 && '⚠️ 120Hz VIBRATION'}
-                  {effectiveStage === 2 && '🧠 HASH MISMATCH'}
-                  {effectiveStage === 3 && '🎯 BAD CODE CAUGHT'}
-                  {effectiveStage === 4 && '🛡️ GOLDEN CODE RESTORED'}
+              <g transform="translate(0, 41)">
+                <rect x="-46" y="0" width="92" height="19" rx="4" fill={effectiveStage === 4 ? '#10b981' : '#f59e0b'} opacity="0.95" />
+                <text x="0" y="13" fill="#ffffff" fontSize="8" fontWeight="900" textAnchor="middle" style={{ fontFamily: 'system-ui, sans-serif' }}>
+                  {effectiveStage === 1 && '⚠️ 120Hz SHAKE'}
+                  {effectiveStage === 2 && '🧠 BAD HASH CODE'}
+                  {effectiveStage === 3 && '🎯 BAD CODE ID'}
+                  {effectiveStage === 4 && '🛡️ CLEAN CODE'}
                 </text>
               </g>
             )}
@@ -631,10 +634,14 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
               <circle cx="30" cy="26" r="12" fill="#00f2fe" opacity="0.25" />
               <text x="30" y="31" fill="#00f2fe" fontSize="13" fontWeight="900" textAnchor="middle">🎯</text>
               <text x="55" y="24" fill="#ffffff" fontSize="12" fontWeight="900" style={{ fontFamily: 'system-ui, sans-serif' }}>
-                TARGET PINPOINTED: {scns.map(s => s.target).join(' & ')} ({scns.map(s => s.layerName).join(' & ')})
+                {scns.length === 1
+                  ? `TARGET PINPOINTED: ${scns[0].target} (${scns[0].layerName})`
+                  : `MULTI-VECTOR TARGETS PINPOINTED: ${scns.length} LAYERS COMPROMISED`}
               </text>
               <text x="55" y="41" fill="#7dd3fc" fontSize="10" fontWeight="700" style={{ fontFamily: 'system-ui, sans-serif' }}>
-                Math Proof: {scns.map(s => s.plainMathProof).join(' • ')}
+                {scns.length === 1
+                  ? `Math Proof: ${scns[0].plainMathProof}`
+                  : `Physics Audit Proof: Inflow vs Outflow conservation laws isolated ${scns.map(s => s.target).join(', ')} without false alarms!`}
               </text>
             </g>
           )}
@@ -648,7 +655,9 @@ export default function DigitalTwinSCADA({ state, autoStage = 0, selectedScenari
                 AUTONOMOUS SELF-HEALING COMPLETE • 0 SECONDS FACILITY DOWNTIME
               </text>
               <text x="55" y="41" fill="#6ee7b7" fontSize="10" fontWeight="700" style={{ fontFamily: 'system-ui, sans-serif' }}>
-                {scns.map(s => s.plainFix).join(' • ')}
+                {scns.length === 1
+                  ? scns[0].plainFix
+                  : `All ${scns.length} attack vectors autonomously neutralized in parallel: ${scns.map(s => s.target).join(', ')} safe & operating.`}
               </text>
             </g>
           )}
