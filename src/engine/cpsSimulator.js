@@ -73,8 +73,36 @@ export const ATTACK_SCENARIOS = {
     symptom: 'Water is pouring out of the pipe even though the computer commanded the valve to CLOSE.',
     traditionalMistake: 'Old tools blame the water sensor and think it is glitching, while 60,000 Liters of water leak away.',
     plainMathProof: 'The sensor was telling the truth: water was really leaking. The computer command was 0%, but the physical valve was stuck at 100%.',
-    plainFix: 'We automatically divert water to a backup pipe and stop the water leak instantly.',
+  },
+  ALL_PATHS_BLOCKED: {
+    id: 'ALL_PATHS_BLOCKED',
+    name: 'All Alternate Paths Blocked (Total Bypass Gridlock)',
+    layer: 'ACTUATOR',
+    layerName: 'Physical Hydraulics (Multi-Path Blockade)',
+    target: 'All Transfer & Bypass Conduits',
+    targetNode: 'valve',
+    isAllPathsBlocked: true,
+    description: 'The hacker jammed the primary transfer pipe AND simultaneously blocked all alternate bypass conduits.',
+    symptom: 'Total hydraulic gridlock! Primary valve blocked and alternate bypass valve jammed shut. Pressure surging toward pipe rupture.',
+    traditionalMistake: 'Old IT tools panic and repeatedly issue valve commands until hydraulic pressure ruptures the steel pipeline, destroying the plant.',
+    plainMathProof: 'Bernoulli Incompressible Fluid Law: Kinetic inflow (42.5 L/s) slamming into zero outflow generates destructive water hammer shockwave (ΔP > 8.0 bar).',
+    plainFix: 'AquaShield mechanical pressure-relief disc vents surge pressure, decouples upstream pump P-101, and redirects water into the internal recirculation loop back to Reservoir Tank 1. 0 Liters lost.',
     color: '#ff2a5f'
+  },
+  POWER_GRID_BLACKOUT: {
+    id: 'POWER_GRID_BLACKOUT',
+    name: 'Widespread Power Grid Blackout (Total 0V Shutdown)',
+    layer: 'CONTROLLER',
+    layerName: 'Electrical Power Grid (0V Blackout)',
+    target: 'Main Power Distribution Bus',
+    targetNode: 'power',
+    isPowerBlackout: true,
+    description: 'A complete power outage or cyber grid attack cut electrical power to 0 volts across all facility pumps and digital computers.',
+    symptom: 'Total electrical blackout (0V AC)! All electric pumps and SCADA computers have shut down.',
+    traditionalMistake: 'Traditional computerized systems go blind and crash, shutting off all municipal drinking water to the city for days.',
+    plainMathProof: 'Natural Gravity Siphon Law (P = ρgh): Water elevation gradient between Tank 1 (elevated) and Tank 4 (ground) generates continuous passive head pressure of 1.6 bar without electricity.',
+    plainFix: 'Fail-secure mechanical spring-return valves immediately snap into open posture with 0V power. Passive gravity-flow filtration continues supplying 18.5 L/s clean water with zero electricity.',
+    color: '#eab308'
   }
 };
 
@@ -255,6 +283,8 @@ export class CPSSimulator {
     const hasController = scns.some(s => s.id === 'CONTROLLER_HIJACK' || s.layer === 'CONTROLLER');
     const hasFirmware = scns.some(s => s.id === 'FIRMWARE_ROOTKIT' || s.layer === 'FIRMWARE');
     const hasActuator = scns.some(s => s.id === 'ACTUATOR_JAM' || s.layer === 'ACTUATOR');
+    const hasAllPathsBlocked = scns.some(s => s.id === 'ALL_PATHS_BLOCKED' || s.isAllPathsBlocked);
+    const hasPowerBlackout = scns.some(s => s.id === 'POWER_GRID_BLACKOUT' || s.isPowerBlackout);
 
     // 1. Sensor Spoof
     if (hasSensor) {
@@ -297,13 +327,43 @@ export class CPSSimulator {
     }
 
     // 5. Actuator Jam
-    if (hasActuator) {
+    if (hasActuator && !hasAllPathsBlocked) {
       if (this.phase === 'RESOLVED') {
         this.sensors.flowOutflow = 39.0;
         this.layers.ACTUATOR.status = 'BACKUP_PIPE_OPEN';
       } else {
         this.sensors.flowOutflow = 65.0;
         this.layers.ACTUATOR.status = this.phase === 'LOCALIZED' ? 'COMPROMISED' : 'SUSPECT';
+      }
+    }
+
+    // 6. Special Judge Challenge 1: ALL Alternate Paths Blocked (Total Hydraulic Gridlock)
+    if (hasAllPathsBlocked) {
+      if (this.phase === 'RESOLVED') {
+        this.sensors.flowOutflow = 38.0;
+        this.sensors.pressureBar = 2.4;
+        this.layers.ACTUATOR.status = 'RECIRCULATION_LOOP_ACTIVE';
+      } else {
+        this.sensors.flowOutflow = 0.0;
+        this.sensors.pressureBar = 7.8;
+        this.layers.ACTUATOR.status = this.phase === 'LOCALIZED' ? 'COMPROMISED' : 'SUSPECT';
+      }
+    }
+
+    // 7. Special Judge Challenge 2: Total Power Grid Blackout (0V Facility Shutdown)
+    if (hasPowerBlackout) {
+      if (this.phase === 'RESOLVED') {
+        this.sensors.flowInflow = 0.0;
+        this.sensors.flowOutflow = 18.5; // Passive gravity siphon flow (P = rho*g*h)
+        this.sensors.pressureBar = 1.6; // Gravity static head
+        this.layers.ACTUATOR.status = 'SPRING_FAIL_SAFE_OPEN';
+      } else {
+        this.sensors.flowInflow = 0.0;
+        this.sensors.flowOutflow = 0.0;
+        this.sensors.pressureBar = 0.4;
+        Object.keys(this.layers).forEach(layerKey => {
+          this.layers[layerKey].status = 'BLACKOUT_0V';
+        });
       }
     }
 

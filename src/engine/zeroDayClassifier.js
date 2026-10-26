@@ -25,6 +25,74 @@ export function classifyCustomHackerPrompt(promptText) {
     };
   }
 
+  // Special Judge Scenario 1: All Alternate Paths Blocked (Total Hydraulic Gridlock)
+  if (
+    p.includes('all path') ||
+    p.includes('multiple path') ||
+    p.includes('bypass block') ||
+    p.includes('alternate path') ||
+    p.includes('all alternate') ||
+    p.includes('gridlock') ||
+    (p.includes('block') && p.includes('alternate')) ||
+    (p.includes('block') && p.includes('all'))
+  ) {
+    return {
+      id: 'ALL_PATHS_BLOCKED',
+      isCustom: true,
+      isAllPathsBlocked: true,
+      name: 'All Alternate Paths Blocked (Total Bypass Gridlock)',
+      rawPrompt: promptText,
+      layer: 'ACTUATOR',
+      layerName: 'Physical Hydraulics (Multi-Path Blockade)',
+      target: 'All Primary & Bypass Conduits',
+      targetNode: 'valve',
+      componentType: 'valve',
+      description: 'The hacker jammed the primary transfer pipe AND simultaneously blocked all alternate bypass conduits.',
+      symptom: 'Total hydraulic gridlock! Primary valve blocked and alternate bypass valve jammed shut. Pressure surging toward pipe rupture (7.8 bar).',
+      traditionalMistake: 'Old IT tools panic and repeatedly cycle commands until hydraulic pressure ruptures the steel pipeline, destroying the plant.',
+      plainMathProof: 'Bernoulli Incompressible Fluid Law: Kinetic inflow (42.5 L/s) slamming into zero outflow generates destructive water hammer shockwave (ΔP > 7.8 bar).',
+      plainFix: 'AquaShield mechanical pressure-relief disc vents surge pressure to 2.4 bar, decouples upstream pump P-101, and redirects water into the internal recirculation loop back to Reservoir Tank 1. 0 Liters lost.',
+      color: '#ff2a5f',
+      physicsImpact: { tank1Delta: 10, tank2Delta: 15, tank3Delta: -10, tank4Delta: -10, pressureDelta: 4.6, flowDelta: -39 },
+      swatCorrelation: 'SWaT Actuator Gridlock Benchmark (Multi-Valve Simultaneous Blockade)'
+    };
+  }
+
+  // Special Judge Scenario 2: Widespread Power Grid Blackout (Total 0V Shutdown)
+  if (
+    p.includes('power shut') ||
+    p.includes('power outage') ||
+    p.includes('blackout') ||
+    p.includes('power cut') ||
+    p.includes('power fail') ||
+    p.includes('0v') ||
+    p.includes('0 volt') ||
+    p.includes('electricity') ||
+    p.includes('grid shut') ||
+    p.includes('grid fail')
+  ) {
+    return {
+      id: 'POWER_GRID_BLACKOUT',
+      isCustom: true,
+      isPowerBlackout: true,
+      name: 'Widespread Power Grid Blackout (Total 0V Shutdown)',
+      rawPrompt: promptText,
+      layer: 'CONTROLLER',
+      layerName: 'Electrical Power Grid (0V Blackout)',
+      target: 'Main Power Distribution Bus',
+      targetNode: 'power',
+      componentType: 'controller',
+      description: 'A complete power outage or cyber grid attack cut electrical power to 0 volts across all facility pumps and digital computers.',
+      symptom: 'Total electrical blackout (0V AC)! All electric pumps and SCADA computers have shut down. 0 RPM on all turbines.',
+      traditionalMistake: 'Traditional computerized systems go blind and crash, shutting off all municipal drinking water to the city for days.',
+      plainMathProof: 'Natural Gravity Siphon Law (P = ρgh): Water elevation gradient between Tank 1 (elevated) and Tank 4 (ground) generates continuous passive head pressure of 1.6 bar without electricity.',
+      plainFix: 'Fail-secure mechanical spring-return valves immediately snap into open posture with 0V power. Passive gravity-flow filtration continues supplying 18.5 L/s clean water with zero electricity.',
+      color: '#eab308',
+      physicsImpact: { tank1Delta: -8, tank2Delta: -4, tank3Delta: 5, tank4Delta: 8, pressureDelta: -1.6, flowDelta: -20.5 },
+      swatCorrelation: 'SWaT Power Loss & Grid Disturbance Benchmark'
+    };
+  }
+
   // 1. Identify Target Component & Node
   let targetNode = 'tank2';
   let target = 'Water Treatment Component';

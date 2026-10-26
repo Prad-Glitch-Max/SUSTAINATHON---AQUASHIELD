@@ -4,6 +4,8 @@ import { classifyCustomHackerPrompt } from '../engine/zeroDayClassifier';
 import { sound } from '../utils/soundEffects';
 
 const QUICK_ZERO_DAY_CHIPS = [
+  { label: '🚫 Judge Challenge: Hacker Blocks ALL Alternate Paths', prompt: 'Hacker blocks primary pipe and jams all alternate bypass conduits causing total gridlock' },
+  { label: '🔌 Judge Challenge: Total Power Shutdown (0V Blackout)', prompt: 'Widespread power blackout cuts electrical grid to 0 volts across all pumps and controllers' },
   { label: '🧪 Chlorine Chemical Overdose (Tank 3)', prompt: 'Inject 6.8 ppm chlorine chemical overdose into Tank 3 disinfectant' },
   { label: 'Pump 1 Voltage Drop & Turbine Cavitation', prompt: 'Slashing electrical voltage to Pump 1 motor causing severe hydraulic cavitation' },
   { label: '🌐 Modbus TCP SYN-Flood Delay on Network Wire', prompt: 'Flooding Modbus TCP industrial bus with 50,000 delayed packets per second' },

@@ -178,6 +178,62 @@ const STAGE_DETAILS = {
       detail: 'AquaShield activates the motorized secondary diverter valve and closes upstream shutoff gate #2 in 580 milliseconds.',
       contrast: 'Leak stopped instantly! 60,000 Liters of purified drinking water saved from waste with zero plant downtime.'
     }
+  },
+  ALL_PATHS_BLOCKED: {
+    targetName: 'All Primary & Bypass Conduits (Total Blockade)',
+    layerName: 'Physical Hydraulics (Multi-Path Blockade)',
+    step1: {
+      badge: 'MULTI-PATH ATTACK INJECTED',
+      title: 'Hacker Jammed Primary Valve AND Blocked All Bypass Paths',
+      detail: 'The attacker maliciously closed the primary transfer valve AND simultaneously jammed the alternate bypass conduit shut, locking all downstream conduits.',
+      contrast: 'Old security systems panic! They blindly keep pumping water into blocked pipes until water hammer pressure ruptures the steel pipeline, destroying the plant.'
+    },
+    step2: {
+      badge: 'WATER HAMMER SURGE AUDIT',
+      title: 'AquaShield Detects Bernoulli Incompressible Flow Shockwave',
+      detail: 'Inflow from Tank 1 (42.5 L/s) slamming into zero outflow generates extreme kinetic back-pressure (ΔP surging > 7.8 bar).',
+      contrast: 'Bernoulli Fluid Mechanics dictate immediate pipe bursting unless pressure is vented and fluid momentum is safely dissipated.'
+    },
+    step3: {
+      badge: 'TOTAL GRIDLOCK IDENTIFIED',
+      title: 'Pinpointed: Zero Outflow Path in All Forward Conduits',
+      detail: 'AquaShield algorithm identifies that neither primary pipe nor secondary bypass is physically open. Forward transmission is impossible.',
+      contrast: 'Traditional software crashes or waits for human operators to arrive on site while pipes burst.'
+    },
+    step4: {
+      badge: 'AUTONOMOUS SELF-HEALING COMPLETE',
+      title: 'Emergency Relief Vent & Recirculation Loop Activated',
+      detail: 'Mechanical rupture relief disc vents surge pressure to safe 2.4 bar, upstream pump P-101 decouples, and fluid is routed through the Emergency Recirculation Loop back to Reservoir Tank 1.',
+      contrast: 'Zero pipe bursts. Zero liters wasted. Fluid safely loops in internal containment until actuators are cleared.'
+    }
+  },
+  POWER_GRID_BLACKOUT: {
+    targetName: 'Facility 3-Phase AC Electrical Power Grid',
+    layerName: 'Electrical Power Grid (0V Total Blackout)',
+    step1: {
+      badge: 'BLACKOUT BREACH INJECTED',
+      title: 'Complete 0V Electrical Power Grid Failure',
+      detail: 'A cyber assault on the electrical substation or physical grid failure cuts electrical power to 0 volts across all facility pumps, motors, and SCADA computers.',
+      contrast: 'Traditional automated plants go completely dark and blind, halting all municipal drinking water to the city for days.'
+    },
+    step2: {
+      badge: 'FAIL-SAFE AUDIT IN PROGRESS',
+      title: 'AquaShield Passive Energy Audit: Zero Voltage Detected',
+      detail: 'Voltage drops to 0.0V AC. Electric pumps P-101 & P-102 coast down to 0 RPM. Active digital telemetry ceases.',
+      contrast: 'Cyber systems with no physical fail-safes are paralyzed. AquaShield relies on fail-secure physical mechanics.'
+    },
+    step3: {
+      badge: 'ROOT CAUSE PINPOINTED',
+      title: 'Pinpointed: External Grid Power Blackout (0V)',
+      detail: 'Plant hydraulics, pipes, and tanks are 100% undamaged. Sole cause is loss of external electrical grid power.',
+      contrast: 'Old systems require manual backup generator startup taking 45-60 minutes.'
+    },
+    step4: {
+      badge: 'AUTONOMOUS SELF-HEALING COMPLETE',
+      title: 'Passive Gravity Siphon & Mechanical Spring Valves Activated',
+      detail: 'Fail-secure spring-return mechanical valves snap into open posture with 0V power. Natural gravity elevation head (P = ρgh) drives 18.5 L/s continuous clean drinking water to the city with ZERO electricity.',
+      contrast: 'City clean water supply remains active 24/7 even during total metropolitan blackout!'
+    }
   }
 };
 
@@ -301,6 +357,75 @@ export default function InteractiveControlBar({
       setElapsedSec(9.5);
     }, 8500);
     timersRef.current.push(timerStage4);
+  };
+
+  const handleLaunchJudgeChallenge = (scenarioKey) => {
+    if (!isNominal && !isResolved) return;
+    clearAllTimers();
+    onSelectScenarioKeys([scenarioKey]);
+
+    if (isAutoPilot) {
+      if (onChangeAutoStage) onChangeAutoStage(1);
+      setProgressPercent(25);
+      setElapsedSec(0.0);
+
+      sound.playAlarm();
+      onLaunchAttack([scenarioKey]);
+
+      setTimeout(() => {
+        document.getElementById('scada-facility-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+
+      const startTime = Date.now();
+      const intervalId = setInterval(() => {
+        const elapsed = (Date.now() - startTime) / 1000;
+        setElapsedSec(Math.min(elapsed, 9.5));
+      }, 100);
+      timersRef.current.push(intervalId);
+
+      const timerStage2 = setTimeout(() => {
+        sound.playScan();
+        if (onChangeAutoStage) onChangeAutoStage(2);
+        setProgressPercent(55);
+      }, 2800);
+      timersRef.current.push(timerStage2);
+
+      const timerStage3 = setTimeout(() => {
+        sound.playScan();
+        onLocalize();
+        if (onChangeAutoStage) onChangeAutoStage(3);
+        setProgressPercent(80);
+      }, 5800);
+      timersRef.current.push(timerStage3);
+
+      const timerStage4 = setTimeout(() => {
+        sound.playSuccess();
+        try {
+          confetti({
+            particleCount: 50,
+            spread: 60,
+            origin: { y: 0.75 },
+            colors: ['#00f2fe', '#34d399', '#38bdf8']
+          });
+        } catch {
+          // safe fallback
+        }
+        onDeployFix();
+        if (onChangeAutoStage) onChangeAutoStage(4);
+        setProgressPercent(100);
+        clearInterval(intervalId);
+        setElapsedSec(9.5);
+      }, 8500);
+      timersRef.current.push(timerStage4);
+    } else {
+      sound.playAlarm();
+      if (onChangeAutoStage) onChangeAutoStage(1);
+      setProgressPercent(33);
+      onLaunchAttack([scenarioKey]);
+      setTimeout(() => {
+        document.getElementById('scada-facility-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
   };
 
   const handleManualLaunch = () => {
@@ -454,6 +579,83 @@ export default function InteractiveControlBar({
         </div>
       </div>
 
+      {/* Review 1 Judge Inquiries / Edge Cases (1-Click Live Demos) */}
+      <div
+        style={{
+          background: 'rgba(15, 23, 42, 0.75)',
+          border: '1px solid rgba(245, 158, 11, 0.35)',
+          borderRadius: '12px',
+          padding: '10px 14px',
+          marginBottom: '14px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '10px'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '0.78rem', fontWeight: 900, color: '#fbbf24', letterSpacing: '0.04em' }}>
+            REVIEW 1 JUDGE CHALLENGES (1-CLICK LIVE DEMO):
+          </span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => handleLaunchJudgeChallenge('ALL_PATHS_BLOCKED')}
+            disabled={!isNominal && !isResolved}
+            style={{
+              background: selectedScenarioKeys.includes('ALL_PATHS_BLOCKED')
+                ? 'rgba(255, 42, 95, 0.25)'
+                : 'rgba(255, 42, 95, 0.1)',
+              border: selectedScenarioKeys.includes('ALL_PATHS_BLOCKED')
+                ? '1.5px solid #ff2a5f'
+                : '1px solid rgba(255, 42, 95, 0.35)',
+              color: '#fda4af',
+              padding: '6px 14px',
+              borderRadius: '20px',
+              fontSize: '0.74rem',
+              fontWeight: 800,
+              cursor: !isNominal && !isResolved ? 'not-allowed' : 'pointer',
+              opacity: !isNominal && !isResolved ? 0.45 : 1,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'all 0.2s ease',
+              boxShadow: selectedScenarioKeys.includes('ALL_PATHS_BLOCKED') ? '0 0 12px rgba(255,42,95,0.4)' : 'none'
+            }}
+          >
+            <span>🚫 1. What if Hacker Blocks ALL Alternate Paths?</span>
+          </button>
+
+          <button
+            onClick={() => handleLaunchJudgeChallenge('POWER_GRID_BLACKOUT')}
+            disabled={!isNominal && !isResolved}
+            style={{
+              background: selectedScenarioKeys.includes('POWER_GRID_BLACKOUT')
+                ? 'rgba(234, 179, 8, 0.25)'
+                : 'rgba(234, 179, 8, 0.1)',
+              border: selectedScenarioKeys.includes('POWER_GRID_BLACKOUT')
+                ? '1.5px solid #eab308'
+                : '1px solid rgba(234, 179, 8, 0.35)',
+              color: '#fef08a',
+              padding: '6px 14px',
+              borderRadius: '20px',
+              fontSize: '0.74rem',
+              fontWeight: 800,
+              cursor: !isNominal && !isResolved ? 'not-allowed' : 'pointer',
+              opacity: !isNominal && !isResolved ? 0.45 : 1,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'all 0.2s ease',
+              boxShadow: selectedScenarioKeys.includes('POWER_GRID_BLACKOUT') ? '0 0 12px rgba(234,179,8,0.4)' : 'none'
+            }}
+          >
+            <span>🔌 2. What if there is a Total Power Shutdown (0V Blackout)?</span>
+          </button>
+        </div>
+      </div>
+
       {/* Multi-Attack Quick Presets */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', flexWrap: 'wrap' }}>
         {PRESETS.map((p, idx) => {
@@ -577,7 +779,7 @@ export default function InteractiveControlBar({
               transition: 'all 0.25s ease'
             }}
           >
-            <Zap size={22} color={isMulti ? '#ff2a5f' : '#ffffff'} />
+            <Flame size={22} color={isMulti ? '#ff2a5f' : '#ffffff'} />
             <span>
               {isMulti
                 ? `Launch ${selectedScenarioKeys.length} Cyber Attacks & Watch AquaShield Fix All Simultaneously`
