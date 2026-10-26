@@ -283,23 +283,25 @@ export const DEFAULT_BLUEPRINT_ID = 'BLUEPRINT_4_CASCADE';
 // Helper to compute node coordinates for arbitrary tank counts (3 to 6)
 export function getBlueprintLayout(blueprint) {
   const count = blueprint.tankCount || blueprint.tanks.length;
-  const canvasWidth = 960;
-  const canvasHeight = 310;
+  // Spacious high-definition SCADA canvas (spacious horizontal and vertical tiers)
+  const canvasWidth = 1080;
+  const canvasHeight = 380;
   
   // Margins
-  const marginLeft = 60;
-  const marginRight = 60;
+  const marginLeft = 56;
+  const marginRight = 56;
   const usableWidth = canvasWidth - marginLeft - marginRight;
   const spacing = usableWidth / (count - 1);
   
-  // Tank dimensions scaled by count
-  const tankWidth = count === 3 ? 116 : count === 4 ? 100 : count === 5 ? 88 : 78;
-  const tankHeight = 145;
-  const tankY = 130;
+  // Tank dimensions scaled proportionally by count
+  const tankWidth = count === 3 ? 116 : count === 4 ? 98 : count === 5 ? 86 : 74;
+  const tankHeight = 138;
+  const tankY = 116;
   
   const tankLayouts = blueprint.tanks.map((tank, i) => {
     const centerX = marginLeft + i * spacing;
     const x = centerX - tankWidth / 2;
+    const headerWidth = Math.max(92, tankWidth + 12);
     return {
       ...tank,
       index: i,
@@ -308,8 +310,8 @@ export function getBlueprintLayout(blueprint) {
       y: tankY,
       width: tankWidth,
       height: tankHeight,
-      headerWidth: Math.max(90, tankWidth + 14),
-      headerX: centerX - Math.max(90, tankWidth + 14) / 2
+      headerWidth,
+      headerX: centerX - headerWidth / 2
     };
   });
 

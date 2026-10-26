@@ -10,6 +10,8 @@ import AdaptiveLearningConsole from './components/AdaptiveLearningConsole';
 import { CPSSimulator } from './engine/cpsSimulator';
 import { adaptiveLearningEngine } from './engine/adaptiveLearningEngine';
 import { LayoutDashboard, Database, ShieldCheck } from 'lucide-react';
+import confetti from 'canvas-confetti';
+import { sound } from './utils/soundEffects';
 
 export default function App() {
   const simRef = useRef(null);
@@ -23,6 +25,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('lab'); // 'lab' | 'dataset'
   const [showPostMortem, setShowPostMortem] = useState(false);
   const prevPhaseRef = useRef(simState.phase);
+  const customAttackTimersRef = useRef([]);
 
   // Trigger incident summary modal upon resolution
   useEffect(() => {
@@ -47,6 +50,8 @@ export default function App() {
 
   // Blueprint Switcher Handler
   const handleSelectBlueprint = (blueprintId) => {
+    customAttackTimersRef.current.forEach(t => clearTimeout(t));
+    customAttackTimersRef.current = [];
     setShowPostMortem(false);
     setAutoStage(0);
     simRef.current.setBlueprint(blueprintId);
@@ -61,41 +66,81 @@ export default function App() {
   };
 
   // Step 1b: Launch Custom Zero-Day Attack from Hacker Prompt Console
+  // Slowed down smoothly to ~8.0s - 9.4s so judges & operators can observe every phase!
   const handleLaunchCustomAttack = (customScenario) => {
+    // Clear any previous running sequence
+    customAttackTimersRef.current.forEach(t => clearTimeout(t));
+    customAttackTimersRef.current = [];
+
     setSelectedScenarioKeys([customScenario]);
     handleLaunchAttack([customScenario]);
 
     const isLearned = simRef.current.isLearnedReflex;
 
     if (isLearned) {
-      // ✦ FAST-PATH LEARNED REFLEX: Rectified instantaneously (<15ms)!
+      // ✦ FAST-PATH LEARNED REFLEX: Paced cleanly (~7.8s) so memory recall & fast fix are clearly visible
       setAutoStage(1);
-      setTimeout(() => {
-        simRef.current.localizeAttack();
-        setSimState({ ...simRef.current.getState() });
-        setAutoStage(3);
-      }, 400);
-      setTimeout(() => {
-        simRef.current.deployFix();
-        setSimState({ ...simRef.current.getState() });
-        setAutoStage(4);
-      }, 950);
-    } else {
-      // 🔍 NOVEL ATTACK: Full 8.5s exploratory diagnostic search
-      setAutoStage(1);
-      setTimeout(() => {
+      
+      const t1 = setTimeout(() => {
+        sound.playScan();
         setAutoStage(2);
-      }, 2800);
-      setTimeout(() => {
+      }, 2400);
+
+      const t2 = setTimeout(() => {
+        sound.playScan();
         simRef.current.localizeAttack();
         setSimState({ ...simRef.current.getState() });
         setAutoStage(3);
-      }, 5800);
-      setTimeout(() => {
+      }, 5000);
+
+      const t3 = setTimeout(() => {
+        sound.playSuccess();
+        try {
+          confetti({
+            particleCount: 110,
+            spread: 75,
+            origin: { y: 0.65 },
+            colors: ['#00f2fe', '#10b981', '#38bdf8', '#34d399']
+          });
+        } catch {}
         simRef.current.deployFix();
         setSimState({ ...simRef.current.getState() });
         setAutoStage(4);
-      }, 8500);
+      }, 7800);
+
+      customAttackTimersRef.current.push(t1, t2, t3);
+    } else {
+      // 🔍 NOVEL ATTACK: Full 9.4s exploratory diagnostic search across physical equations
+      setAutoStage(1);
+
+      const t1 = setTimeout(() => {
+        sound.playScan();
+        setAutoStage(2);
+      }, 3200);
+
+      const t2 = setTimeout(() => {
+        sound.playScan();
+        simRef.current.localizeAttack();
+        setSimState({ ...simRef.current.getState() });
+        setAutoStage(3);
+      }, 6400);
+
+      const t3 = setTimeout(() => {
+        sound.playSuccess();
+        try {
+          confetti({
+            particleCount: 120,
+            spread: 80,
+            origin: { y: 0.65 },
+            colors: ['#00f2fe', '#10b981', '#38bdf8', '#34d399']
+          });
+        } catch {}
+        simRef.current.deployFix();
+        setSimState({ ...simRef.current.getState() });
+        setAutoStage(4);
+      }, 9400);
+
+      customAttackTimersRef.current.push(t1, t2, t3);
     }
   };
 
@@ -211,6 +256,8 @@ export default function App() {
 
   // Reset to Baseline
   const handleReset = () => {
+    customAttackTimersRef.current.forEach(t => clearTimeout(t));
+    customAttackTimersRef.current = [];
     setShowPostMortem(false);
     setAutoStage(0);
     simRef.current.restoreBaseline();
