@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>AquaShield CPS — Hackathon Master Guide & Presentation Dossier</title>
+  <title>AquaShield CPS — Hackathon Master Presentation Guide</title>
   <style>
     @page {
       size: A4;
@@ -20,17 +20,16 @@
       color: #1e293b;
       background: #ffffff;
       line-height: 1.42;
-      font-size: 9pt;
+      font-size: 8.8pt;
     }
 
     .page-break {
       page-break-after: always;
     }
 
-    /* Header styling */
     .doc-header {
       border-bottom: 2px solid #0284c7;
-      padding-bottom: 8px;
+      padding-bottom: 6px;
       margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
@@ -38,7 +37,7 @@
     }
 
     .doc-title {
-      font-size: 18pt;
+      font-size: 17pt;
       font-weight: 800;
       color: #0f172a;
       letter-spacing: -0.02em;
@@ -56,10 +55,8 @@
       font-size: 7.5pt;
       color: #64748b;
       font-weight: 500;
-      line-height: 1.3;
     }
 
-    /* Cards & Boxes */
     .card {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
@@ -79,9 +76,9 @@
     }
 
     h2 {
-      font-size: 11pt;
+      font-size: 10.5pt;
       color: #0f172a;
-      font-weight: 700;
+      font-weight: 800;
       margin-top: 10px;
       margin-bottom: 6px;
       border-bottom: 1px solid #e2e8f0;
@@ -89,25 +86,24 @@
     }
 
     h3 {
-      font-size: 9.5pt;
+      font-size: 9pt;
       color: #1e293b;
       font-weight: 700;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
 
     p {
-      margin-bottom: 6px;
+      margin-bottom: 5px;
     }
 
-    /* Images */
     .img-container {
-      margin: 8px 0 6px 0;
+      margin: 6px 0;
       text-align: center;
     }
 
     .img-container img {
       max-width: 100%;
-      height: 255px;
+      height: 250px;
       object-fit: cover;
       object-position: top;
       border-radius: 6px;
@@ -122,7 +118,6 @@
       font-style: italic;
     }
 
-    /* Grid layouts */
     .grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -130,11 +125,10 @@
       margin-bottom: 8px;
     }
 
-    /* Script formatting */
     .pitch-step {
       background: #f8fafc;
       border-left: 3px solid #0284c7;
-      padding: 7px 10px;
+      padding: 6px 10px;
       margin-bottom: 8px;
       border-radius: 0 5px 5px 0;
     }
@@ -142,10 +136,10 @@
     .pitch-step-header {
       display: flex;
       justify-content: space-between;
-      font-weight: 700;
+      font-weight: 800;
       font-size: 8.5pt;
       color: #0369a1;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
 
     .pitch-quote {
@@ -155,28 +149,11 @@
       line-height: 1.4;
     }
 
-    ul, ol {
-      margin-left: 16px;
-      margin-bottom: 6px;
-    }
-
-    li {
-      margin-bottom: 2px;
-    }
-
-    code {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 8pt;
-      background: #e2e8f0;
-      padding: 1px 4px;
-      border-radius: 3px;
-    }
-
     table {
       width: 100%;
       border-collapse: collapse;
       margin: 8px 0;
-      font-size: 8pt;
+      font-size: 7.8pt;
     }
 
     th, td {
@@ -194,168 +171,147 @@
 </head>
 <body>
 
-  <!-- ================= PAGE 1: Overview & Visual Proof ================= -->
+  <!-- ================= PAGE 1 ================= -->
   <div class="doc-header">
     <div>
-      <div class="doc-title">AQUASHIELD CPS</div>
-      <div class="doc-subtitle">Physics-Informed Cyber-Physical Attack Localization & Resilient Recovery</div>
+      <div class="doc-title">AQUASHIELD CPS — PRESENTATION GUIDE</div>
+      <div class="doc-subtitle">Finding & Fixing Cyber Attacks on Clean Water Plants (In Plain English)</div>
     </div>
     <div class="doc-meta">
       <div><strong>Sustainathon 2024</strong> • VIT Vellore</div>
-      <div>UN SDG 6 & SDG 9 • Hackathon Presentation Dossier</div>
+      <div>UN SDG 6: Clean Water • Zero Jargon Presentation Dossier</div>
     </div>
   </div>
 
   <div class="problem-box">
-    <strong>Official Problem Statement:</strong><br>
-    <em>“The Attack-Localization Problem — Detecting an anomaly does not necessarily reveal whether its origin is a sensor, communication channel, controller, firmware component or physical actuator. Cybersecurity systems can identify abnormal behaviour without providing sufficient information about where an attack originated or how it propagated through a cyber-physical system.”</em>
+    <strong>The Official Problem Statement (What the judges asked):</strong><br>
+    <em>“Detecting an anomaly does not necessarily reveal whether its origin is a sensor, communication channel, controller, firmware component or physical actuator. Cybersecurity systems can identify abnormal behaviour without providing sufficient information about where an attack originated.”</em>
   </div>
 
-  <h2>1. Executive Summary in Layman's Terms</h2>
+  <h2>1. The Problem in Plain English (The Human Body Analogy)</h2>
   <p>
-    Think of modern sustainable infrastructure (like smart water treatment facilities, desalination plants, or solar microgrids) like the human body: sensors are the eyes, communication wires are the nerves, the controller (PLC) is the brain, firmware is the brain's instincts, and actuators (pumps/valves) are the muscles.
+    Think of a modern clean water recycling plant like the human body: <strong>sensors</strong> are the eyes, <strong>network cables</strong> are the nerves, the <strong>controller</strong> is the brain, <strong>software</strong> is the instincts, and <strong>water valves/pumps</strong> are the muscles.
   </p>
   <p>
-    <strong>The Problem:</strong> When a cybersecurity alarm goes off, existing tools only know <em>“something feels wrong”</em>. They cannot tell if a thermometer is lying, a nerve wire was intercepted, the brain was hacked, or a muscle is jammed. In a water plant, guessing wrong causes panic operators to shut down the plant and dump hundreds of thousands of liters of clean drinking water into the sewer.
+    <strong>The Big Issue:</strong> Today's security tools only sound an alarm saying <em>“Something feels wrong!”</em>. They cannot tell if a thermometer is lying, a cable is cut, the computer was hacked, or a valve is jammed. Because operators don't know what broke, they panic, shut down the entire plant, and dump over <strong>150,000 Liters of clean drinking water</strong> into the drain!
   </p>
   <p>
-    <strong>The AquaShield Solution:</strong> Hackers can forge digital network packets or fake sensor readings, but <strong>they cannot violate the laws of physics</strong>. AquaShield uses a real-time Physics Digital Twin to cross-verify mass conservation equations ($\Delta V = \int (Q_{in} - Q_{out}) dt$). In under <strong>38 milliseconds</strong>, it isolates the exact guilty layer, quarantines it, and engages a virtual estimator so the plant never stops producing clean water.
+    <strong>The AquaShield Solution:</strong> Hackers can forge digital computer numbers, but <strong>they cannot break the laws of physics</strong>. AquaShield automatically compares incoming water vs outgoing water. In less than <strong>38 milliseconds</strong>, it finds the exact broken part, turns on a software backup, and fixes the plant <strong>100% automatically without dumping any water</strong>.
   </p>
 
-  <h2>2. Live Running Application: Visual Dashboard</h2>
+  <h2>2. Live Running Dashboard (Visual Proof)</h2>
   <div class="img-container">
     <img src="file:///Users/pradyun/.gemini/antigravity-ide/brain/1e2298a6-4ef1-480f-9562-2ea9dde771d5/aquashield_live_running_app.png" alt="AquaShield CPS Live Dashboard Screenshot">
-    <div class="img-caption">Figure 1: AquaShield CPS running live — L1 Sensor Spoofing attack injected, causal red laser locking onto Sensor SEN-204, and the 5-layer localization matrix isolating the breach in 38ms while the plant remains 99.4% operational.</div>
+    <div class="img-caption">Figure 1: AquaShield CPS live demo — Attack launched, red laser locks onto the sensor, isolating the problem in 38ms while clean drinking water keeps flowing.</div>
   </div>
 
   <div class="page-break"></div>
 
-  <!-- ================= PAGE 2: Architecture & Features ================= -->
+  <!-- ================= PAGE 2 ================= -->
   <div class="doc-header">
     <div>
-      <div class="doc-title">AQUASHIELD CPS</div>
-      <div class="doc-subtitle">Section 2: 5-Layer CPS Architecture & Feature Deep-Dive</div>
+      <div class="doc-title">AQUASHIELD CPS — PRESENTATION GUIDE</div>
+      <div class="doc-subtitle">Section 2: The 5 Layers & How the App Works</div>
     </div>
     <div class="doc-meta">
-      <div>Page 2 • Technical Architecture</div>
+      <div>Page 2 • Plant Architecture</div>
     </div>
   </div>
 
-  <h2>3. The 5-Layer CPS Architecture (Direct Prompt Mapping)</h2>
-  <p style="font-size: 8.5pt;">Our system explicitly monitors, models, and isolates each of the five layers highlighted in the hackathon prompt:</p>
+  <h2>3. The 5 Layers (Explained in Everyday Language)</h2>
+  <p style="font-size: 8.5pt;">The competition problem specifically listed 5 places where an attack can hide. Here is how AquaShield tests each one:</p>
 
   <table>
     <thead>
       <tr>
-        <th style="width: 18%;">CPS Layer</th>
-        <th style="width: 22%;">Facility Component</th>
-        <th style="width: 28%;">Attack Scenario Implemented</th>
-        <th style="width: 32%;">AquaShield Localization Proof</th>
+        <th style="width: 18%;">Layer (Analogy)</th>
+        <th style="width: 20%;">What Part It Is</th>
+        <th style="width: 30%;">What the Hacker Did</th>
+        <th style="width: 32%;">How AquaShield Solves It Automatically</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><strong>1. Sensor</strong></td>
-        <td>SEN-204 (Level Probe on TNK-102)</td>
-        <td><strong>Telemetry Spoofing:</strong> Reading frozen at 32% while raw inflow is filling tank toward overflow.</td>
-        <td>Mass Conservation Invariant: Observed $dh/dt = 0$, but flow meter proves $Q_{in} - Q_{out} = +3.8$ L/s. Physics violation isolated to sensor.</td>
+        <td><strong>1. Sensor</strong><br><em>(The Eyes)</em></td>
+        <td>Water Level Sensor on Tank 2</td>
+        <td><strong>Fake Reading:</strong> Froze the sensor at 32%, making the tank look empty while it's actually filling up.</td>
+        <td><strong>Virtual Sensor Backup:</strong> Math proves water was flowing in, so level had to rise. We mute the lying sensor and calculate real water level using simple math.</td>
       </tr>
       <tr>
-        <td><strong>2. Channel</strong></td>
-        <td>COMM-BUS-03 (Modbus TCP Port 502)</td>
-        <td><strong>Replay & Jitter Attack:</strong> Injects 385ms network delay and replays stale telemetry timestamps.</td>
-        <td>Temporal Consistency Audit: Packet timestamp skew $\Delta t > 250$ms and sequence jumps isolate the network bus.</td>
+        <td><strong>2. Network Cable</strong><br><em>(The Nerves)</em></td>
+        <td>Modbus Network Wire</td>
+        <td><strong>Cable Jam:</strong> Delayed messages by 385 milliseconds and resent old messages.</td>
+        <td><strong>Backup Wire Switch:</strong> Physical water levels were normal, only cable timestamps were late. Automatically switches messages to backup wireless channel in 38ms.</td>
       </tr>
       <tr>
-        <td><strong>3. Controller</strong></td>
-        <td>PLC-CORE-1 (PID Setpoint Block)</td>
-        <td><strong>Setpoint Hijack:</strong> Attacker overrides membrane pressure target from 3.2 bar to dangerous 8.5 bar.</td>
-        <td>Safety Envelope Violation: Target setpoint exceeds physical hydraulic burst limit (5.0 bar) without authorized token.</td>
+        <td><strong>3. Computer Brain</strong><br><em>(The Brain)</em></td>
+        <td>Factory Control Computer (PLC)</td>
+        <td><strong>Dangerous Command:</strong> Hacked the computer to push water pressure to 8.5 bar to burst pipes.</td>
+        <td><strong>Safety Limit Clamp:</strong> System has hardcoded rule: pipes burst at 5 bar. Automatically clamps pressure back down to a safe 3.2 bar.</td>
       </tr>
       <tr>
-        <td><strong>4. Firmware</strong></td>
-        <td>FW-ROM-0x7C (Turbine Governor Microcode)</td>
-        <td><strong>Stuxnet Rootkit:</strong> Corrupt microcode hides pump oscillations to cause motor cavitation failure.</td>
-        <td>Hardware Root-of-Trust (RoT): SHA-256 cryptographic hash mismatch (Expected 0x8F9A42... received 0xDEADBEEF).</td>
+        <td><strong>4. Software Code</strong><br><em>(The Instincts)</em></td>
+        <td>Pump Motor Software Code</td>
+        <td><strong>Bad Code (Stuxnet):</strong> Code shakes the motor to break it, while lying to the screen that it's normal.</td>
+        <td><strong>Digital Fingerprint Check:</strong> Checks software code fingerprint. Mismatch caught! Automatically erases bad code and reloads clean original code.</td>
       </tr>
       <tr>
-        <td><strong>5. Actuator</strong></td>
-        <td>ACT-VALVE-202 (Emergency Bleed Solenoid)</td>
-        <td><strong>Mechanical Seizure:</strong> Controller signaled 0% (CLOSED), but valve is physically jammed open at 100%.</td>
-        <td>Actuator Discrepancy Invariant: Command voltage = 0V, but downstream discharge flow velocity = 65.0 L/s.</td>
+        <td><strong>5. Moving Parts</strong><br><em>(The Muscles)</em></td>
+        <td>Emergency Release Valve</td>
+        <td><strong>Stuck Metal Valve:</strong> Solenoid valve physically jammed open at 100%, leaking water.</td>
+        <td><strong>Backup Pipe Diverter:</strong> Computer said CLOSE, but water was leaking. Automatically diverts flow into a backup pipe and stops leak immediately.</td>
       </tr>
     </tbody>
   </table>
 
-  <h2>4. Core Dashboard Features Explained</h2>
+  <h2>4. Key App Features (No Jargon)</h2>
 
   <div class="grid-2">
     <div class="card">
-      <h3>A. Interactive SCADA Digital Twin</h3>
-      <p style="font-size: 8pt;">Simulates a 4-tank continuous water recycling facility:</p>
-      <ul style="font-size: 7.5pt; margin-bottom: 4px;">
-        <li><strong>TNK-101 (Raw Intake):</strong> Inflow sedimentation basin.</li>
-        <li><strong>TNK-102 (Filtration):</strong> Membrane filtration (Houses SEN-204).</li>
-        <li><strong>TNK-103 (RO & Disinfection):</strong> Chlorine dosing & reverse osmosis.</li>
-        <li><strong>TNK-104 (Potable Reservoir):</strong> Clean drinking water supply.</li>
-      </ul>
-      <p style="font-size: 7.5pt; color: #0284c7;">
-        <em>Dynamic Feature:</em> Live animated SVG liquid levels, rotating pump turbines, and red laser tracing to the compromised node.
-      </p>
+      <h3>A. Clean Water Plant (SCADA Twin)</h3>
+      <p style="font-size: 7.8pt;">Full-width view of 4 water treatment tanks (Raw Water $\to$ Filter $\to$ Disinfection $\to$ Pure Drinking Water) with real-time water levels and rotating pump turbines.</p>
     </div>
 
     <div class="card">
-      <h3>B. Traditional IDS vs. AquaShield Comparison</h3>
-      <p style="font-size: 8pt;">Side-by-side benchmark showing the sustainability advantage:</p>
-      <div style="font-size: 7.5pt; background: #fee2e2; padding: 4px 6px; border-radius: 4px; margin-bottom: 4px; color: #991b1b;">
-        <strong>Traditional IDS:</strong> Blind alert $\to$ emergency plant shutdown $\to$ 150,000L clean water dumped $\to$ 4-8 hours manual technician inspection.
-      </div>
-      <div style="font-size: 7.5pt; background: #dcfce7; padding: 4px 6px; border-radius: 4px; color: #166534;">
-        <strong>AquaShield:</strong> Localized in 38ms $\to$ quarantines only the bad node $\to$ switches to virtual estimator $\to$ 0 seconds downtime $\to$ 0L water dumped.
-      </div>
+      <h3>B. Autonomous AI Mode vs Manual</h3>
+      <p style="font-size: 7.8pt;">Click one button and watch the system find the attack and fix it <strong>100% automatically in under 3 seconds</strong>. Switch to Manual mode to inspect each step slowly.</p>
     </div>
   </div>
 
   <div class="grid-2">
     <div class="card">
-      <h3>C. Chaos Injection Studio (Judge Testing Dock)</h3>
-      <p style="font-size: 8pt;">
-        5 dedicated one-click buttons to inject any of the 5 layer attacks live in front of judges, plus a <strong>Restore Nominal Baseline</strong> button that resets the system with sound effects and screen confetti.
-      </p>
+      <h3>C. The 5-Layer Stack (Below Plant)</h3>
+      <p style="font-size: 7.8pt;">5 clean cards across the screen. When an attack happens, <strong>only the broken card turns red</strong>, while the other 4 cards prove they are safe and green.</p>
     </div>
 
     <div class="card">
-      <h3>D. Live SCADA Audit & Math Inspector</h3>
-      <p style="font-size: 8pt;">
-        Real-time industrial event log stream with precise timestamps, alongside dynamic evaluation of the mass balance conservation formula:
-        <code>ΔV = ∫ (Q_in - Q_out) dt = A × (dh/dt)</code>
-      </p>
+      <h3>D. Old Tools vs. AquaShield</h3>
+      <p style="font-size: 7.8pt;">A direct comparison: Old tools panic, shut the plant down, and dump 150,000L of water. AquaShield fixes it in 38ms with <strong>0 seconds of downtime</strong> and zero water wasted.</p>
     </div>
   </div>
 
   <div class="page-break"></div>
 
-  <!-- ================= PAGE 3: Operator Guide & Pitch Script ================= -->
+  <!-- ================= PAGE 3 ================= -->
   <div class="doc-header">
     <div>
-      <div class="doc-title">AQUASHIELD CPS</div>
-      <div class="doc-subtitle">Section 3: Operator Checklist, Pitch Script & Judge Q&A</div>
+      <div class="doc-title">AQUASHIELD CPS — PRESENTATION GUIDE</div>
+      <div class="doc-subtitle">Section 3: Operator Checklist & Winning 2-Minute Script</div>
     </div>
     <div class="doc-meta">
       <div>Page 3 • Presentation Playbook</div>
     </div>
   </div>
 
-  <h2>5. How to Operate the Demo Tomorrow (Step-by-Step)</h2>
+  <h2>5. How to Run the Demo (Simple Checklist)</h2>
   
   <div class="card">
-    <h3 style="color: #0369a1;">Preparation Checklist (5 Minutes Before Judges Arrive)</h3>
     <ol style="font-size: 8pt; margin-bottom: 0;">
-      <li>Open Terminal on your laptop and run: <code>cd /Users/pradyun/Desktop/SUSTAINATHON && npm run dev</code></li>
+      <li>Open Terminal on your Mac and run: <code>cd /Users/pradyun/Desktop/SUSTAINATHON && npm run dev</code></li>
       <li>Open Google Chrome to: <strong>http://localhost:5173</strong></li>
-      <li>Press <strong>F11</strong> (or <code>Cmd + Shift + F</code> on Mac) to enter full-screen mode for the clean SCADA look.</li>
-      <li>Set laptop volume to ~40% so cyber beeps, alarm sirens, and success chimes are clearly audible.</li>
-      <li>Ensure the screen is in the <strong>Nominal Baseline</strong> state (all indicators green).</li>
+      <li>Press <strong>Cmd + Shift + F</strong> (or F11) on Mac to go full-screen.</li>
+      <li>Keep laptop volume at ~40% so judges hear the cyber beeps and victory chimes.</li>
+      <li>Make sure the mode is set to <strong>Autonomous AI (Automatic)</strong>.</li>
     </ol>
   </div>
 
@@ -367,58 +323,45 @@
       <span>0:00 - 0:30</span>
     </div>
     <div class="pitch-quote">
-      “Good morning judges! We are presenting AquaShield CPS, solving the Attack-Localization Problem in critical sustainable infrastructure.<br>
-      In smart water plants and solar grids, standard cybersecurity systems can detect that something is wrong, but they cannot tell you WHERE the attack started — whether a sensor is lying, a network packet was intercepted, a PLC controller was hacked, firmware was modified, or a physical valve is jammed.<br>
-      Because operators cannot localize the root cause, they panic, shut down the facility, and dump hundreds of thousands of liters of clean drinking water.”
+      “Good morning judges! Our project is AquaShield CPS, solving the Attack-Localization Problem in clean water facilities.<br>
+      In water plants, standard cybersecurity alarms can tell you that something is wrong, but they cannot tell you WHERE it started — whether a sensor is lying, a network cable is delayed, the computer was hacked, software is corrupted, or a valve is jammed.<br>
+      Because operators cannot tell what broke, they panic, shut down the facility, and dump hundreds of thousands of liters of clean drinking water into the drain.”
     </div>
   </div>
 
   <div class="pitch-step">
     <div class="pitch-step-header">
-      <span>STEP 2: The Interactive Test (Hand the Mouse to the Judge!)</span>
-      <span>0:30 - 0:45</span>
+      <span>STEP 2: The 1-Click Autonomous Demo (The 'Aha!' Moment)</span>
+      <span>0:30 - 1:15</span>
     </div>
     <div class="pitch-quote">
-      “To show you how we solve this, judge, please click any button in our Chaos Injection Studio below — for example, 'Layer 1: Sensor Spoofing'.”
+      “Now watch our live water recycling plant. I will launch a cyber attack targeting the water level sensor.<br><br>
+      (Click the big blue button: 'Launch Cyber Attack & Watch AquaShield Fix It Automatically')<br><br>
+      Look at what happens: The alarm sounds! Old tools panic because they think the tank is drying up. But in less than 2 seconds, our laser shoots across the plant and locks onto the sensor. AquaShield proved through incoming water flow that the sensor was lying. It immediately mutes the sensor, activates our virtual math backup, and keeps the plant running completely safely!”
     </div>
   </div>
 
   <div class="pitch-step">
     <div class="pitch-step-header">
-      <span>STEP 3: The Localization Proof (The 'Aha!' Moment)</span>
-      <span>0:45 - 1:15</span>
-    </div>
-    <div class="pitch-quote">
-      “Watch what just happened:<br>
-      1. An alarm sounded, and our red causal laser locked onto Sensor SEN-204.<br>
-      2. In our 5-Layer Stack on the right, ONLY Layer 1 is isolated. The other 4 layers are proven completely safe.<br>
-      3. How did we know? Physics! Inflow minus Outflow mathematically requires the tank level to be at 73%, but the hacker locked the sensor reading at 32%.<br>
-      4. In 38 milliseconds, AquaShield quarantined the sensor and engaged our Digital Twin Virtual Estimator.”
-    </div>
-  </div>
-
-  <div class="pitch-step">
-    <div class="pitch-step-header">
-      <span>STEP 4: The Sustainability Punchline & Finale</span>
+      <span>STEP 3: The Sustainability Punchline</span>
       <span>1:15 - 2:00</span>
     </div>
     <div class="pitch-quote">
-      “A traditional IDS would have dumped 150,000 Liters of water and caused 6 hours of downtime. With AquaShield, plant availability stays at 99.4%, clean drinking water keeps flowing, and zero water is wasted.<br>
-      (Click 'Restore Nominal Baseline' -> victory chime plays & confetti triggers!)<br>
-      And with one click, our physical invariants restore nominal operations. Thank you!”
+      “A traditional system would have dumped 150,000 Liters of clean water and taken 6 hours to inspect. With AquaShield, plant availability stays at 99.4%, clean drinking water never stops flowing, and zero water is wasted.<br><br>
+      And as you just saw, the system self-heals 100% automatically without waiting for humans. Thank you!”
     </div>
   </div>
 
-  <h2>7. Answers to the Top 3 Judge Questions</h2>
+  <h2>7. Answers to the Top 3 Judge Questions (Simple Language)</h2>
   <div class="card" style="font-size: 8pt; margin-bottom: 0;">
-    <p><strong>Q1: How is this different from a normal Intrusion Detection System (IDS)?</strong><br>
-    <em>Answer:</em> “Standard IDS only looks at cyber data (CPU, network traffic). They treat physical pumps and water tanks as a black box. AquaShield combines cyber data with physical invariants (mass balance & fluid laws) to tell the difference between a sensor lying vs. an actuator physically breaking.”</p>
+    <p><strong>Q1: Does a human have to go fix it, or does the computer fix it by itself?</strong><br>
+    <em>Answer:</em> “The computer fixes the emergency 100% automatically in less than 2 seconds using software backups so clean water is never dumped. Humans only get an email report later for routine checkups.”</p>
     
-    <p><strong>Q2: Why is it demoed on software instead of hardware?</strong><br>
-    <em>Answer:</em> “Industrial water plants handle tens of thousands of liters of pressurized water. Our software is an industrial-grade Digital Twin running exact ordinary differential equations (ODEs) of fluid mechanics, which is the exact industry-standard architecture used by Siemens and GE Digital.”</p>
+    <p><strong>Q2: How is this different from normal cybersecurity tools?</strong><br>
+    <em>Answer:</em> “Normal tools only look at computer code. They treat water tanks as a black box. AquaShield compares computer data with the real laws of physics (water flowing in vs out) to catch lies instantly.”</p>
 
-    <p style="margin-bottom: 0;"><strong>Q3: What if the attacker targets the network channel instead of the sensor?</strong><br>
-    <em>Answer:</em> “When Layer 2 (Network) is attacked, the sensor reading is physically plausible, but packet latency spikes to 385ms and sequence timestamps jump. AquaShield isolates Layer 2 and reroutes traffic to a redundant industrial mesh channel in milliseconds.”</p>
+    <p style="margin-bottom: 0;"><strong>Q3: Why is this on software instead of real hardware?</strong><br>
+    <em>Answer:</em> “Real water plants handle millions of liters of high-pressure water. Our software is an industrial Digital Twin simulating real fluid physics, which is the exact same method used by Siemens and GE Digital.”</p>
   </div>
 
 </body>
