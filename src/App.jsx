@@ -6,8 +6,9 @@ import DigitalTwinSCADA from './components/DigitalTwinSCADA';
 import DatasetBenchmarkView from './components/DatasetBenchmarkView';
 import IncidentPostMortemModal from './components/IncidentPostMortemModal';
 import BlueprintSelector from './components/BlueprintSelector';
+import MaintenanceView from './components/MaintenanceView';
 import { CPSSimulator } from './engine/cpsSimulator';
-import { LayoutDashboard, Database, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, Database, ShieldCheck, Wrench } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { sound } from './utils/soundEffects';
 
@@ -251,6 +252,29 @@ export default function App() {
           <span>Real-World Dataset Benchmark (SWaT / Kaggle)</span>
         </button>
 
+        <button
+          onClick={() => setActiveTab('maintenance')}
+          className="glass-panel"
+          style={{
+            padding: '10px 22px',
+            cursor: 'pointer',
+            borderRadius: '24px',
+            background: activeTab === 'maintenance' ? 'rgba(0, 242, 254, 0.2)' : 'rgba(15, 23, 42, 0.6)',
+            border: activeTab === 'maintenance' ? '1px solid #00f2fe' : '1px solid rgba(255,255,255,0.08)',
+            color: activeTab === 'maintenance' ? '#00f2fe' : '#94a3b8',
+            fontSize: '0.85rem',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            boxShadow: activeTab === 'maintenance' ? '0 0 16px rgba(0,242,254,0.3)' : 'none',
+            transition: 'all 0.2s ease'
+          }}
+        >
+          <Wrench size={16} />
+          <span>Maintenance</span>
+        </button>
+
       </div>
 
       {/* TAB 1: INTERACTIVE ATTACK LAB (MAIN STAGE) */}
@@ -305,6 +329,13 @@ export default function App() {
             phase={simState.phase}
             onReplayDatasetAttack={handleReplayDatasetAttack}
           />
+        </div>
+      )}
+
+      {/* TAB 3: MAINTENANCE & SENSOR DEGRADATION MONITOR */}
+      {activeTab === 'maintenance' && (
+        <div style={{ margin: '0 16px' }}>
+          <MaintenanceView simState={simState} />
         </div>
       )}
 
