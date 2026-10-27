@@ -91,7 +91,7 @@ export default function IncidentPostMortemModal({
         position: 'fixed',
         inset: 0,
         zIndex: 2000,
-        background: 'rgba(2, 6, 23, 0.78)',
+        background: 'var(--frost)',
         backdropFilter: 'blur(10px)',
         WebkitBackdropFilter: 'blur(10px)',
         display: 'flex',
@@ -108,10 +108,10 @@ export default function IncidentPostMortemModal({
           width: '100%',
           maxHeight: '90vh',
           overflowY: 'auto',
-          background: 'rgba(11, 19, 38, 0.95)',
-          border: '1.5px solid rgba(16, 185, 129, 0.45)',
+          background: 'var(--frost-strong)',
+          border: '1.5px solid rgba(5, 150, 105, 0.45)',
           borderRadius: '16px',
-          boxShadow: '0 25px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(16, 185, 129, 0.2)',
+          boxShadow: '0 25px 60px rgba(18, 35, 31, 0.126), 0 0 35px rgba(5, 150, 105, 0.07)',
           padding: '24px 26px',
           position: 'relative'
         }}
@@ -123,25 +123,25 @@ export default function IncidentPostMortemModal({
             position: 'absolute',
             top: '16px',
             right: '16px',
-            background: 'rgba(255, 255, 255, 0.06)',
-            border: '1px solid rgba(255, 255, 255, 0.12)',
+            background: 'rgba(18, 35, 31, 0.06)',
+            border: '1px solid rgba(18, 35, 31, 0.12)',
             borderRadius: '50%',
             width: '32px',
             height: '32px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#94a3b8',
+            color: '#5a6b65',
             cursor: 'pointer',
             transition: 'all 0.2s ease'
           }}
           onMouseEnter={e => {
             e.currentTarget.style.color = '#ffffff';
-            e.currentTarget.style.background = 'rgba(255,255,255,0.15)';
+            e.currentTarget.style.background = 'rgba(18, 35, 31, 0.15)';
           }}
           onMouseLeave={e => {
-            e.currentTarget.style.color = '#94a3b8';
-            e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
+            e.currentTarget.style.color = '#5a6b65';
+            e.currentTarget.style.background = 'rgba(18, 35, 31, 0.06)';
           }}
         >
           <X size={16} />
@@ -154,26 +154,26 @@ export default function IncidentPostMortemModal({
               width: '42px',
               height: '42px',
               borderRadius: '10px',
-              background: 'rgba(16, 185, 129, 0.15)',
-              border: '1px solid rgba(16, 185, 129, 0.35)',
+              background: 'rgba(5, 150, 105, 0.15)',
+              border: '1px solid rgba(5, 150, 105, 0.35)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0
             }}
           >
-            <ShieldCheck size={24} color="#10b981" />
+            <ShieldCheck size={24} color="#059669" />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '0.72rem', color: '#10b981', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              <span style={{ fontSize: '0.72rem', color: '#059669', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                 AUTONOMOUS HEALING POST-MORTEM REPORT
               </span>
               <span className="badge badge-emerald" style={{ fontSize: '0.66rem', padding: '1px 8px' }}>
                 ZERO DOWNTIME
               </span>
             </div>
-            <h3 className="font-display" style={{ fontSize: '1.2rem', color: '#f8fafc', fontWeight: 900, marginTop: '2px' }}>
+            <h3 className="font-display" style={{ fontSize: '1.2rem', color: 'var(--ink)', fontWeight: 900, marginTop: '2px' }}>
               Incident Resolved & Physical Plant Protected
             </h3>
           </div>
@@ -195,8 +195,8 @@ export default function IncidentPostMortemModal({
               <div
                 key={idx}
                 style={{
-                  background: 'rgba(15, 23, 42, 0.65)',
-                  border: '1px solid rgba(56, 189, 248, 0.2)',
+                  background: 'var(--frost)',
+                  border: '1px solid rgba(14, 116, 144, 0.2)',
                   borderRadius: '12px',
                   padding: '16px 18px',
                   display: 'flex',
@@ -205,42 +205,42 @@ export default function IncidentPostMortemModal({
                 }}
               >
                 {/* Breached Target Header */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '10px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(18, 35, 31, 0.08)', paddingBottom: '10px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '0.9rem', fontWeight: 900, color: '#38bdf8' }}>
+                    <span style={{ fontSize: '0.9rem', fontWeight: 900, color: '#0e7490' }}>
                       {scn.name}
                     </span>
                     {isMulti && (
-                      <span style={{ fontSize: '0.68rem', color: '#94a3b8', background: 'rgba(255,255,255,0.08)', padding: '2px 6px', borderRadius: '4px' }}>
+                      <span style={{ fontSize: '0.68rem', color: '#5a6b65', background: 'rgba(18, 35, 31, 0.08)', padding: '2px 6px', borderRadius: '4px' }}>
                         Vector {idx + 1} of {scnList.length}
                       </span>
                     )}
                   </div>
-                  <span style={{ fontSize: '0.72rem', color: '#34d399', fontWeight: 800 }}>
+                  <span style={{ fontSize: '0.72rem', color: '#047857', fontWeight: 800 }}>
                     100% Mitigated in &lt;40ms
                   </span>
                 </div>
 
                 {/* 1. What was the Problem */}
                 <div>
-                  <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#fb7185', display: 'flex', alignItems: 'center', gap: '6px', textTransform: 'uppercase' }}>
-                    <AlertTriangle size={13} color="#fb7185" />
+                  <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#be123c', display: 'flex', alignItems: 'center', gap: '6px', textTransform: 'uppercase' }}>
+                    <AlertTriangle size={13} color="#be123c" />
                     <span>1. The Problem (What Happened)</span>
                   </div>
-                  <p style={{ fontSize: '0.82rem', color: '#e2e8f0', margin: '4px 0 0 0', lineHeight: 1.5 }}>
+                  <p style={{ fontSize: '0.82rem', color: '#24362f', margin: '4px 0 0 0', lineHeight: 1.5 }}>
                     {scn.symptom || scn.description}
                   </p>
                 </div>
 
                 {/* 2. Where It Occurred */}
                 <div>
-                  <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#38bdf8', display: 'flex', alignItems: 'center', gap: '6px', textTransform: 'uppercase' }}>
-                    <MapPin size={13} color="#38bdf8" />
+                  <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#0e7490', display: 'flex', alignItems: 'center', gap: '6px', textTransform: 'uppercase' }}>
+                    <MapPin size={13} color="#0e7490" />
                     <span>2. Where It Occurred (Exact Root-Cause Location)</span>
                   </div>
-                  <div style={{ fontSize: '0.82rem', color: '#e2e8f0', margin: '4px 0 0 0', lineHeight: 1.5 }}>
-                    <strong style={{ color: '#00f2fe' }}>{scn.target}</strong> ({scn.layerName || 'Physical Cyber-Physical Layer'}).
-                    <div style={{ fontSize: '0.78rem', color: '#94a3b8', marginTop: '2px' }}>
+                  <div style={{ fontSize: '0.82rem', color: '#24362f', margin: '4px 0 0 0', lineHeight: 1.5 }}>
+                    <strong style={{ color: '#0891b2' }}>{scn.target}</strong> ({scn.layerName || 'Physical Cyber-Physical Layer'}).
+                    <div style={{ fontSize: '0.78rem', color: '#5a6b65', marginTop: '2px' }}>
                       <strong>Mathematical Proof:</strong> {scn.plainMathProof || 'Mass flow continuity confirmed physical discrepancy.'}
                     </div>
                   </div>
@@ -248,25 +248,25 @@ export default function IncidentPostMortemModal({
 
                 {/* 3. Solution Taken */}
                 <div>
-                  <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#34d399', display: 'flex', alignItems: 'center', gap: '6px', textTransform: 'uppercase' }}>
-                    <Wrench size={13} color="#34d399" />
+                  <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#047857', display: 'flex', alignItems: 'center', gap: '6px', textTransform: 'uppercase' }}>
+                    <Wrench size={13} color="#047857" />
                     <span>3. Solution Taken (How AquaShield Fixed It)</span>
                   </div>
-                  <p style={{ fontSize: '0.82rem', color: '#e2e8f0', margin: '4px 0 0 0', lineHeight: 1.5 }}>
+                  <p style={{ fontSize: '0.82rem', color: '#24362f', margin: '4px 0 0 0', lineHeight: 1.5 }}>
                     {scn.plainFix || 'Isolated compromised component and engaged virtual physics state estimator.'}
                   </p>
                 </div>
 
                 {/* 4. Future Prevention & Hardening */}
-                <div style={{ background: 'rgba(16, 185, 129, 0.08)', padding: '10px 12px', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.25)' }}>
-                  <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#6ee7b7', display: 'flex', alignItems: 'center', gap: '6px', textTransform: 'uppercase' }}>
-                    <ShieldAlert size={13} color="#6ee7b7" />
+                <div style={{ background: 'rgba(5, 150, 105, 0.08)', padding: '10px 12px', borderRadius: '8px', border: '1px solid rgba(5, 150, 105, 0.25)' }}>
+                  <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#059669', display: 'flex', alignItems: 'center', gap: '6px', textTransform: 'uppercase' }}>
+                    <ShieldAlert size={13} color="#059669" />
                     <span>4. Future Prevention (How to Prevent This Again)</span>
                   </div>
-                  <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#a7f3d0', marginTop: '3px' }}>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#065f46', marginTop: '3px' }}>
                     {prevention.title}
                   </div>
-                  <ul style={{ margin: '4px 0 0 0', paddingLeft: '18px', fontSize: '0.76rem', color: '#cbd5e1', lineHeight: 1.45 }}>
+                  <ul style={{ margin: '4px 0 0 0', paddingLeft: '18px', fontSize: '0.76rem', color: '#3b4d46', lineHeight: 1.45 }}>
                     {prevention.steps.map((st, sIdx) => (
                       <li key={sIdx} style={{ marginTop: '2px' }}>{st}</li>
                     ))}
@@ -278,11 +278,11 @@ export default function IncidentPostMortemModal({
         </div>
 
         {/* Modal Bottom Action Bar */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '18px', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '14px', flexWrap: 'wrap', gap: '10px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '18px', borderTop: '1px solid rgba(18, 35, 31, 0.08)', paddingTop: '14px', flexWrap: 'wrap', gap: '10px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Droplets size={16} color="#38bdf8" />
-            <span style={{ fontSize: '0.76rem', color: '#94a3b8' }}>
-              Drinking water preserved with <strong style={{ color: '#34d399' }}>0 Liters wasted</strong> & <strong style={{ color: '#00f2fe' }}>0 seconds downtime</strong>
+            <Droplets size={16} color="#0e7490" />
+            <span style={{ fontSize: '0.76rem', color: '#5a6b65' }}>
+              Drinking water preserved with <strong style={{ color: '#047857' }}>0 Liters wasted</strong> & <strong style={{ color: '#0891b2' }}>0 seconds downtime</strong>
             </span>
           </div>
 
@@ -294,7 +294,7 @@ export default function IncidentPostMortemModal({
               fontSize: '0.82rem',
               fontWeight: 800,
               cursor: 'pointer',
-              border: '1px solid #10b981',
+              border: '1px solid #059669',
               display: 'flex',
               alignItems: 'center',
               gap: '6px'

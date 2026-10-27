@@ -20,7 +20,7 @@ export const BLUEPRINT_PRESETS = {
         role: 'Intake & Sedimentation',
         capacity: 45000,
         level: 72,
-        color: '#38bdf8',
+        color: '#0284c7',
         chemical: 'Alum Coagulant (12 ppm)'
       },
       {
@@ -30,7 +30,7 @@ export const BLUEPRINT_PRESETS = {
         role: 'Granular Media Filtration',
         capacity: 35000,
         level: 68,
-        color: '#00f2fe',
+        color: '#0e7490',
         chemical: 'Turbidity Removal (0.4 NTU)'
       },
       {
@@ -40,7 +40,7 @@ export const BLUEPRINT_PRESETS = {
         role: 'Disinfected Potable Supply',
         capacity: 55000,
         level: 80,
-        color: '#10b981',
+        color: '#047857',
         chemical: 'Residual Chlorine (2.0 ppm)'
       }
     ],
@@ -72,7 +72,7 @@ export const BLUEPRINT_PRESETS = {
         role: 'Raw Reservoir & Screening',
         capacity: 50000,
         level: 72,
-        color: '#38bdf8',
+        color: '#0284c7',
         chemical: 'Raw River Water'
       },
       {
@@ -82,7 +82,7 @@ export const BLUEPRINT_PRESETS = {
         role: 'Ultra-Fine Particulate Filter',
         capacity: 40000,
         level: 68,
-        color: '#00f2fe',
+        color: '#0e7490',
         chemical: 'Polymer Membrane (0.02 µm)'
       },
       {
@@ -92,7 +92,7 @@ export const BLUEPRINT_PRESETS = {
         role: 'Chemical Disinfection & Oxidation',
         capacity: 45000,
         level: 75,
-        color: '#34d399',
+        color: '#16a34a',
         chemical: 'Sodium Hypochlorite (2.1 ppm)'
       },
       {
@@ -102,7 +102,7 @@ export const BLUEPRINT_PRESETS = {
         role: 'Municipal High-Pressure Export',
         capacity: 60000,
         level: 82,
-        color: '#10b981',
+        color: '#047857',
         chemical: 'Potable Drinking Water (WHO Safe)'
       }
     ],
@@ -136,7 +136,7 @@ export const BLUEPRINT_PRESETS = {
         role: 'Heavy Solid Vortex Separation',
         capacity: 42000,
         level: 74,
-        color: '#38bdf8',
+        color: '#0284c7',
         chemical: 'Raw Industrial Effluent'
       },
       {
@@ -146,7 +146,7 @@ export const BLUEPRINT_PRESETS = {
         role: 'Microbial Organic Digestion',
         capacity: 52000,
         level: 69,
-        color: '#00f2fe',
+        color: '#0e7490',
         chemical: 'Dissolved O2 (6.5 mg/L)'
       },
       {
@@ -156,7 +156,7 @@ export const BLUEPRINT_PRESETS = {
         role: 'Sub-Micron Pathogen Barrier',
         capacity: 38000,
         level: 71,
-        color: '#38bdf8',
+        color: '#0284c7',
         chemical: 'Micro-Pore Hollow Fiber'
       },
       {
@@ -166,7 +166,7 @@ export const BLUEPRINT_PRESETS = {
         role: 'High-Pressure Dissolved Solids Filter',
         capacity: 36000,
         level: 77,
-        color: '#34d399',
+        color: '#16a34a',
         chemical: 'Polyamide Membrane (5.8 bar)'
       },
       {
@@ -176,7 +176,7 @@ export const BLUEPRINT_PRESETS = {
         role: 'Zero Liquid Discharge (ZLD) Effluent',
         capacity: 65000,
         level: 84,
-        color: '#10b981',
+        color: '#047857',
         chemical: 'Ultra-Pure Reclaimed Water'
       }
     ],
@@ -210,7 +210,7 @@ export const BLUEPRINT_PRESETS = {
         role: 'Deep Ocean Intake Well',
         capacity: 75000,
         level: 76,
-        color: '#38bdf8',
+        color: '#0284c7',
         chemical: 'Seawater (TDS 35,000 ppm)'
       },
       {
@@ -220,7 +220,7 @@ export const BLUEPRINT_PRESETS = {
         role: 'Anthracite & Sand Coagulation',
         capacity: 48000,
         level: 70,
-        color: '#00f2fe',
+        color: '#0e7490',
         chemical: 'SDI Index < 2.5'
       },
       {
@@ -230,7 +230,7 @@ export const BLUEPRINT_PRESETS = {
         role: 'Parallel Primary Desalination Train',
         capacity: 35000,
         level: 66,
-        color: '#0284c7',
+        color: '#075985',
         chemical: 'HP RO Train A (62 bar)'
       },
       {
@@ -240,7 +240,7 @@ export const BLUEPRINT_PRESETS = {
         role: 'Parallel Redundant Desalination Train',
         capacity: 35000,
         level: 67,
-        color: '#0284c7',
+        color: '#075985',
         chemical: 'HP RO Train B (62 bar)'
       },
       {
@@ -250,7 +250,7 @@ export const BLUEPRINT_PRESETS = {
         role: 'Calcite Bed Hardness Balancing',
         capacity: 42000,
         level: 74,
-        color: '#34d399',
+        color: '#16a34a',
         chemical: 'Calcium & Magnesium Enrichment'
       },
       {
@@ -260,7 +260,7 @@ export const BLUEPRINT_PRESETS = {
         role: 'City Drinking Water Grid Feeder',
         capacity: 80000,
         level: 86,
-        color: '#10b981',
+        color: '#047857',
         chemical: 'Clean Potable Water (TDS < 200 ppm)'
       }
     ],

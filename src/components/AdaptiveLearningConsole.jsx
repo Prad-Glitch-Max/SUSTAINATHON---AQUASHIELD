@@ -77,18 +77,18 @@ export default function AdaptiveLearningConsole({
         marginBottom: '14px',
         borderRadius: '12px',
         background: isLearnedReflex
-          ? 'rgba(16, 185, 129, 0.08)'
+          ? 'rgba(5, 150, 105, 0.08)'
           : isAttackActive
-            ? 'rgba(255, 42, 95, 0.07)'
-            : 'rgba(11, 19, 38, 0.85)',
+            ? 'rgba(225, 29, 72, 0.07)'
+            : 'var(--frost)',
         border: isLearnedReflex
-          ? '1.5px solid #10b981'
+          ? '1.5px solid #059669'
           : isAttackActive
-            ? '1.5px solid rgba(255, 42, 95, 0.4)'
-            : '1px solid rgba(56, 189, 248, 0.22)',
+            ? '1.5px solid rgba(225, 29, 72, 0.4)'
+            : '1px solid rgba(14, 116, 144, 0.22)',
         boxShadow: isLearnedReflex
-          ? '0 0 25px rgba(16, 185, 129, 0.25)'
-          : '0 8px 24px rgba(0, 0, 0, 0.4)',
+          ? '0 0 25px rgba(5, 150, 105, 0.09)'
+          : '0 8px 24px rgba(18, 35, 31, 0.072)',
         transition: 'all 0.3s ease'
       }}
     >
@@ -100,18 +100,18 @@ export default function AdaptiveLearningConsole({
               width: '34px',
               height: '34px',
               borderRadius: '8px',
-              background: isLearnedReflex ? 'rgba(16, 185, 129, 0.2)' : 'rgba(168, 85, 247, 0.15)',
-              border: `1px solid ${isLearnedReflex ? '#10b981' : '#a855f7'}`,
+              background: isLearnedReflex ? 'rgba(5, 150, 105, 0.2)' : 'rgba(139, 92, 246, 0.15)',
+              border: `1px solid ${isLearnedReflex ? '#059669' : '#8b5cf6'}`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
             }}
           >
-            <Brain size={18} color={isLearnedReflex ? '#10b981' : '#c084fc'} />
+            <Brain size={18} color={isLearnedReflex ? '#059669' : '#6d28d9'} />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-              <h3 className="font-display" style={{ fontSize: '0.94rem', color: '#f8fafc', fontWeight: 900, letterSpacing: '0.03em' }}>
+              <h3 className="font-display" style={{ fontSize: '0.94rem', color: 'var(--ink)', fontWeight: 900, letterSpacing: '0.03em' }}>
                 ADAPTIVE LEARNING & EXPERIENCE VAULT
               </h3>
               <span
@@ -137,9 +137,9 @@ export default function AdaptiveLearningConsole({
               style={{
                 padding: '6px 14px',
                 borderRadius: '8px',
-                background: 'rgba(168, 85, 247, 0.18)',
-                border: '1px solid #a855f7',
-                color: '#e9d5ff',
+                background: 'rgba(139, 92, 246, 0.18)',
+                border: '1px solid #8b5cf6',
+                color: '#5b21b6',
                 fontSize: '0.74rem',
                 fontWeight: 800,
                 cursor: 'pointer',
@@ -149,7 +149,7 @@ export default function AdaptiveLearningConsole({
                 transition: 'all 0.2s ease'
               }}
             >
-              <Sparkles size={14} color="#c084fc" />
+              <Sparkles size={14} color="#6d28d9" />
               <span>1-Click Learning Demo</span>
             </button>
           )}
@@ -162,9 +162,9 @@ export default function AdaptiveLearningConsole({
               style={{
                 padding: '6px 14px',
                 borderRadius: '8px',
-                background: isLearnedReflex ? 'rgba(16, 185, 129, 0.15)' : 'rgba(0, 242, 254, 0.15)',
-                border: `1px solid ${isLearnedReflex ? '#10b981' : '#00f2fe'}`,
-                color: isLearnedReflex ? '#34d399' : '#38bdf8',
+                background: isLearnedReflex ? 'rgba(5, 150, 105, 0.15)' : 'rgba(8, 145, 178, 0.15)',
+                border: `1px solid ${isLearnedReflex ? '#059669' : '#0891b2'}`,
+                color: isLearnedReflex ? '#047857' : '#0e7490',
                 fontSize: '0.74rem',
                 fontWeight: 800,
                 cursor: 'pointer',
@@ -189,9 +189,9 @@ export default function AdaptiveLearningConsole({
             style={{
               padding: '6px 14px',
               borderRadius: '8px',
-              background: 'rgba(15, 23, 42, 0.7)',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              color: '#cbd5e1',
+              background: 'var(--frost)',
+              border: '1px solid rgba(18, 35, 31, 0.12)',
+              color: '#3b4d46',
               fontSize: '0.74rem',
               fontWeight: 700,
               cursor: 'pointer',
@@ -201,7 +201,7 @@ export default function AdaptiveLearningConsole({
               transition: 'all 0.2s ease'
             }}
           >
-            <Database size={13} color="#00f2fe" />
+            <Database size={13} color="#0891b2" />
             <span>Memory Vault ({vaultMemories.length})</span>
           </button>
         </div>
@@ -214,8 +214,8 @@ export default function AdaptiveLearningConsole({
             marginTop: '10px',
             padding: '10px 14px',
             borderRadius: '8px',
-            background: 'rgba(16, 185, 129, 0.14)',
-            border: '1px solid #10b981',
+            background: 'rgba(5, 150, 105, 0.14)',
+            border: '1px solid #059669',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -224,19 +224,19 @@ export default function AdaptiveLearningConsole({
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '0.8rem', fontWeight: 900, color: '#34d399' }}>
+            <span style={{ fontSize: '0.8rem', fontWeight: 900, color: '#047857' }}>
               RECOGNIZED FROM MEMORY (Incident #{learnedExperience.id})
             </span>
-            <span style={{ fontSize: '0.7rem', color: '#a7f3d0' }}>
+            <span style={{ fontSize: '0.7rem', color: '#065f46' }}>
               Encounter #{learnedExperience.encounterCount || 2} • 99.8% Match Confidence
             </span>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ fontSize: '0.74rem', color: '#cbd5e1' }}>
-              First Encounter: <strong style={{ color: '#fb7185' }}>{learnedExperience.firstEncounterMs || 8500}ms</strong>
+            <div style={{ fontSize: '0.74rem', color: '#3b4d46' }}>
+              First Encounter: <strong style={{ color: '#be123c' }}>{learnedExperience.firstEncounterMs || 8500}ms</strong>
               <ArrowRight size={11} style={{ margin: '0 4px', verticalAlign: 'middle' }} />
-              Subsequent Recall: <strong style={{ color: '#34d399' }}>{learnedExperience.secondEncounterMs || 12}ms (Instant Reflex!)</strong>
+              Subsequent Recall: <strong style={{ color: '#047857' }}>{learnedExperience.secondEncounterMs || 12}ms (Instant Reflex!)</strong>
             </div>
             <span className="badge badge-emerald" style={{ fontSize: '0.64rem', padding: '2px 8px' }}>
               99.8% Speedup
@@ -251,8 +251,8 @@ export default function AdaptiveLearningConsole({
             marginTop: '10px',
             padding: '10px 14px',
             borderRadius: '8px',
-            background: 'rgba(245, 158, 11, 0.1)',
-            border: '1px solid rgba(245, 158, 11, 0.35)',
+            background: 'rgba(217, 119, 6, 0.1)',
+            border: '1px solid rgba(217, 119, 6, 0.35)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -261,12 +261,12 @@ export default function AdaptiveLearningConsole({
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <AlertTriangle size={15} color="#fbbf24" />
-            <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#fbbf24' }}>
+            <AlertTriangle size={15} color="#b45309" />
+            <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#b45309' }}>
               Novel Attack Encountered: First-Time Diagnostic Search (8.5s)
             </span>
           </div>
-          <div style={{ fontSize: '0.72rem', color: '#cbd5e1' }}>
+          <div style={{ fontSize: '0.72rem', color: '#3b4d46' }}>
             AquaShield will isolate the root cause. Once resolved, click <strong>"Teach AquaShield"</strong> so next time it self-heals in 12ms!
           </div>
         </div>
@@ -279,7 +279,7 @@ export default function AdaptiveLearningConsole({
             position: 'fixed',
             inset: 0,
             zIndex: 2500,
-            background: 'rgba(2, 6, 23, 0.82)',
+            background: 'var(--frost)',
             backdropFilter: 'blur(10px)',
             display: 'flex',
             alignItems: 'center',
@@ -292,10 +292,10 @@ export default function AdaptiveLearningConsole({
             style={{
               maxWidth: '560px',
               width: '100%',
-              background: 'rgba(11, 19, 38, 0.96)',
-              border: '1.5px solid #00f2fe',
+              background: 'var(--frost-strong)',
+              border: '1.5px solid #0891b2',
               borderRadius: '16px',
-              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(0, 242, 254, 0.2)',
+              boxShadow: '0 25px 60px rgba(18, 35, 31, 0.144), 0 0 35px rgba(8, 145, 178, 0.07)',
               padding: '22px 24px',
               position: 'relative'
             }}
@@ -306,15 +306,15 @@ export default function AdaptiveLearningConsole({
                 position: 'absolute',
                 top: '16px',
                 right: '16px',
-                background: 'rgba(255, 255, 255, 0.06)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
+                background: 'rgba(18, 35, 31, 0.06)',
+                border: '1px solid rgba(18, 35, 31, 0.12)',
                 borderRadius: '50%',
                 width: '30px',
                 height: '30px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#94a3b8',
+                color: '#5a6b65',
                 cursor: 'pointer'
               }}
             >
@@ -322,9 +322,9 @@ export default function AdaptiveLearningConsole({
             </button>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-              <Brain size={22} color="#00f2fe" />
+              <Brain size={22} color="#0891b2" />
               <div>
-                <h3 className="font-display" style={{ fontSize: '1.1rem', color: '#f8fafc', fontWeight: 900 }}>
+                <h3 className="font-display" style={{ fontSize: '1.1rem', color: 'var(--ink)', fontWeight: 900 }}>
                   Teach AquaShield from Experience & Feedback
                 </h3>
                 <p style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
@@ -335,16 +335,16 @@ export default function AdaptiveLearningConsole({
 
             <form onSubmit={handleSaveFeedback} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div>
-                <label style={{ fontSize: '0.74rem', fontWeight: 800, color: '#38bdf8', display: 'block', marginBottom: '4px' }}>
+                <label style={{ fontSize: '0.74rem', fontWeight: 800, color: '#0e7490', display: 'block', marginBottom: '4px' }}>
                   Target Attack Signature
                 </label>
-                <div style={{ background: 'rgba(15, 23, 42, 0.8)', padding: '8px 12px', borderRadius: '8px', fontSize: '0.8rem', color: '#f1f5f9', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <div style={{ background: 'var(--frost)', padding: '8px 12px', borderRadius: '8px', fontSize: '0.8rem', color: 'var(--ink)', border: '1px solid rgba(18, 35, 31, 0.08)' }}>
                   {activeScenario?.name || 'Zero-Day Scenario'} ({activeScenario?.target || 'Target Component'})
                 </div>
               </div>
 
               <div>
-                <label style={{ fontSize: '0.74rem', fontWeight: 800, color: '#38bdf8', display: 'block', marginBottom: '4px' }}>
+                <label style={{ fontSize: '0.74rem', fontWeight: 800, color: '#0e7490', display: 'block', marginBottom: '4px' }}>
                   Operator Feedback / Root-Cause Confirmation
                 </label>
                 <textarea
@@ -354,11 +354,11 @@ export default function AdaptiveLearningConsole({
                   required
                   style={{
                     width: '100%',
-                    background: 'rgba(15, 23, 42, 0.8)',
-                    border: '1px solid rgba(56, 189, 248, 0.3)',
+                    background: 'var(--frost)',
+                    border: '1px solid rgba(14, 116, 144, 0.3)',
                     borderRadius: '8px',
                     padding: '8px 12px',
-                    color: '#f8fafc',
+                    color: 'var(--ink)',
                     fontSize: '0.78rem',
                     fontFamily: 'inherit',
                     resize: 'vertical'
@@ -368,7 +368,7 @@ export default function AdaptiveLearningConsole({
               </div>
 
               <div>
-                <label style={{ fontSize: '0.74rem', fontWeight: 800, color: '#34d399', display: 'block', marginBottom: '4px' }}>
+                <label style={{ fontSize: '0.74rem', fontWeight: 800, color: '#047857', display: 'block', marginBottom: '4px' }}>
                   Learned Autonomous Countermeasure Policy
                 </label>
                 <textarea
@@ -378,11 +378,11 @@ export default function AdaptiveLearningConsole({
                   required
                   style={{
                     width: '100%',
-                    background: 'rgba(15, 23, 42, 0.8)',
-                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                    background: 'var(--frost)',
+                    border: '1px solid rgba(5, 150, 105, 0.3)',
                     borderRadius: '8px',
                     padding: '8px 12px',
-                    color: '#f8fafc',
+                    color: 'var(--ink)',
                     fontSize: '0.78rem',
                     fontFamily: 'inherit',
                     resize: 'vertical'
@@ -398,9 +398,9 @@ export default function AdaptiveLearningConsole({
                   style={{
                     padding: '8px 16px',
                     borderRadius: '8px',
-                    background: 'rgba(255,255,255,0.06)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    color: '#94a3b8',
+                    background: 'rgba(18, 35, 31, 0.06)',
+                    border: '1px solid rgba(18, 35, 31, 0.1)',
+                    color: '#5a6b65',
                     fontSize: '0.78rem',
                     cursor: 'pointer'
                   }}
@@ -415,7 +415,7 @@ export default function AdaptiveLearningConsole({
                     fontSize: '0.8rem',
                     fontWeight: 900,
                     cursor: 'pointer',
-                    border: '1px solid #10b981',
+                    border: '1px solid #059669',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '6px'
@@ -437,7 +437,7 @@ export default function AdaptiveLearningConsole({
             position: 'fixed',
             inset: 0,
             zIndex: 2500,
-            background: 'rgba(2, 6, 23, 0.82)',
+            background: 'var(--frost)',
             backdropFilter: 'blur(10px)',
             display: 'flex',
             alignItems: 'center',
@@ -452,10 +452,10 @@ export default function AdaptiveLearningConsole({
               width: '100%',
               maxHeight: '88vh',
               overflowY: 'auto',
-              background: 'rgba(11, 19, 38, 0.97)',
-              border: '1.5px solid rgba(16, 185, 129, 0.4)',
+              background: 'var(--frost-strong)',
+              border: '1.5px solid rgba(5, 150, 105, 0.4)',
               borderRadius: '16px',
-              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.8)',
+              boxShadow: '0 25px 60px rgba(18, 35, 31, 0.144)',
               padding: '24px',
               position: 'relative'
             }}
@@ -466,15 +466,15 @@ export default function AdaptiveLearningConsole({
                 position: 'absolute',
                 top: '16px',
                 right: '16px',
-                background: 'rgba(255, 255, 255, 0.06)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
+                background: 'rgba(18, 35, 31, 0.06)',
+                border: '1px solid rgba(18, 35, 31, 0.12)',
                 borderRadius: '50%',
                 width: '30px',
                 height: '30px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#94a3b8',
+                color: '#5a6b65',
                 cursor: 'pointer'
               }}
             >
@@ -483,9 +483,9 @@ export default function AdaptiveLearningConsole({
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Database size={22} color="#00f2fe" />
+                <Database size={22} color="#0891b2" />
                 <div>
-                  <h3 className="font-display" style={{ fontSize: '1.15rem', color: '#f8fafc', fontWeight: 900 }}>
+                  <h3 className="font-display" style={{ fontSize: '1.15rem', color: 'var(--ink)', fontWeight: 900 }}>
                     AquaShield Adaptive Experience Vault
                   </h3>
                   <p style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
@@ -497,11 +497,11 @@ export default function AdaptiveLearningConsole({
               <button
                 onClick={handleResetVault}
                 style={{
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.12)',
+                  background: 'rgba(18, 35, 31, 0.06)',
+                  border: '1px solid rgba(18, 35, 31, 0.12)',
                   borderRadius: '6px',
                   padding: '5px 12px',
-                  color: '#94a3b8',
+                  color: '#5a6b65',
                   fontSize: '0.72rem',
                   cursor: 'pointer',
                   display: 'flex',
@@ -519,8 +519,8 @@ export default function AdaptiveLearningConsole({
                 <div
                   key={mem.id}
                   style={{
-                    background: 'rgba(15, 23, 42, 0.7)',
-                    border: '1px solid rgba(56, 189, 248, 0.2)',
+                    background: 'var(--frost)',
+                    border: '1px solid rgba(14, 116, 144, 0.2)',
                     borderRadius: '10px',
                     padding: '14px 16px',
                     display: 'flex',
@@ -528,12 +528,12 @@ export default function AdaptiveLearningConsole({
                     gap: '8px'
                   }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(18, 35, 31, 0.06)', paddingBottom: '8px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '0.76rem', color: '#00f2fe', fontFamily: 'monospace', fontWeight: 800 }}>
+                      <span style={{ fontSize: '0.76rem', color: '#0891b2', fontFamily: 'monospace', fontWeight: 800 }}>
                         {mem.id}
                       </span>
-                      <strong style={{ fontSize: '0.88rem', color: '#f8fafc' }}>
+                      <strong style={{ fontSize: '0.88rem', color: 'var(--ink)' }}>
                         {mem.name}
                       </strong>
                     </div>
@@ -542,22 +542,22 @@ export default function AdaptiveLearningConsole({
                     </span>
                   </div>
 
-                  <div style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>
-                    <strong style={{ color: '#38bdf8' }}>Target Node: </strong>
+                  <div style={{ fontSize: '0.75rem', color: '#3b4d46' }}>
+                    <strong style={{ color: '#0e7490' }}>Target Node: </strong>
                     <span>{mem.component} ({mem.layer})</span>
                   </div>
 
-                  <div style={{ fontSize: '0.74rem', color: '#94a3b8', lineHeight: 1.4 }}>
-                    <strong style={{ color: '#fbbf24' }}>Operator Feedback: </strong>
+                  <div style={{ fontSize: '0.74rem', color: '#5a6b65', lineHeight: 1.4 }}>
+                    <strong style={{ color: '#b45309' }}>Operator Feedback: </strong>
                     <span>{mem.operatorFeedback}</span>
                   </div>
 
-                  <div style={{ fontSize: '0.74rem', color: '#34d399', lineHeight: 1.4, background: 'rgba(16, 185, 129, 0.08)', padding: '6px 10px', borderRadius: '6px' }}>
-                    <strong style={{ color: '#10b981' }}>Learned Countermeasure: </strong>
+                  <div style={{ fontSize: '0.74rem', color: '#047857', lineHeight: 1.4, background: 'rgba(5, 150, 105, 0.08)', padding: '6px 10px', borderRadius: '6px' }}>
+                    <strong style={{ color: '#059669' }}>Learned Countermeasure: </strong>
                     <span>{mem.learnedFix}</span>
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.68rem', color: '#64748b', marginTop: '2px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.68rem', color: '#6b7b75', marginTop: '2px' }}>
                     <span>First Search: {mem.firstEncounterMs || 8500}ms → Subsequent Reflex: {mem.secondEncounterMs || 12}ms</span>
                     <span>Confidence: {(mem.learnedConfidence * 100).toFixed(1)}%</span>
                   </div>
@@ -574,7 +574,7 @@ export default function AdaptiveLearningConsole({
                   fontSize: '0.8rem',
                   fontWeight: 800,
                   cursor: 'pointer',
-                  border: '1px solid #10b981'
+                  border: '1px solid #059669'
                 }}
               >
                 Close Vault

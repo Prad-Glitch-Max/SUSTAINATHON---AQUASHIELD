@@ -25,11 +25,11 @@ import { sound } from '../utils/soundEffects';
 import confetti from 'canvas-confetti';
 
 const SCENARIOS = [
-  { key: 'SENSOR_SPOOF', label: '1. Fake Sensor', target: 'Water Sensor (Tank 2)', icon: Eye, color: '#00f2fe' },
-  { key: 'NETWORK_REPLAY', label: '2. Network Cable', target: 'Cable Delay / Replay', icon: Radio, color: '#3b82f6' },
-  { key: 'CONTROLLER_HIJACK', label: '3. Computer Brain', target: 'Hacked PLC Controller', icon: Cpu, color: '#a855f7' },
-  { key: 'FIRMWARE_ROOTKIT', label: '4. Software Code', target: 'Corrupted Motor Firmware', icon: Binary, color: '#f59e0b' },
-  { key: 'ACTUATOR_JAM', label: '5. Stuck Valve', target: 'Jammed Physical Valve', icon: Cog, color: '#ff2a5f' }
+  { key: 'SENSOR_SPOOF', label: '1. Fake Sensor', target: 'Water Sensor (Tank 2)', icon: Eye, color: '#0891b2' },
+  { key: 'NETWORK_REPLAY', label: '2. Network Cable', target: 'Cable Delay / Replay', icon: Radio, color: '#2563eb' },
+  { key: 'CONTROLLER_HIJACK', label: '3. Computer Brain', target: 'Hacked PLC Controller', icon: Cpu, color: '#8b5cf6' },
+  { key: 'FIRMWARE_ROOTKIT', label: '4. Software Code', target: 'Corrupted Motor Firmware', icon: Binary, color: '#d97706' },
+  { key: 'ACTUATOR_JAM', label: '5. Stuck Valve', target: 'Jammed Physical Valve', icon: Cog, color: '#e11d48' }
 ];
 
 const PRESETS = [
@@ -347,7 +347,7 @@ export default function InteractiveControlBar({
           particleCount: 120,
           spread: 80,
           origin: { y: 0.65 },
-          colors: ['#00f2fe', '#10b981', '#38bdf8', '#34d399']
+          colors: ['#0891b2', '#059669', '#0e7490', '#047857']
         });
       } catch {
         // safe fallback
@@ -407,7 +407,7 @@ export default function InteractiveControlBar({
             particleCount: 50,
             spread: 60,
             origin: { y: 0.75 },
-            colors: ['#00f2fe', '#34d399', '#38bdf8']
+            colors: ['#0891b2', '#047857', '#0e7490']
           });
         } catch {
           // safe fallback
@@ -456,7 +456,7 @@ export default function InteractiveControlBar({
         particleCount: 100,
         spread: 70,
         origin: { y: 0.65 },
-        colors: ['#00f2fe', '#10b981', '#38bdf8']
+        colors: ['#0891b2', '#059669', '#0e7490']
       });
     } catch {
       // safe fallback
@@ -485,16 +485,16 @@ export default function InteractiveControlBar({
         padding: '22px 26px',
         margin: '0 16px 16px 16px',
         border: isAttackActive
-          ? '1.5px solid #ff2a5f'
+          ? '1.5px solid #e11d48'
           : isLocalized
-          ? '1.5px solid #00f2fe'
+          ? '1.5px solid #0891b2'
           : isResolved
-          ? '1.5px solid #10b981'
-          : '1px solid rgba(56,189,248,0.25)',
+          ? '1.5px solid #059669'
+          : '1px solid rgba(14, 116, 144, 0.25)',
         boxShadow: isAttackActive
-          ? '0 0 30px rgba(255,42,95,0.2)'
+          ? '0 0 30px rgba(225, 29, 72, 0.07)'
           : isResolved
-          ? '0 0 30px rgba(16,185,129,0.15)'
+          ? '0 0 30px rgba(5, 150, 105, 0.05)'
           : 'none',
         transition: 'all 0.3s ease'
       }}
@@ -503,7 +503,7 @@ export default function InteractiveControlBar({
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span className="font-display" style={{ fontSize: '1.15rem', fontWeight: 900, color: '#f8fafc', letterSpacing: '0.02em' }}>
+            <span className="font-display" style={{ fontSize: '1.15rem', fontWeight: 900, color: 'var(--ink)', letterSpacing: '0.02em' }}>
               CYBER-PHYSICAL ATTACK & SELF-HEALING LAB
             </span>
             <span
@@ -512,9 +512,9 @@ export default function InteractiveControlBar({
                 fontSize: '0.72rem',
                 fontWeight: 800,
                 padding: '4px 10px',
-                background: isAutoPilot ? 'rgba(0,242,254,0.15)' : 'rgba(255,255,255,0.08)',
-                color: isAutoPilot ? '#00f2fe' : '#94a3b8',
-                border: isAutoPilot ? '1px solid #00f2fe' : '1px solid rgba(255,255,255,0.15)'
+                background: isAutoPilot ? 'rgba(8, 145, 178, 0.15)' : 'rgba(18, 35, 31, 0.08)',
+                color: isAutoPilot ? '#0891b2' : '#5a6b65',
+                border: isAutoPilot ? '1px solid #0891b2' : '1px solid rgba(18, 35, 31, 0.15)'
               }}
             >
               {isAutoPilot ? 'AUTONOMOUS AI (AUTOMATIC)' : 'MANUAL STEP-BY-STEP'}
@@ -531,15 +531,15 @@ export default function InteractiveControlBar({
         </div>
 
         {/* Mode Switcher */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(5, 10, 22, 0.85)', padding: '4px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--frost)', padding: '4px', borderRadius: '24px', border: '1px solid rgba(18, 35, 31, 0.1)' }}>
           <button
             onClick={() => {
               clearAllTimers();
               setIsAutoPilot(true);
             }}
             style={{
-              background: isAutoPilot ? '#00f2fe' : 'transparent',
-              color: isAutoPilot ? '#050811' : '#94a3b8',
+              background: isAutoPilot ? '#0891b2' : 'transparent',
+              color: isAutoPilot ? '#ffffff' : '#5a6b65',
               border: 'none',
               borderRadius: '20px',
               padding: '7px 16px',
@@ -561,8 +561,8 @@ export default function InteractiveControlBar({
               setIsAutoPilot(false);
             }}
             style={{
-              background: !isAutoPilot ? '#00f2fe' : 'transparent',
-              color: !isAutoPilot ? '#050811' : '#94a3b8',
+              background: !isAutoPilot ? '#0891b2' : 'transparent',
+              color: !isAutoPilot ? '#ffffff' : '#5a6b65',
               border: 'none',
               borderRadius: '20px',
               padding: '7px 16px',
@@ -593,9 +593,9 @@ export default function InteractiveControlBar({
               onClick={() => applyPreset(p.keys)}
               disabled={!isNominal && !isResolved}
               style={{
-                background: isPresetActive ? 'rgba(0,242,254,0.2)' : 'rgba(15, 23, 42, 0.65)',
-                border: isPresetActive ? '1px solid #00f2fe' : '1px solid rgba(255,255,255,0.08)',
-                color: isPresetActive ? '#00f2fe' : '#cbd5e1',
+                background: isPresetActive ? 'rgba(8, 145, 178, 0.2)' : 'var(--frost)',
+                border: isPresetActive ? '1px solid #0891b2' : '1px solid rgba(18, 35, 31, 0.08)',
+                color: isPresetActive ? '#0891b2' : '#3b4d46',
                 padding: '4px 12px',
                 borderRadius: '16px',
                 fontSize: '0.72rem',
@@ -614,7 +614,7 @@ export default function InteractiveControlBar({
       {/* 5 Scenario Selector Cards with Multi-Select Toggles */}
       <div style={{ marginBottom: '18px' }}>
         <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '6px' }}>
-          <span style={{ fontSize: '0.72rem', color: '#38bdf8', fontWeight: 700 }}>
+          <span style={{ fontSize: '0.72rem', color: '#0e7490', fontWeight: 700 }}>
             {selectedScenarioKeys.length} Layer{selectedScenarioKeys.length > 1 ? 's' : ''} Selected
           </span>
         </div>
@@ -628,8 +628,8 @@ export default function InteractiveControlBar({
                 onClick={() => toggleScenario(scn.key)}
                 disabled={!isNominal && !isResolved}
                 style={{
-                  background: isSelected ? 'rgba(0, 242, 254, 0.2)' : 'rgba(15, 23, 42, 0.7)',
-                  border: isSelected ? '2px solid #00f2fe' : '1px solid rgba(56, 189, 248, 0.15)',
+                  background: isSelected ? 'rgba(8, 145, 178, 0.2)' : 'var(--frost)',
+                  border: isSelected ? '2px solid #0891b2' : '1px solid rgba(14, 116, 144, 0.15)',
                   borderRadius: '10px',
                   padding: '10px 14px',
                   cursor: !isNominal && !isResolved ? 'not-allowed' : 'pointer',
@@ -639,11 +639,11 @@ export default function InteractiveControlBar({
                   gap: '12px',
                   textAlign: 'left',
                   transition: 'all 0.2s ease',
-                  boxShadow: isSelected ? '0 0 16px rgba(0,242,254,0.3)' : 'none'
+                  boxShadow: isSelected ? '0 0 16px rgba(8, 145, 178, 0.1)' : 'none'
                 }}
               >
                 {/* Checkbox Icon */}
-                <div style={{ color: isSelected ? '#00f2fe' : '#64748b' }}>
+                <div style={{ color: isSelected ? '#0891b2' : '#6b7b75' }}>
                   {isSelected ? <CheckSquare size={18} /> : <Square size={18} />}
                 </div>
 
@@ -652,20 +652,20 @@ export default function InteractiveControlBar({
                     width: '32px',
                     height: '32px',
                     borderRadius: '8px',
-                    background: isSelected ? scn.color : 'rgba(255,255,255,0.06)',
+                    background: isSelected ? scn.color : 'rgba(18, 35, 31, 0.06)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0
                   }}
                 >
-                  <Icon size={18} color={isSelected ? '#050811' : scn.color} />
+                  <Icon size={18} color={isSelected ? '#ffffff' : scn.color} />
                 </div>
                 <div>
-                  <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#ffffff' }}>
+                  <div style={{ fontSize: '0.84rem', fontWeight: 800, color: 'var(--ink)' }}>
                     {scn.label}
                   </div>
-                  <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: '1px' }}>
+                  <div style={{ fontSize: '0.7rem', color: '#5a6b65', marginTop: '1px' }}>
                     {scn.target}
                   </div>
                 </div>
@@ -685,13 +685,13 @@ export default function InteractiveControlBar({
             style={{
               background: isNominal || isResolved
                 ? isMulti
-                  ? 'linear-gradient(135deg, #ff2a5f, #00f2fe)'
-                  : 'linear-gradient(135deg, #00f2fe, #0284c7)'
-                : 'rgba(30, 41, 59, 0.45)',
-              border: isNominal || isResolved ? '1px solid #00f2fe' : '1px solid rgba(255,255,255,0.05)',
+                  ? 'linear-gradient(135deg, #e11d48, #0891b2)'
+                  : 'linear-gradient(135deg, #0891b2, #0e7490)'
+                : 'rgba(222, 229, 226, 0.7)',
+              border: isNominal || isResolved ? '1px solid #0891b2' : '1px solid rgba(18, 35, 31, 0.05)',
               borderRadius: '12px',
               padding: '16px 24px',
-              color: isNominal || isResolved ? '#ffffff' : '#64748b',
+              color: isNominal || isResolved ? '#ffffff' : '#6b7b75',
               cursor: isNominal || isResolved ? 'pointer' : 'not-allowed',
               opacity: isNominal || isResolved ? 1 : 0.45,
               display: 'flex',
@@ -700,11 +700,11 @@ export default function InteractiveControlBar({
               gap: '12px',
               fontSize: '0.98rem',
               fontWeight: 900,
-              boxShadow: isNominal || isResolved ? '0 0 24px rgba(0,242,254,0.45)' : 'none',
+              boxShadow: isNominal || isResolved ? '0 0 24px rgba(8, 145, 178, 0.16)' : 'none',
               transition: 'all 0.25s ease'
             }}
           >
-            <Flame size={22} color={isMulti ? '#ff2a5f' : '#ffffff'} />
+            <Flame size={22} color={isMulti ? '#e11d48' : '#ffffff'} />
             <span>
               {isMulti
                 ? `Launch ${selectedScenarioKeys.length} Cyber Attacks & Watch AquaShield Fix All Simultaneously`
@@ -715,11 +715,11 @@ export default function InteractiveControlBar({
           <button
             onClick={handleReset}
             style={{
-              background: 'rgba(15, 23, 42, 0.8)',
-              border: '1px solid rgba(56, 189, 248, 0.3)',
+              background: 'var(--frost)',
+              border: '1px solid rgba(14, 116, 144, 0.3)',
               borderRadius: '12px',
               padding: '16px 22px',
-              color: '#94a3b8',
+              color: '#5a6b65',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -740,7 +740,7 @@ export default function InteractiveControlBar({
             onClick={handleManualLaunch}
             disabled={!isNominal && !isResolved}
             style={{
-              background: isNominal || isResolved ? 'linear-gradient(135deg, #ff2a5f, #b91c1c)' : 'rgba(30, 41, 59, 0.4)',
+              background: isNominal || isResolved ? 'linear-gradient(135deg, #e11d48, #b91c1c)' : 'rgba(222, 229, 226, 0.7)',
               border: 'none',
               borderRadius: '10px',
               padding: '14px 16px',
@@ -763,11 +763,11 @@ export default function InteractiveControlBar({
             onClick={handleManualLocalize}
             disabled={!isAttackActive}
             style={{
-              background: isAttackActive ? 'linear-gradient(135deg, #00f2fe, #0284c7)' : 'rgba(30, 41, 59, 0.4)',
+              background: isAttackActive ? 'linear-gradient(135deg, #0891b2, #0e7490)' : 'rgba(222, 229, 226, 0.7)',
               border: 'none',
               borderRadius: '10px',
               padding: '14px 16px',
-              color: isAttackActive ? '#050811' : '#64748b',
+              color: isAttackActive ? '#ffffff' : '#6b7b75',
               cursor: isAttackActive ? 'pointer' : 'not-allowed',
               opacity: isAttackActive ? 1 : 0.4,
               display: 'flex',
@@ -787,7 +787,7 @@ export default function InteractiveControlBar({
             onClick={handleManualFix}
             disabled={!isLocalized}
             style={{
-              background: isLocalized ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(30, 41, 59, 0.4)',
+              background: isLocalized ? 'linear-gradient(135deg, #059669, #059669)' : 'rgba(222, 229, 226, 0.7)',
               border: 'none',
               borderRadius: '10px',
               padding: '14px 16px',
@@ -810,11 +810,11 @@ export default function InteractiveControlBar({
           <button
             onClick={handleReset}
             style={{
-              background: 'rgba(15, 23, 42, 0.8)',
-              border: '1px solid rgba(56, 189, 248, 0.25)',
+              background: 'var(--frost)',
+              border: '1px solid rgba(14, 116, 144, 0.25)',
               borderRadius: '10px',
               padding: '14px 16px',
-              color: '#94a3b8',
+              color: '#5a6b65',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -839,15 +839,15 @@ export default function InteractiveControlBar({
             <div
               style={{
                 background: autoStage === 1 || isAttackActive
-                  ? 'rgba(255, 42, 95, 0.18)'
+                  ? 'rgba(225, 29, 72, 0.18)'
                   : autoStage > 1 || isLocalized || isResolved
-                  ? 'rgba(16, 185, 129, 0.12)'
-                  : 'rgba(15, 23, 42, 0.5)',
+                  ? 'rgba(5, 150, 105, 0.12)'
+                  : 'var(--frost)',
                 border: autoStage === 1 || isAttackActive
-                  ? '1.5px solid #ff2a5f'
+                  ? '1.5px solid #e11d48'
                   : autoStage > 1 || isLocalized || isResolved
-                  ? '1px solid #10b981'
-                  : '1px solid rgba(255,255,255,0.06)',
+                  ? '1px solid #059669'
+                  : '1px solid rgba(18, 35, 31, 0.06)',
                 borderRadius: '8px',
                 padding: '8px 10px',
                 display: 'flex',
@@ -861,7 +861,7 @@ export default function InteractiveControlBar({
                   width: '24px',
                   height: '24px',
                   borderRadius: '50%',
-                  background: autoStage > 1 || isLocalized || isResolved ? '#10b981' : '#ff2a5f',
+                  background: autoStage > 1 || isLocalized || isResolved ? '#059669' : '#e11d48',
                   color: '#ffffff',
                   fontSize: '0.72rem',
                   fontWeight: 900,
@@ -874,10 +874,10 @@ export default function InteractiveControlBar({
                 {autoStage > 1 || isLocalized || isResolved ? '✓' : '1'}
               </div>
               <div>
-                <div style={{ fontSize: '0.74rem', fontWeight: 800, color: autoStage === 1 || isAttackActive ? '#ff2a5f' : '#ffffff' }}>
+                <div style={{ fontSize: '0.74rem', fontWeight: 800, color: autoStage === 1 || isAttackActive ? '#e11d48' : 'var(--ink)' }}>
                   Breach Injected
                 </div>
-                <div style={{ fontSize: '0.65rem', color: '#94a3b8' }}>
+                <div style={{ fontSize: '0.65rem', color: '#5a6b65' }}>
                   {isMulti ? `${selectedScenarioKeys.length} Breaches Active` : 'Alarms Ringing'}
                 </div>
               </div>
@@ -887,15 +887,15 @@ export default function InteractiveControlBar({
             <div
               style={{
                 background: autoStage === 2
-                  ? 'rgba(0, 242, 254, 0.2)'
+                  ? 'rgba(8, 145, 178, 0.2)'
                   : autoStage > 2 || isLocalized || isResolved
-                  ? 'rgba(16, 185, 129, 0.12)'
-                  : 'rgba(15, 23, 42, 0.5)',
+                  ? 'rgba(5, 150, 105, 0.12)'
+                  : 'var(--frost)',
                 border: autoStage === 2
-                  ? '1.5px solid #00f2fe'
+                  ? '1.5px solid #0891b2'
                   : autoStage > 2 || isLocalized || isResolved
-                  ? '1px solid #10b981'
-                  : '1px solid rgba(255,255,255,0.06)',
+                  ? '1px solid #059669'
+                  : '1px solid rgba(18, 35, 31, 0.06)',
                 borderRadius: '8px',
                 padding: '8px 10px',
                 display: 'flex',
@@ -909,8 +909,8 @@ export default function InteractiveControlBar({
                   width: '24px',
                   height: '24px',
                   borderRadius: '50%',
-                  background: autoStage > 2 || isLocalized || isResolved ? '#10b981' : autoStage === 2 ? '#00f2fe' : 'rgba(255,255,255,0.1)',
-                  color: autoStage === 2 ? '#050811' : '#ffffff',
+                  background: autoStage > 2 || isLocalized || isResolved ? '#059669' : autoStage === 2 ? '#0891b2' : 'rgba(18, 35, 31, 0.1)',
+                  color: autoStage > 2 || isLocalized || isResolved || autoStage === 2 ? '#ffffff' : 'var(--ink)',
                   fontSize: '0.72rem',
                   fontWeight: 900,
                   display: 'flex',
@@ -922,10 +922,10 @@ export default function InteractiveControlBar({
                 {autoStage > 2 || isLocalized || isResolved ? '✓' : '2'}
               </div>
               <div>
-                <div style={{ fontSize: '0.74rem', fontWeight: 800, color: autoStage === 2 ? '#00f2fe' : '#ffffff' }}>
+                <div style={{ fontSize: '0.74rem', fontWeight: 800, color: autoStage === 2 ? '#0891b2' : 'var(--ink)' }}>
                   Physics Audit
                 </div>
-                <div style={{ fontSize: '0.65rem', color: '#94a3b8' }}>Cross-Layer Math</div>
+                <div style={{ fontSize: '0.65rem', color: '#5a6b65' }}>Cross-Layer Math</div>
               </div>
             </div>
 
@@ -933,15 +933,15 @@ export default function InteractiveControlBar({
             <div
               style={{
                 background: autoStage === 3 || isLocalized
-                  ? 'rgba(168, 85, 247, 0.2)'
+                  ? 'rgba(139, 92, 246, 0.2)'
                   : autoStage > 3 || isResolved
-                  ? 'rgba(16, 185, 129, 0.12)'
-                  : 'rgba(15, 23, 42, 0.5)',
+                  ? 'rgba(5, 150, 105, 0.12)'
+                  : 'var(--frost)',
                 border: autoStage === 3 || isLocalized
-                  ? '1.5px solid #a855f7'
+                  ? '1.5px solid #8b5cf6'
                   : autoStage > 3 || isResolved
-                  ? '1px solid #10b981'
-                  : '1px solid rgba(255,255,255,0.06)',
+                  ? '1px solid #059669'
+                  : '1px solid rgba(18, 35, 31, 0.06)',
                 borderRadius: '8px',
                 padding: '8px 10px',
                 display: 'flex',
@@ -955,8 +955,8 @@ export default function InteractiveControlBar({
                   width: '24px',
                   height: '24px',
                   borderRadius: '50%',
-                  background: autoStage > 3 || isResolved ? '#10b981' : autoStage === 3 || isLocalized ? '#a855f7' : 'rgba(255,255,255,0.1)',
-                  color: '#ffffff',
+                  background: autoStage > 3 || isResolved ? '#059669' : autoStage === 3 || isLocalized ? '#8b5cf6' : 'rgba(18, 35, 31, 0.1)',
+                  color: autoStage >= 3 || isLocalized || isResolved ? '#ffffff' : 'var(--ink)',
                   fontSize: '0.72rem',
                   fontWeight: 900,
                   display: 'flex',
@@ -968,10 +968,10 @@ export default function InteractiveControlBar({
                 {autoStage > 3 || isResolved ? '✓' : '3'}
               </div>
               <div>
-                <div style={{ fontSize: '0.74rem', fontWeight: 800, color: autoStage === 3 || isLocalized ? '#c084fc' : '#ffffff' }}>
+                <div style={{ fontSize: '0.74rem', fontWeight: 800, color: autoStage === 3 || isLocalized ? '#6d28d9' : 'var(--ink)' }}>
                   Pinpointed
                 </div>
-                <div style={{ fontSize: '0.65rem', color: '#94a3b8' }}>
+                <div style={{ fontSize: '0.65rem', color: '#5a6b65' }}>
                   {isMulti ? `${selectedScenarioKeys.length} Culprits Isolated` : 'Laser Lock'}
                 </div>
               </div>
@@ -981,11 +981,11 @@ export default function InteractiveControlBar({
             <div
               style={{
                 background: autoStage === 4 || isResolved
-                  ? 'rgba(16, 185, 129, 0.2)'
-                  : 'rgba(15, 23, 42, 0.5)',
+                  ? 'rgba(5, 150, 105, 0.2)'
+                  : 'var(--frost)',
                 border: autoStage === 4 || isResolved
-                  ? '1.5px solid #10b981'
-                  : '1px solid rgba(255,255,255,0.06)',
+                  ? '1.5px solid #059669'
+                  : '1px solid rgba(18, 35, 31, 0.06)',
                 borderRadius: '8px',
                 padding: '8px 10px',
                 display: 'flex',
@@ -999,8 +999,8 @@ export default function InteractiveControlBar({
                   width: '24px',
                   height: '24px',
                   borderRadius: '50%',
-                  background: autoStage === 4 || isResolved ? '#10b981' : 'rgba(255,255,255,0.1)',
-                  color: '#ffffff',
+                  background: autoStage === 4 || isResolved ? '#059669' : 'rgba(18, 35, 31, 0.1)',
+                  color: autoStage === 4 || isResolved ? '#ffffff' : 'var(--ink)',
                   fontSize: '0.72rem',
                   fontWeight: 900,
                   display: 'flex',
@@ -1012,27 +1012,27 @@ export default function InteractiveControlBar({
                 {autoStage === 4 || isResolved ? '✓' : '4'}
               </div>
               <div>
-                <div style={{ fontSize: '0.74rem', fontWeight: 800, color: autoStage === 4 || isResolved ? '#34d399' : '#ffffff' }}>
+                <div style={{ fontSize: '0.74rem', fontWeight: 800, color: autoStage === 4 || isResolved ? '#047857' : 'var(--ink)' }}>
                   Self-Healed
                 </div>
-                <div style={{ fontSize: '0.65rem', color: '#94a3b8' }}>0s Plant Downtime</div>
+                <div style={{ fontSize: '0.65rem', color: '#5a6b65' }}>0s Plant Downtime</div>
               </div>
             </div>
           </div>
 
           {/* Animated Glowing Progress Bar */}
-          <div style={{ background: 'rgba(15, 23, 42, 0.8)', height: '10px', borderRadius: '5px', overflow: 'hidden', position: 'relative', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <div style={{ background: 'var(--frost)', height: '10px', borderRadius: '5px', overflow: 'hidden', position: 'relative', border: '1px solid rgba(18, 35, 31, 0.08)' }}>
             <div
               style={{
                 width: `${progressPercent}%`,
                 height: '100%',
                 background: autoStage === 4 || isResolved
-                  ? 'linear-gradient(90deg, #10b981, #34d399)'
+                  ? 'linear-gradient(90deg, #059669, #047857)'
                   : autoStage === 3 || isLocalized
-                  ? 'linear-gradient(90deg, #00f2fe, #a855f7)'
+                  ? 'linear-gradient(90deg, #0891b2, #8b5cf6)'
                   : autoStage === 2
-                  ? 'linear-gradient(90deg, #ff2a5f, #00f2fe)'
-                  : 'linear-gradient(90deg, #ff2a5f, #f59e0b)',
+                  ? 'linear-gradient(90deg, #e11d48, #0891b2)'
+                  : 'linear-gradient(90deg, #e11d48, #d97706)',
                 transition: 'width 0.4s ease-out',
                 boxShadow: '0 0 12px currentColor'
               }}
@@ -1041,16 +1041,16 @@ export default function InteractiveControlBar({
 
           {/* Timer Display */}
           {isAutoPilot && autoStage > 0 && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px', fontSize: '0.72rem', color: '#94a3b8' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px', fontSize: '0.72rem', color: '#5a6b65' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <Timer size={13} color="#00f2fe" />
-                <span>Sequence Time: <strong style={{ color: '#ffffff' }}>{elapsedSec.toFixed(1)}s</strong> / ~9.5s</span>
+                <Timer size={13} color="#0891b2" />
+                <span>Sequence Time: <strong style={{ color: 'var(--ink)' }}>{elapsedSec.toFixed(1)}s</strong> / ~9.5s</span>
               </div>
               <div>
-                {autoStage === 1 && <span style={{ color: '#ff2a5f', fontWeight: 700 }}>Injecting {selectedScenarioKeys.length} Breach(es) & Sounding Alarms...</span>}
-                {autoStage === 2 && <span style={{ color: '#00f2fe', fontWeight: 700 }}>AI Auditing Fluid Inflow vs Outflow & Network Telemetry...</span>}
-                {autoStage === 3 && <span style={{ color: '#c084fc', fontWeight: 700 }}>Laser Locking onto Root Causes...</span>}
-                {autoStage === 4 && <span style={{ color: '#34d399', fontWeight: 700 }}>Autonomous Self-Healing Active for All Breaches!</span>}
+                {autoStage === 1 && <span style={{ color: '#e11d48', fontWeight: 700 }}>Injecting {selectedScenarioKeys.length} Breach(es) & Sounding Alarms...</span>}
+                {autoStage === 2 && <span style={{ color: '#0891b2', fontWeight: 700 }}>AI Auditing Fluid Inflow vs Outflow & Network Telemetry...</span>}
+                {autoStage === 3 && <span style={{ color: '#6d28d9', fontWeight: 700 }}>Laser Locking onto Root Causes...</span>}
+                {autoStage === 4 && <span style={{ color: '#047857', fontWeight: 700 }}>Autonomous Self-Healing Active for All Breaches!</span>}
               </div>
             </div>
           )}

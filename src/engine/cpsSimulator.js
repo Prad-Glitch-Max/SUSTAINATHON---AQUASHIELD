@@ -9,7 +9,7 @@ export const ATTACK_SCENARIOS = {
     layerName: 'None (Plant Healthy)',
     target: 'All Systems Normal',
     description: 'Clean drinking water is flowing smoothly through all treatment tanks.',
-    color: '#10b981'
+    color: '#047857'
   },
   SENSOR_SPOOF: {
     id: 'SENSOR_SPOOF',
@@ -23,7 +23,7 @@ export const ATTACK_SCENARIOS = {
     traditionalMistake: 'Old security tools panic! They think the tank is drying up, pump in way too much water, and flood the whole facility.',
     plainMathProof: 'Water is flowing in, so the water level MUST rise. The sensor says it didn’t move. Therefore, the sensor is lying.',
     plainFix: 'We ignore the lying sensor, calculate the real water level using simple math, and keep the drinking water clean with zero downtime.',
-    color: '#00f2fe'
+    color: '#0e7490'
   },
   NETWORK_REPLAY: {
     id: 'NETWORK_REPLAY',
@@ -37,7 +37,7 @@ export const ATTACK_SCENARIOS = {
     traditionalMistake: 'Old tools panic, think the entire internet is down, and shut down the whole plant, dumping 40,000 Liters of clean water.',
     plainMathProof: 'The water tanks and pumps are completely healthy. Only the message timestamps are late. This proves only the wire is having trouble.',
     plainFix: 'We automatically switch messages to a backup wireless wire in 38 milliseconds. The plant never stops.',
-    color: '#3b82f6'
+    color: '#2563eb'
   },
   CONTROLLER_HIJACK: {
     id: 'CONTROLLER_HIJACK',
@@ -51,7 +51,7 @@ export const ATTACK_SCENARIOS = {
     traditionalMistake: 'Old tools blame the water pumps, completely missing that the computer brain itself was commanded to do something dangerous.',
     plainMathProof: 'The water pipes physically cannot handle 8.5 bar. The computer command broke basic safety limits.',
     plainFix: 'Our emergency safety switch overrides the computer, clamps the pressure back to a safe 3.2 bar, and saves the pipes.',
-    color: '#a855f7'
+    color: '#7c3aed'
   },
   FIRMWARE_ROOTKIT: {
     id: 'FIRMWARE_ROOTKIT',
@@ -65,7 +65,7 @@ export const ATTACK_SCENARIOS = {
     traditionalMistake: 'Old tools trust what the screen says and never notice the motor physically shaking until it burns out.',
     plainMathProof: 'We checked the software’s digital fingerprint. The fingerprint did not match the original clean software code.',
     plainFix: 'We erased the hacked software and restored the clean original code in less than a second.',
-    color: '#f59e0b'
+    color: '#d97706'
   },
   ACTUATOR_JAM: {
     id: 'ACTUATOR_JAM',
@@ -79,7 +79,7 @@ export const ATTACK_SCENARIOS = {
     traditionalMistake: 'Old tools blame the water sensor and think it is glitching, while 60,000 Liters of water leak away.',
     plainMathProof: 'The sensor was telling the truth: water was really leaking. The computer command was 0%, but the physical valve was stuck at 100%.',
     plainFix: 'AquaShield isolates the mechanical gate jam, engages the secondary motorized diverter bypass valve, and preserves 100% of municipal clean water supply.',
-    color: '#ff2a5f'
+    color: '#e11d48'
   },
   ALL_PATHS_BLOCKED: {
     id: 'ALL_PATHS_BLOCKED',
@@ -94,7 +94,7 @@ export const ATTACK_SCENARIOS = {
     traditionalMistake: 'Old IT tools panic and repeatedly issue valve commands until hydraulic pressure ruptures the steel pipeline, destroying the plant.',
     plainMathProof: 'Bernoulli Incompressible Fluid Law: Kinetic inflow (42.5 L/s) slamming into zero outflow generates destructive water hammer shockwave (ΔP > 8.0 bar).',
     plainFix: 'AquaShield mechanical pressure-relief disc vents surge pressure, decouples upstream pump P-101, and redirects water into the internal recirculation loop back to Reservoir Tank 1. 0 Liters lost.',
-    color: '#ff2a5f'
+    color: '#e11d48'
   },
   POWER_GRID_BLACKOUT: {
     id: 'POWER_GRID_BLACKOUT',
@@ -109,7 +109,7 @@ export const ATTACK_SCENARIOS = {
     traditionalMistake: 'Traditional computerized systems go blind and crash, shutting off all municipal drinking water to the city for days.',
     plainMathProof: 'Natural Gravity Siphon Law (P = ρgh): Water elevation gradient between Tank 1 (elevated) and Tank 4 (ground) generates continuous passive head pressure of 1.6 bar without electricity.',
     plainFix: 'Fail-secure mechanical spring-return valves immediately snap into open posture with 0V power. Passive gravity-flow filtration continues supplying 18.5 L/s clean water with zero electricity.',
-    color: '#eab308'
+    color: '#a16207'
   }
 };
 
@@ -157,10 +157,10 @@ export class CPSSimulator {
     } else {
       // Fallback
       this.tanks = {
-        tank1: { id: 'TNK-101', name: 'Raw Water Intake', level: 72, capacity: 50000, color: '#38bdf8' },
-        tank2: { id: 'TNK-102', name: 'Filtration Tank', level: 68, capacity: 40000, color: '#00f2fe' },
-        tank3: { id: 'TNK-103', name: 'Disinfection Tank', level: 75, capacity: 45000, color: '#34d399' },
-        tank4: { id: 'TNK-104', name: 'Clean Drinking Water', level: 82, capacity: 60000, color: '#10b981' }
+        tank1: { id: 'TNK-101', name: 'Raw Water Intake', level: 72, capacity: 50000, color: '#0284c7' },
+        tank2: { id: 'TNK-102', name: 'Filtration Tank', level: 68, capacity: 40000, color: '#0e7490' },
+        tank3: { id: 'TNK-103', name: 'Disinfection Tank', level: 75, capacity: 45000, color: '#16a34a' },
+        tank4: { id: 'TNK-104', name: 'Clean Drinking Water', level: 82, capacity: 60000, color: '#047857' }
       };
     }
 

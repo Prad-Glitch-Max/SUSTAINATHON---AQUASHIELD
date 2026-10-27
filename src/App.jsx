@@ -8,7 +8,8 @@ import IncidentPostMortemModal from './components/IncidentPostMortemModal';
 import BlueprintSelector from './components/BlueprintSelector';
 import MaintenanceView from './components/MaintenanceView';
 import { CPSSimulator } from './engine/cpsSimulator';
-import { LayoutDashboard, Database, ShieldCheck, Wrench } from 'lucide-react';
+import Section, { openSection } from './components/Section';
+import { LayoutDashboard, Database, ShieldCheck, Wrench, Terminal, Network, Activity, SlidersHorizontal, Shield, Gauge, Layers, BookOpen, Cpu } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { sound } from './utils/soundEffects';
 
@@ -95,7 +96,7 @@ export default function App() {
           particleCount: 110,
           spread: 75,
           origin: { y: 0.65 },
-          colors: ['#00f2fe', '#10b981', '#38bdf8', '#34d399']
+          colors: ['#0891b2', '#059669', '#0e7490', '#047857']
         });
       } catch {}
       simRef.current.deployFix();
@@ -149,7 +150,7 @@ export default function App() {
       traditionalMistake: swatAttack.traditionalFailure,
       plainMathProof: swatAttack.aquaShieldLocalizationProof,
       plainFix: swatAttack.remedyApplied,
-      color: '#ff2a5f',
+      color: '#e11d48',
       physicsImpact: {
         tank1Delta: swatAttack.id === 'SWAT_ATTACK_01' ? 18 : 0,
         tank3Delta: swatAttack.id === 'SWAT_ATTACK_22' ? 20 : 0,
@@ -189,183 +190,187 @@ export default function App() {
     setSimState({ ...simRef.current.getState() });
   };
 
+  // ---- Navigation model: views + the titles shown in the "Contents" dropdown ----
+  const VIEWS = [
+    { id: 'lab', label: 'Attack Lab' },
+    { id: 'dataset', label: 'Real-World Dataset' },
+    { id: 'maintenance', label: 'Maintenance' }
+  ];
+
+  const MENU_GROUPS = [
+    {
+      label: 'Attack Lab', view: 'lab',
+      items: [
+        { id: 'lab-controls', title: 'Attack lab controls', subtitle: 'Launch, locate and self-heal an attack', icon: SlidersHorizontal },
+        { id: 'lab-twin', title: 'Digital twin — live plant', subtitle: 'Animated tanks, pumps, valves and pipes', icon: Activity },
+        { id: 'twin-explain', title: 'Live explanation', subtitle: 'What is happening, in plain words', icon: BookOpen },
+        { id: 'twin-tanks', title: 'Tank status', subtitle: 'Level and health of every tank', icon: Gauge },
+        { id: 'twin-telemetry', title: 'Live telemetry', subtitle: 'Flow, pressure, chlorine and more', icon: Cpu },
+        { id: 'lab-prompt', title: 'Custom hacker prompt', subtitle: 'Type any attack in plain English', icon: Terminal },
+        { id: 'lab-topology', title: 'Plant topology', subtitle: 'Switch between 3, 4, 5 or 6 tanks', icon: Network }
+      ]
+    },
+    {
+      label: 'Real-World Dataset', view: 'dataset',
+      items: [
+        { id: 'dataset-main', title: 'SWaT / Kaggle benchmark', subtitle: 'Replay recorded attacks on the twin', icon: Database }
+      ]
+    },
+    {
+      label: 'Maintenance', view: 'maintenance',
+      items: [
+        { id: 'maint-overview', title: 'Plant health overview', icon: Shield },
+        { id: 'maint-how', title: 'How replacement works', subtitle: 'Humans vs. the system', icon: BookOpen },
+        { id: 'maint-hardware', title: 'Hardware health cards', icon: Layers },
+        { id: 'maint-trend', title: 'Degradation forecast', icon: Activity },
+        { id: 'maint-stress', title: 'Stress simulator & activity log', icon: Wrench }
+      ]
+    }
+  ];
+
+  const handleMenuSelect = (view, sectionId) => {
+    if (view !== activeTab) setActiveTab(view);
+    // wait for the view to mount before opening the section
+    setTimeout(() => openSection(sectionId), view !== activeTab ? 140 : 0);
+  };
+
+  const phaseBadge = {
+    NOMINAL: { text: 'Normal', tone: 'ok' },
+    ATTACK_ACTIVE: { text: 'Attack active', tone: 'warn' },
+    LOCALIZED: { text: 'Root cause found', tone: 'info' },
+    RESOLVED: { text: 'Fixed', tone: 'ok' }
+  }[simState.phase] || { text: '', tone: '' };
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', paddingBottom: '30px' }}>
-      {/* Top Header Bar */}
       <Header
         activeScenario={simState.activeScenario}
         phase={simState.phase}
+        activeTab={activeTab}
+        onTab={setActiveTab}
+        views={VIEWS}
+        menuGroups={MENU_GROUPS}
+        onMenuSelect={handleMenuSelect}
       />
 
-      {/* Clean Navigation Tabs */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '12px',
-        margin: '0 16px 16px 16px',
-        flexWrap: 'wrap'
-      }}>
-        <button
-          onClick={() => setActiveTab('lab')}
-          className="glass-panel"
-          style={{
-            padding: '10px 22px',
-            cursor: 'pointer',
-            borderRadius: '24px',
-            background: activeTab === 'lab' ? 'rgba(0, 242, 254, 0.2)' : 'rgba(15, 23, 42, 0.6)',
-            border: activeTab === 'lab' ? '1px solid #00f2fe' : '1px solid rgba(255,255,255,0.08)',
-            color: activeTab === 'lab' ? '#00f2fe' : '#94a3b8',
-            fontSize: '0.85rem',
-            fontWeight: 700,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            boxShadow: activeTab === 'lab' ? '0 0 16px rgba(0,242,254,0.3)' : 'none',
-            transition: 'all 0.2s ease'
-          }}
-        >
-          <LayoutDashboard size={16} />
-          <span>Interactive Attack Lab (Main Stage)</span>
-        </button>
+      <main className="page">
+        {/* VIEW 1: ATTACK LAB */}
+        {activeTab === 'lab' && (
+          <>
+            <Section
+              id="lab-controls"
+              title="Attack lab controls"
+              subtitle="Launch an attack, find the root cause, then self-heal"
+              icon={SlidersHorizontal}
+              badge={phaseBadge.text}
+              badgeTone={phaseBadge.tone}
+              defaultOpen
+            >
+              <InteractiveControlBar
+                phase={simState.phase}
+                activeScenario={simState.activeScenario}
+                activeScenarios={simState.activeScenarios}
+                selectedScenarioKeys={selectedScenarioKeys}
+                onSelectScenarioKeys={setSelectedScenarioKeys}
+                autoStage={autoStage}
+                onChangeAutoStage={setAutoStage}
+                onLaunchAttack={handleLaunchAttack}
+                onLocalize={handleLocalize}
+                onDeployFix={handleDeployFix}
+                onReset={handleReset}
+              />
+            </Section>
 
-        <button
-          onClick={() => setActiveTab('dataset')}
-          className="glass-panel"
-          style={{
-            padding: '10px 22px',
-            cursor: 'pointer',
-            borderRadius: '24px',
-            background: activeTab === 'dataset' ? 'rgba(0, 242, 254, 0.2)' : 'rgba(15, 23, 42, 0.6)',
-            border: activeTab === 'dataset' ? '1px solid #00f2fe' : '1px solid rgba(255,255,255,0.08)',
-            color: activeTab === 'dataset' ? '#00f2fe' : '#94a3b8',
-            fontSize: '0.85rem',
-            fontWeight: 700,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            boxShadow: activeTab === 'dataset' ? '0 0 16px rgba(0,242,254,0.3)' : 'none',
-            transition: 'all 0.2s ease'
-          }}
-        >
-          <Database size={16} />
-          <span>Real-World Dataset Benchmark (SWaT / Kaggle)</span>
-        </button>
+            <Section
+              id="lab-twin"
+              title="Digital twin — live plant"
+              subtitle="Animated tanks, pumps, valves and pipes"
+              icon={Activity}
+              defaultOpen
+            >
+              <DigitalTwinSCADA
+                state={simState}
+                autoStage={autoStage}
+                selectedScenarioKeys={selectedScenarioKeys}
+              />
+            </Section>
 
-        <button
-          onClick={() => setActiveTab('maintenance')}
-          className="glass-panel"
-          style={{
-            padding: '10px 22px',
-            cursor: 'pointer',
-            borderRadius: '24px',
-            background: activeTab === 'maintenance' ? 'rgba(0, 242, 254, 0.2)' : 'rgba(15, 23, 42, 0.6)',
-            border: activeTab === 'maintenance' ? '1px solid #00f2fe' : '1px solid rgba(255,255,255,0.08)',
-            color: activeTab === 'maintenance' ? '#00f2fe' : '#94a3b8',
-            fontSize: '0.85rem',
-            fontWeight: 700,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            boxShadow: activeTab === 'maintenance' ? '0 0 16px rgba(0,242,254,0.3)' : 'none',
-            transition: 'all 0.2s ease'
-          }}
-        >
-          <Wrench size={16} />
-          <span>Maintenance</span>
-        </button>
+            <Section
+              id="lab-prompt"
+              title="Custom hacker prompt"
+              subtitle="Type any attack in plain English and watch the twin react"
+              icon={Terminal}
+            >
+              <ZeroDayPromptConsole
+                embedded
+                phase={simState.phase}
+                activeScenario={simState.activeScenario}
+                onLaunchCustomAttack={handleLaunchCustomAttack}
+                onReset={handleReset}
+              />
+            </Section>
 
-      </div>
+            <Section
+              id="lab-topology"
+              title="Plant topology"
+              subtitle="Switch between 3, 4, 5 or 6 tank layouts"
+              icon={Network}
+            >
+              <BlueprintSelector
+                activeBlueprintId={simState.blueprintId || simState.blueprint?.id || 'BLUEPRINT_4_CASCADE'}
+                onSelectBlueprint={handleSelectBlueprint}
+                phase={simState.phase}
+              />
+            </Section>
+          </>
+        )}
 
-      {/* TAB 1: INTERACTIVE ATTACK LAB (MAIN STAGE) */}
-      {activeTab === 'lab' && (
-        <div style={{ margin: '0 16px' }}>
-          {/* REVIEW 2: DYNAMIC BLUEPRINT TOPOLOGY SELECTOR (3, 4, 5, 6 TANKS) */}
-          <BlueprintSelector
-            activeBlueprintId={simState.blueprintId || simState.blueprint?.id || 'BLUEPRINT_4_CASCADE'}
-            onSelectBlueprint={handleSelectBlueprint}
-            phase={simState.phase}
-          />
-
-          {/* ZERO-DAY HACKER PROMPT CONSOLE (JUDGES CAN ENTER ANY OUT-OF-THE-BOX ATTACK!) */}
-          <ZeroDayPromptConsole
-            phase={simState.phase}
-            activeScenario={simState.activeScenario}
-            onLaunchCustomAttack={handleLaunchCustomAttack}
-            onReset={handleReset}
-          />
-
-          {/* Step-by-Step & Autonomous Demo Controller */}
-          <InteractiveControlBar
-            phase={simState.phase}
-            activeScenario={simState.activeScenario}
-            activeScenarios={simState.activeScenarios}
-            selectedScenarioKeys={selectedScenarioKeys}
-            onSelectScenarioKeys={setSelectedScenarioKeys}
-            autoStage={autoStage}
-            onChangeAutoStage={setAutoStage}
-            onLaunchAttack={handleLaunchAttack}
-            onLocalize={handleLocalize}
-            onDeployFix={handleDeployFix}
-            onReset={handleReset}
-          />
-
-          {/* 1. SCADA Digital Twin Facility (Full Width, Spacious!) */}
-          <section>
-            <DigitalTwinSCADA
-              state={simState}
-              autoStage={autoStage}
-              selectedScenarioKeys={selectedScenarioKeys}
+        {/* VIEW 2: REAL-WORLD DATASET BENCHMARK (SWaT / KAGGLE) */}
+        {activeTab === 'dataset' && (
+          <Section
+            id="dataset-main"
+            title="SWaT / Kaggle benchmark"
+            subtitle="Replay real recorded attacks on the digital twin"
+            icon={Database}
+            defaultOpen
+          >
+            <DatasetBenchmarkView
+              activeScenario={simState.activeScenario}
+              phase={simState.phase}
+              onReplayDatasetAttack={handleReplayDatasetAttack}
             />
-          </section>
-        </div>
-      )}
+          </Section>
+        )}
 
-      {/* TAB 2: REAL-WORLD DATASET BENCHMARK (SWaT / KAGGLE) */}
-      {activeTab === 'dataset' && (
-        <div style={{ margin: '0 16px' }}>
-          <DatasetBenchmarkView
-            activeScenario={simState.activeScenario}
-            phase={simState.phase}
-            onReplayDatasetAttack={handleReplayDatasetAttack}
-          />
-        </div>
-      )}
+        {/* VIEW 3: MAINTENANCE & SENSOR DEGRADATION MONITOR */}
+        {activeTab === 'maintenance' && <MaintenanceView simState={simState} />}
+      </main>
 
-      {/* TAB 3: MAINTENANCE & SENSOR DEGRADATION MONITOR */}
-      {activeTab === 'maintenance' && (
-        <div style={{ margin: '0 16px' }}>
-          <MaintenanceView simState={simState} />
-        </div>
-      )}
-
-      {/* Floating Reopen Button if in RESOLVED state and modal is dismissed */}
+      {/* Floating reopen button once resolved and the report was dismissed */}
       {simState.phase === 'RESOLVED' && !showPostMortem && (
         <button
           onClick={() => setShowPostMortem(true)}
-          className="glass-panel"
           style={{
             position: 'fixed',
             bottom: '24px',
             right: '24px',
             zIndex: 900,
-            background: 'rgba(16, 185, 129, 0.25)',
-            border: '1.5px solid #10b981',
-            borderRadius: '24px',
-            padding: '10px 18px',
-            color: '#34d399',
+            background: '#059669',
+            border: 'none',
+            borderRadius: '999px',
+            padding: '11px 18px',
+            color: '#ffffff',
             fontSize: '0.82rem',
-            fontWeight: 800,
+            fontWeight: 650,
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.5), 0 0 16px rgba(16, 185, 129, 0.35)',
-            transition: 'all 0.2s ease'
+            boxShadow: '0 8px 24px rgba(18, 35, 31, 0.2)'
           }}
         >
-          <ShieldCheck size={18} />
-          <span>Incident Resolution Report</span>
+          <ShieldCheck size={17} />
+          <span>Incident resolution report</span>
         </button>
       )}
 
@@ -378,16 +383,15 @@ export default function App() {
         sustainability={simState.sustainability}
       />
 
-      {/* Footer */}
       <footer style={{
         textAlign: 'center',
         padding: '18px',
         color: 'var(--text-dim)',
         fontSize: '0.75rem',
-        borderTop: '1px solid rgba(255,255,255,0.05)',
-        margin: '24px 16px 0 16px'
+        margin: '12px auto 0',
+        maxWidth: 1200
       }}>
-        AquaShield CPS • Built for <strong style={{ color: '#00f2fe' }}>Sustainathon</strong> • Vellore Institute of Technology (VITV) • UN Sustainable Development Goal 6 (Clean Water)
+        AquaShield CPS · Built for <strong style={{ color: 'var(--accent)' }}>Sustainathon</strong> · Vellore Institute of Technology (VITV) · UN Sustainable Development Goal 6 (Clean Water)
       </footer>
     </div>
   );

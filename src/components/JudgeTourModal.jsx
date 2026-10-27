@@ -25,7 +25,7 @@ const SLIDES = [
     step: 4,
     title: 'The Interactive Demo (Hand the Mouse to the Judge!)',
     tagline: 'Invite them to launch an attack and watch the system self-heal',
-    script: `“Judge, please click any button in our Chaos Injection Studio below — for example, 'L1: Sensor Spoofing'.\n\nNotice how the traditional IDS panics and wants to shut the plant down. But AquaShield's causal laser traces directly to Sensor #204, isolates it, activates the virtual physics estimator, and keeps the plant 100% operational!”`
+    script: `“Judge, please click any button in our Chaos Injection Studio below — for example, 'L1: Sensor Spoofing'.\n\nNotice how the traditional IDS panics and wants to shut the plant down. But AquaShield's causal laser traces directly to Sensor #ffffff, isolates it, activates the virtual physics estimator, and keeps the plant 100% operational!”`
   }
 ];
 
@@ -53,7 +53,7 @@ export default function JudgeTourModal({ isOpen, onClose }) {
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(3, 7, 18, 0.85)',
+      background: 'var(--frost)',
       backdropFilter: 'blur(8px)',
       zIndex: 1000,
       display: 'flex',
@@ -65,8 +65,8 @@ export default function JudgeTourModal({ isOpen, onClose }) {
         maxWidth: '680px',
         width: '100%',
         padding: '28px',
-        border: '1px solid #00f2fe',
-        boxShadow: '0 0 40px rgba(0, 242, 254, 0.25)',
+        border: '1px solid #0891b2',
+        boxShadow: '0 0 40px rgba(8, 145, 178, 0.09)',
         position: 'relative'
       }}>
         {/* Close Button */}
@@ -78,7 +78,7 @@ export default function JudgeTourModal({ isOpen, onClose }) {
             right: '18px',
             background: 'none',
             border: 'none',
-            color: '#94a3b8',
+            color: '#5a6b65',
             cursor: 'pointer'
           }}
         >
@@ -87,31 +87,31 @@ export default function JudgeTourModal({ isOpen, onClose }) {
 
         {/* Modal Header */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-          <div style={{ background: 'rgba(0,242,254,0.15)', padding: '8px', borderRadius: '8px' }}>
-            <Award size={22} color="#00f2fe" />
+          <div style={{ background: 'rgba(8, 145, 178, 0.15)', padding: '8px', borderRadius: '8px' }}>
+            <Award size={22} color="#0891b2" />
           </div>
           <div>
-            <div style={{ fontSize: '0.7rem', color: '#00f2fe', fontWeight: 700, textTransform: 'uppercase' }}>
+            <div style={{ fontSize: '0.7rem', color: '#0891b2', fontWeight: 700, textTransform: 'uppercase' }}>
               STEP {slide.step} OF {SLIDES.length} • HACKATHON PITCH SCRIPT
             </div>
-            <h3 className="font-display" style={{ fontSize: '1.1rem', color: '#f1f5f9' }}>
+            <h3 className="font-display" style={{ fontSize: '1.1rem', color: 'var(--ink)' }}>
               {slide.title}
             </h3>
           </div>
         </div>
 
-        <div style={{ fontSize: '0.85rem', color: '#38bdf8', marginBottom: '12px', fontWeight: 600 }}>
+        <div style={{ fontSize: '0.85rem', color: '#0e7490', marginBottom: '12px', fontWeight: 600 }}>
           {slide.tagline}
         </div>
 
         {/* Script Card */}
         <div style={{
-          background: 'rgba(5, 10, 22, 0.9)',
-          border: '1px solid rgba(56, 189, 248, 0.2)',
+          background: 'var(--frost)',
+          border: '1px solid rgba(14, 116, 144, 0.2)',
           borderRadius: '10px',
           padding: '18px',
           fontSize: '0.88rem',
-          color: '#e2e8f0',
+          color: '#24362f',
           lineHeight: '1.6',
           whiteSpace: 'pre-line',
           minHeight: '180px'
@@ -129,7 +129,7 @@ export default function JudgeTourModal({ isOpen, onClose }) {
                   width: idx === currentSlide ? '24px' : '8px',
                   height: '8px',
                   borderRadius: '4px',
-                  background: idx === currentSlide ? '#00f2fe' : 'rgba(255,255,255,0.2)',
+                  background: idx === currentSlide ? '#0891b2' : 'rgba(18, 35, 31, 0.2)',
                   transition: 'all 0.3s ease'
                 }}
               />
@@ -141,7 +141,7 @@ export default function JudgeTourModal({ isOpen, onClose }) {
               <button
                 onClick={handlePrev}
                 className="glass-panel"
-                style={{ padding: '8px 14px', cursor: 'pointer', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '6px' }}
+                style={{ padding: '8px 14px', cursor: 'pointer', color: '#5a6b65', display: 'flex', alignItems: 'center', gap: '6px' }}
               >
                 <ChevronLeft size={16} /> Previous
               </button>
@@ -151,7 +151,7 @@ export default function JudgeTourModal({ isOpen, onClose }) {
               <button
                 onClick={handleNext}
                 className="badge badge-cyan"
-                style={{ padding: '8px 18px', cursor: 'pointer', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', border: '1px solid #00f2fe' }}
+                style={{ padding: '8px 18px', cursor: 'pointer', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', border: '1px solid #0891b2' }}
               >
                 Next Step <ChevronRight size={16} />
               </button>

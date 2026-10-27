@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import Section, { openSection } from './Section';
 import {
   Wrench,
   Activity,
@@ -171,8 +172,7 @@ const INITIAL_COMPONENTS = [
 export default function MaintenanceView() {
   const [components, setComponents] = useState(INITIAL_COMPONENTS);
   const [selectedId, setSelectedId] = useState('AIT_501');
-  const [showExplanation, setShowExplanation] = useState(true);
-  const [notification, setNotification] = useState(null);
+    const [notification, setNotification] = useState(null);
 
   // Power Outage / Physical Shock Simulator
   const [outageDuration, setOutageDuration] = useState('30');
@@ -228,7 +228,7 @@ export default function MaintenanceView() {
         particleCount: 80,
         spread: 60,
         origin: { y: 0.65 },
-        colors: ['#34d399', '#00f2fe', '#38bdf8']
+        colors: ['#047857', '#0891b2', '#0e7490']
       });
     } catch {}
 
@@ -277,7 +277,7 @@ export default function MaintenanceView() {
         particleCount: 140,
         spread: 90,
         origin: { y: 0.6 },
-        colors: ['#10b981', '#00f2fe', '#38bdf8', '#34d399', '#a855f7']
+        colors: ['#059669', '#0891b2', '#0e7490', '#047857', '#8b5cf6']
       });
     } catch {}
 
@@ -382,13 +382,14 @@ export default function MaintenanceView() {
       {/* ============================================================== */}
       {/* 1. TOP HEADER & HIGH-LEVEL OVERVIEW BAR                       */}
       {/* ============================================================== */}
+      <Section id="maint-overview" title="Plant health overview" subtitle="Overall equipment condition at a glance" icon={ShieldCheck} defaultOpen>
       <div
         className="glass-panel"
         style={{
           padding: '20px 24px',
           borderRadius: '16px',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-          background: 'rgba(15, 23, 42, 0.85)',
+          border: '1px solid rgba(18, 35, 31, 0.08)',
+          background: 'var(--frost)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -402,18 +403,18 @@ export default function MaintenanceView() {
               width: '40px',
               height: '40px',
               borderRadius: '10px',
-              background: 'rgba(56, 189, 248, 0.15)',
-              border: '1.5px solid #38bdf8',
+              background: 'rgba(14, 116, 144, 0.15)',
+              border: '1.5px solid #0e7490',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
             }}
           >
-            <Wrench size={22} color="#38bdf8" />
+            <Wrench size={22} color="#0e7490" />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h2 style={{ fontSize: '1.18rem', fontWeight: 800, color: '#f8fafc', margin: 0 }}>
+              <h2 style={{ fontSize: '1.18rem', fontWeight: 800, color: 'var(--ink)', margin: 0 }}>
                 PLANT MAINTENANCE & SENSOR CONDITION LOG
               </h2>
               <span
@@ -422,15 +423,15 @@ export default function MaintenanceView() {
                   fontWeight: 800,
                   padding: '2px 8px',
                   borderRadius: '10px',
-                  background: 'rgba(56, 189, 248, 0.15)',
-                  color: '#38bdf8',
-                  border: '1px solid rgba(56, 189, 248, 0.3)'
+                  background: 'rgba(14, 116, 144, 0.15)',
+                  color: '#0e7490',
+                  border: '1px solid rgba(14, 116, 144, 0.3)'
                 }}
               >
                 CPS HARDWARE TELEMETRY
               </span>
             </div>
-            <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: '4px 0 0 0' }}>
+            <p style={{ fontSize: '0.78rem', color: '#5a6b65', margin: '4px 0 0 0' }}>
               Predicts physical sensor damage, schedules human technician repairs, and recalibrates the digital twin.
             </p>
           </div>
@@ -440,14 +441,14 @@ export default function MaintenanceView() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
           {/* Quick Explanation Toggle */}
           <button
-            onClick={() => setShowExplanation(prev => !prev)}
+            onClick={() => openSection('maint-how')}
             className="glass-panel"
             style={{
               padding: '9px 14px',
               borderRadius: '10px',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              background: showExplanation ? 'rgba(56, 189, 248, 0.15)' : 'rgba(15, 23, 42, 0.6)',
-              color: showExplanation ? '#38bdf8' : '#94a3b8',
+              border: '1px solid rgba(18, 35, 31, 0.12)',
+              background: 'var(--frost)',
+              color: '#5a6b65',
               fontSize: '0.76rem',
               fontWeight: 700,
               cursor: 'pointer',
@@ -458,7 +459,7 @@ export default function MaintenanceView() {
           >
             <Info size={14} />
             <span>How Replacement Works</span>
-            {showExplanation ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            <ChevronDown size={14} />
           </button>
 
           {/* REPLACE ALL OPTION (Requested by User!) */}
@@ -468,16 +469,16 @@ export default function MaintenanceView() {
             style={{
               padding: '9px 18px',
               borderRadius: '10px',
-              background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(0, 242, 254, 0.25))',
-              border: '1.5px solid #10b981',
-              color: '#34d399',
+              background: 'linear-gradient(135deg, rgba(5, 150, 105, 0.25), rgba(8, 145, 178, 0.25))',
+              border: '1.5px solid #059669',
+              color: '#047857',
               fontSize: '0.8rem',
               fontWeight: 800,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              boxShadow: '0 0 16px rgba(16, 185, 129, 0.3)',
+              boxShadow: '0 0 16px rgba(5, 150, 105, 0.1)',
               transition: 'all 0.2s ease'
             }}
           >
@@ -486,6 +487,7 @@ export default function MaintenanceView() {
           </button>
         </div>
       </div>
+      </Section>
 
       {/* Confirmation Notification Toast */}
       {notification && (
@@ -493,15 +495,15 @@ export default function MaintenanceView() {
           style={{
             padding: '12px 18px',
             borderRadius: '10px',
-            background: 'rgba(16, 185, 129, 0.2)',
-            border: '1px solid #10b981',
-            color: '#34d399',
+            background: 'rgba(5, 150, 105, 0.2)',
+            border: '1px solid #059669',
+            color: '#047857',
             fontSize: '0.82rem',
             fontWeight: 700,
             display: 'flex',
             alignItems: 'center',
             gap: '10px',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+            boxShadow: '0 4px 16px rgba(18, 35, 31, 0.072)',
             animation: 'fadeIn 0.25s ease'
           }}
         >
@@ -513,14 +515,14 @@ export default function MaintenanceView() {
       {/* ============================================================== */}
       {/* 2. "HOW REPLACEMENT WORKS: HUMANS VS SYSTEM" (Answers User Confusion!) */}
       {/* ============================================================== */}
-      {showExplanation && (
+      <Section id="maint-how" title="How replacement works" subtitle="Who does what: humans vs. the system" icon={Sparkles}>
         <div
           className="glass-panel"
           style={{
             padding: '18px 22px',
             borderRadius: '14px',
-            border: '1px solid rgba(0, 242, 254, 0.2)',
-            background: 'rgba(15, 23, 42, 0.9)',
+            border: '1px solid rgba(8, 145, 178, 0.2)',
+            background: 'var(--frost)',
             display: 'flex',
             flexDirection: 'column',
             gap: '12px',
@@ -529,73 +531,74 @@ export default function MaintenanceView() {
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Sparkles size={16} color="#00f2fe" />
-              <h3 style={{ fontSize: '0.88rem', fontWeight: 800, color: '#00f2fe', margin: 0, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              <Sparkles size={16} color="#0891b2" />
+              <h3 style={{ fontSize: '0.88rem', fontWeight: 800, color: '#0891b2', margin: 0, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                 How Sensor Replacement Works (Who Does What?)
               </h3>
             </div>
-            <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+            <span style={{ fontSize: '0.72rem', color: '#5a6b65' }}>
               Cyber-Physical Systems (CPS) Maintenance Workflow
             </span>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
             {/* Step 1: System Watches */}
-            <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '12px 14px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div style={{ background: 'rgba(18, 35, 31, 0.03)', padding: '12px 14px', borderRadius: '10px', border: '1px solid rgba(18, 35, 31, 0.06)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                <Cpu size={16} color="#38bdf8" />
-                <strong style={{ fontSize: '0.8rem', color: '#f8fafc' }}>1. AquaShield AI (The System)</strong>
+                <Cpu size={16} color="#0e7490" />
+                <strong style={{ fontSize: '0.8rem', color: 'var(--ink)' }}>1. AquaShield AI (The System)</strong>
               </div>
-              <p style={{ fontSize: '0.74rem', color: '#cbd5e1', margin: 0, lineHeight: 1.45 }}>
-                The software continuously computes fluid friction and pressure shocks. It sounds a warning <strong style={{ color: '#38bdf8' }}>48+ hours before</strong> a physical sensor burns out. If damaged, AI runs virtual math estimators so clean drinking water never stops.
+              <p style={{ fontSize: '0.74rem', color: '#3b4d46', margin: 0, lineHeight: 1.45 }}>
+                The software continuously computes fluid friction and pressure shocks. It sounds a warning <strong style={{ color: '#0e7490' }}>48+ hours before</strong> a physical sensor burns out. If damaged, AI runs virtual math estimators so clean drinking water never stops.
               </p>
             </div>
 
             {/* Step 2: Human Replaces */}
-            <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '12px 14px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div style={{ background: 'rgba(18, 35, 31, 0.03)', padding: '12px 14px', borderRadius: '10px', border: '1px solid rgba(18, 35, 31, 0.06)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                <UserCheck size={16} color="#fbbf24" />
-                <strong style={{ fontSize: '0.8rem', color: '#f8fafc' }}>2. Certified Field Crew (Humans)</strong>
+                <UserCheck size={16} color="#b45309" />
+                <strong style={{ fontSize: '0.8rem', color: 'var(--ink)' }}>2. Certified Field Crew (Humans)</strong>
               </div>
-              <p style={{ fontSize: '0.74rem', color: '#cbd5e1', margin: 0, lineHeight: 1.45 }}>
-                Sensors are real stainless-steel hardware in water tanks. Software cannot unscrew bolts! A <strong style={{ color: '#fbbf24' }}>human technician</strong> physically visits the tank, unplugs the fouled or cracked sensor, and installs a brand-new factory unit.
+              <p style={{ fontSize: '0.74rem', color: '#3b4d46', margin: 0, lineHeight: 1.45 }}>
+                Sensors are real stainless-steel hardware in water tanks. Software cannot unscrew bolts! A <strong style={{ color: '#b45309' }}>human technician</strong> physically visits the tank, unplugs the fouled or cracked sensor, and installs a brand-new factory unit.
               </p>
             </div>
 
             {/* Step 3: Digital Sync */}
-            <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '12px 14px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div style={{ background: 'rgba(18, 35, 31, 0.03)', padding: '12px 14px', borderRadius: '10px', border: '1px solid rgba(18, 35, 31, 0.06)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                <RotateCcw size={16} color="#34d399" />
-                <strong style={{ fontSize: '0.8rem', color: '#f8fafc' }}>3. Digital Calibration ("Replace")</strong>
+                <RotateCcw size={16} color="#047857" />
+                <strong style={{ fontSize: '0.8rem', color: 'var(--ink)' }}>3. Digital Calibration ("Replace")</strong>
               </div>
-              <p style={{ fontSize: '0.74rem', color: '#cbd5e1', margin: 0, lineHeight: 1.45 }}>
-                Clicking <strong style={{ color: '#34d399' }}>"Confirm Replacement"</strong> tells the digital twin that fresh physical hardware is now in place. AquaShield recalibrates its mass-balance equations and resets the wear counter to 100% Health.
+              <p style={{ fontSize: '0.74rem', color: '#3b4d46', margin: 0, lineHeight: 1.45 }}>
+                Clicking <strong style={{ color: '#047857' }}>"Confirm Replacement"</strong> tells the digital twin that fresh physical hardware is now in place. AquaShield recalibrates its mass-balance equations and resets the wear counter to 100% Health.
               </p>
             </div>
           </div>
         </div>
-      )}
+      </Section>
 
       {/* ============================================================== */}
       {/* 3. PHYSICAL HARDWARE CARDS GRID (3 COLUMNS x 2 ROWS)           */}
       {/* ============================================================== */}
+      <Section id="maint-hardware" title="Hardware health cards" subtitle="Wear and damage forecast for every physical component" icon={Wrench} defaultOpen>
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
           <div>
-            <h3 style={{ fontSize: '0.96rem', fontWeight: 800, color: '#f8fafc', margin: 0 }}>
+            <h3 style={{ fontSize: '0.96rem', fontWeight: 800, color: 'var(--ink)', margin: 0 }}>
               PHYSICAL EQUIPMENT CONDITION & DAMAGE FORECAST
             </h3>
-            <span style={{ fontSize: '0.74rem', color: '#94a3b8' }}>
+            <span style={{ fontSize: '0.74rem', color: '#5a6b65' }}>
               Select any card to view its wear curve, or click "Confirm Replacement" to simulate on-site technician hardware swap.
             </span>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '0.74rem', color: '#94a3b8' }}>
-              Facility Status: <strong style={{ color: aggregateHealth > 75 ? '#34d399' : '#fbbf24' }}>{aggregateHealth}% Overall Health</strong>
+            <span style={{ fontSize: '0.74rem', color: '#5a6b65' }}>
+              Facility Status: <strong style={{ color: aggregateHealth > 75 ? '#047857' : '#b45309' }}>{aggregateHealth}% Overall Health</strong>
             </span>
             {attentionCount > 0 && (
-              <span style={{ fontSize: '0.7rem', padding: '3px 8px', borderRadius: '6px', background: 'rgba(245, 158, 11, 0.15)', color: '#fbbf24', border: '1px solid #f59e0b', fontWeight: 700 }}>
+              <span style={{ fontSize: '0.7rem', padding: '3px 8px', borderRadius: '6px', background: 'rgba(217, 119, 6, 0.15)', color: '#b45309', border: '1px solid #d97706', fontWeight: 700 }}>
                 {attentionCount} Action(s) Advised
               </span>
             )}
@@ -608,25 +611,25 @@ export default function MaintenanceView() {
             const healthScore = Math.max(0, Math.round(100 - comp.currentWear));
             const isBrandNew = comp.currentWear <= 1.0;
 
-            let badgeColor = '#34d399';
-            let badgeBg = 'rgba(16, 185, 129, 0.15)';
+            let badgeColor = '#047857';
+            let badgeBg = 'rgba(5, 150, 105, 0.15)';
             let badgeText = 'OPTIMAL';
 
             if (comp.currentWear >= comp.criticalThreshold) {
-              badgeColor = '#ff2a5f';
-              badgeBg = 'rgba(255, 42, 95, 0.18)';
+              badgeColor = '#e11d48';
+              badgeBg = 'rgba(225, 29, 72, 0.18)';
               badgeText = 'CRITICAL WEAR';
             } else if (comp.currentWear >= comp.replacementThreshold) {
-              badgeColor = '#fbbf24';
-              badgeBg = 'rgba(245, 158, 11, 0.18)';
+              badgeColor = '#b45309';
+              badgeBg = 'rgba(217, 119, 6, 0.18)';
               badgeText = 'REPLACE SOON';
             } else if (comp.currentWear >= 60) {
-              badgeColor = '#f59e0b';
-              badgeBg = 'rgba(245, 158, 11, 0.12)';
+              badgeColor = '#d97706';
+              badgeBg = 'rgba(217, 119, 6, 0.12)';
               badgeText = 'SERVICE DUE';
             } else if (comp.currentWear >= 35) {
-              badgeColor = '#38bdf8';
-              badgeBg = 'rgba(56, 189, 248, 0.12)';
+              badgeColor = '#0e7490';
+              badgeBg = 'rgba(14, 116, 144, 0.12)';
               badgeText = 'NORMAL WEAR';
             }
 
@@ -648,15 +651,15 @@ export default function MaintenanceView() {
                 style={{
                   padding: '16px',
                   borderRadius: '14px',
-                  border: isSelected ? '1.5px solid #00f2fe' : '1px solid rgba(255, 255, 255, 0.08)',
-                  background: isSelected ? 'rgba(0, 242, 254, 0.06)' : 'rgba(15, 23, 42, 0.75)',
+                  border: isSelected ? '1.5px solid #0891b2' : '1px solid rgba(18, 35, 31, 0.08)',
+                  background: isSelected ? 'rgba(8, 145, 178, 0.06)' : 'var(--frost)',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
                   gap: '12px',
                   transition: 'all 0.2s ease',
-                  boxShadow: isSelected ? '0 0 16px rgba(0, 242, 254, 0.18)' : 'none'
+                  boxShadow: isSelected ? '0 0 16px rgba(8, 145, 178, 0.06)' : 'none'
                 }}
               >
                 <div>
@@ -669,14 +672,14 @@ export default function MaintenanceView() {
                           fontWeight: 800,
                           padding: '2px 7px',
                           borderRadius: '6px',
-                          background: 'rgba(56, 189, 248, 0.15)',
-                          color: '#38bdf8',
-                          border: '1px solid rgba(56, 189, 248, 0.3)'
+                          background: 'rgba(14, 116, 144, 0.15)',
+                          color: '#0e7490',
+                          border: '1px solid rgba(14, 116, 144, 0.3)'
                         }}
                       >
                         {comp.tag}
                       </span>
-                      <span style={{ fontSize: '0.68rem', color: '#94a3b8' }}>
+                      <span style={{ fontSize: '0.68rem', color: '#5a6b65' }}>
                         {comp.location}
                       </span>
                     </div>
@@ -697,41 +700,41 @@ export default function MaintenanceView() {
                   </div>
 
                   {/* Component Title */}
-                  <h4 style={{ fontSize: '0.88rem', fontWeight: 800, color: '#f8fafc', margin: '8px 0 2px 0' }}>
+                  <h4 style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--ink)', margin: '8px 0 2px 0' }}>
                     {comp.name}
                   </h4>
 
                   {/* Plain English Summary */}
-                  <p style={{ fontSize: '0.72rem', color: '#94a3b8', margin: '2px 0 8px 0', lineHeight: 1.4, minHeight: '32px' }}>
+                  <p style={{ fontSize: '0.72rem', color: '#5a6b65', margin: '2px 0 8px 0', lineHeight: 1.4, minHeight: '32px' }}>
                     {comp.simpleDescription}
                   </p>
 
                   {/* Health Gauge & Wear Bar */}
-                  <div style={{ background: 'rgba(255,255,255,0.02)', padding: '8px 10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
+                  <div style={{ background: 'rgba(18, 35, 31, 0.02)', padding: '8px 10px', borderRadius: '8px', border: '1px solid rgba(18, 35, 31, 0.04)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
-                      <span style={{ fontSize: '0.68rem', color: '#94a3b8' }}>Condition</span>
+                      <span style={{ fontSize: '0.68rem', color: '#5a6b65' }}>Condition</span>
                       <span style={{ fontSize: '0.95rem', fontWeight: 900, color: badgeColor }}>
-                        {healthScore}% <span style={{ fontSize: '0.68rem', color: '#94a3b8', fontWeight: 500 }}>Health</span>
+                        {healthScore}% <span style={{ fontSize: '0.68rem', color: '#5a6b65', fontWeight: 500 }}>Health</span>
                       </span>
                     </div>
 
                     {/* Progress Bar */}
-                    <div style={{ width: '100%', height: '6px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: '3px', overflow: 'hidden' }}>
+                    <div style={{ width: '100%', height: '6px', background: 'rgba(18, 35, 31, 0.08)', borderRadius: '3px', overflow: 'hidden' }}>
                       <div
                         style={{
                           width: `${Math.min(100, comp.currentWear)}%`,
                           height: '100%',
                           background: comp.currentWear >= 75
-                            ? 'linear-gradient(90deg, #f59e0b, #ff2a5f)'
+                            ? 'linear-gradient(90deg, #d97706, #e11d48)'
                             : comp.currentWear >= 50
-                            ? 'linear-gradient(90deg, #10b981, #f59e0b)'
-                            : 'linear-gradient(90deg, #00f2fe, #10b981)',
+                            ? 'linear-gradient(90deg, #059669, #d97706)'
+                            : 'linear-gradient(90deg, #0891b2, #059669)',
                           transition: 'width 0.4s ease'
                         }}
                       />
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.66rem', color: '#64748b', marginTop: '4px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.66rem', color: '#6b7b75', marginTop: '4px' }}>
                       <span>Wear: {comp.currentWear.toFixed(1)}%</span>
                       <span>Service threshold: {comp.replacementThreshold}%</span>
                     </div>
@@ -739,10 +742,10 @@ export default function MaintenanceView() {
                 </div>
 
                 {/* Bottom Action: Replace Sensor */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '8px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '8px', borderTop: '1px solid rgba(18, 35, 31, 0.06)' }}>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: '0.64rem', color: '#94a3b8' }}>Est. Remaining:</span>
-                    <span style={{ fontSize: '0.74rem', fontWeight: 700, color: comp.currentWear >= 75 ? '#fbbf24' : '#f8fafc' }}>
+                    <span style={{ fontSize: '0.64rem', color: '#5a6b65' }}>Est. Remaining:</span>
+                    <span style={{ fontSize: '0.74rem', fontWeight: 700, color: comp.currentWear >= 75 ? '#b45309' : 'var(--ink)' }}>
                       {isBrandNew ? 'Full Life (1,400+ h)' : `${compRemainingHours} hrs (~${compRemainingDays} d)`}
                     </span>
                   </div>
@@ -756,9 +759,9 @@ export default function MaintenanceView() {
                     style={{
                       padding: '6px 12px',
                       borderRadius: '8px',
-                      background: isBrandNew ? 'rgba(16, 185, 129, 0.1)' : 'rgba(16, 185, 129, 0.2)',
-                      border: '1px solid #10b981',
-                      color: '#34d399',
+                      background: isBrandNew ? 'rgba(5, 150, 105, 0.1)' : 'rgba(5, 150, 105, 0.2)',
+                      border: '1px solid #059669',
+                      color: '#047857',
                       fontSize: '0.72rem',
                       fontWeight: 800,
                       cursor: 'pointer',
@@ -777,17 +780,19 @@ export default function MaintenanceView() {
           })}
         </div>
       </div>
+      </Section>
 
       {/* ============================================================== */}
       {/* 4. DEEP-DIVE DEGRADATION GRAPH FOR SELECTED SENSOR             */}
       {/* ============================================================== */}
+      <Section id="maint-trend" title="Degradation forecast" subtitle="Wear curve and plain-English diagnosis of the selected component" icon={Activity}>
       <div
         className="glass-panel"
         style={{
           padding: '20px 24px',
           borderRadius: '16px',
-          border: '1px solid rgba(0, 242, 254, 0.25)',
-          background: 'rgba(15, 23, 42, 0.85)',
+          border: '1px solid rgba(8, 145, 178, 0.25)',
+          background: 'var(--frost)',
           display: 'grid',
           gridTemplateColumns: '1.2fr 1fr',
           gap: '20px'
@@ -797,45 +802,45 @@ export default function MaintenanceView() {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
             <div>
-              <span style={{ fontSize: '0.68rem', color: '#00f2fe', fontWeight: 800, textTransform: 'uppercase' }}>
+              <span style={{ fontSize: '0.68rem', color: '#0891b2', fontWeight: 800, textTransform: 'uppercase' }}>
                 Failure Horizon Prediction
               </span>
-              <h4 style={{ fontSize: '0.98rem', fontWeight: 800, color: '#f8fafc', margin: '2px 0 0 0' }}>
+              <h4 style={{ fontSize: '0.98rem', fontWeight: 800, color: 'var(--ink)', margin: '2px 0 0 0' }}>
                 Degradation Trend Curve: {selectedComponent.name} ({selectedComponent.tag})
               </h4>
             </div>
 
-            <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
-              Current Wear: <strong style={{ color: selectedComponent.currentWear >= 75 ? '#fbbf24' : '#34d399' }}>{selectedComponent.currentWear.toFixed(1)}%</strong>
+            <span style={{ fontSize: '0.72rem', color: '#5a6b65' }}>
+              Current Wear: <strong style={{ color: selectedComponent.currentWear >= 75 ? '#b45309' : '#047857' }}>{selectedComponent.currentWear.toFixed(1)}%</strong>
             </span>
           </div>
 
           {/* SVG Chart */}
-          <div style={{ background: 'rgba(2, 6, 23, 0.65)', padding: '14px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div style={{ background: 'var(--frost)', padding: '14px', borderRadius: '12px', border: '1px solid rgba(18, 35, 31, 0.06)' }}>
             <svg viewBox="0 0 450 160" style={{ width: '100%', height: 'auto', display: 'block' }}>
               {/* Horizontal Grid Lines */}
-              <line x1="40" y1="20" x2="430" y2="20" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
-              <line x1="40" y1="60" x2="430" y2="60" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
-              <line x1="40" y1="100" x2="430" y2="100" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
-              <line x1="40" y1="140" x2="430" y2="140" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+              <line x1="40" y1="20" x2="430" y2="20" stroke="rgba(18, 35, 31, 0.06)" strokeWidth="1" />
+              <line x1="40" y1="60" x2="430" y2="60" stroke="rgba(18, 35, 31, 0.06)" strokeWidth="1" />
+              <line x1="40" y1="100" x2="430" y2="100" stroke="rgba(18, 35, 31, 0.06)" strokeWidth="1" />
+              <line x1="40" y1="140" x2="430" y2="140" stroke="rgba(18, 35, 31, 0.15)" strokeWidth="1" />
 
               {/* Y Axis Labels */}
-              <text x="32" y="24" fill="#94a3b8" fontSize="8.5" textAnchor="end">100%</text>
-              <text x="32" y="64" fill="#94a3b8" fontSize="8.5" textAnchor="end">75%</text>
-              <text x="32" y="104" fill="#94a3b8" fontSize="8.5" textAnchor="end">50%</text>
-              <text x="32" y="144" fill="#94a3b8" fontSize="8.5" textAnchor="end">0%</text>
+              <text x="32" y="24" fill="#5a6b65" fontSize="8.5" textAnchor="end">100%</text>
+              <text x="32" y="64" fill="#5a6b65" fontSize="8.5" textAnchor="end">75%</text>
+              <text x="32" y="104" fill="#5a6b65" fontSize="8.5" textAnchor="end">50%</text>
+              <text x="32" y="144" fill="#5a6b65" fontSize="8.5" textAnchor="end">0%</text>
 
               {/* Critical Failure Danger Zone (85%) */}
-              <line x1="40" y1="38" x2="430" y2="38" stroke="#ff2a5f" strokeDasharray="4 4" strokeWidth="1.2" opacity="0.8" />
-              <text x="428" y="34" fill="#ff2a5f" fontSize="8" textAnchor="end" fontWeight="700">85% · Critical Failure Danger</text>
+              <line x1="40" y1="38" x2="430" y2="38" stroke="#e11d48" strokeDasharray="4 4" strokeWidth="1.2" opacity="0.8" />
+              <text x="428" y="34" fill="#e11d48" fontSize="8" textAnchor="end" fontWeight="700">85% · Critical Failure Danger</text>
 
               {/* Replacement Required Line (75%) */}
-              <line x1="40" y1="50" x2="430" y2="50" stroke="#fbbf24" strokeDasharray="4 4" strokeWidth="1.2" opacity="0.8" />
-              <text x="428" y="47" fill="#fbbf24" fontSize="8" textAnchor="end" fontWeight="700">75% · Replacement Required</text>
+              <line x1="40" y1="50" x2="430" y2="50" stroke="#b45309" strokeDasharray="4 4" strokeWidth="1.2" opacity="0.8" />
+              <text x="428" y="47" fill="#b45309" fontSize="8" textAnchor="end" fontWeight="700">75% · Replacement Required</text>
 
               {/* Preventive Service Line (70%) */}
-              <line x1="40" y1="56" x2="430" y2="56" stroke="#f59e0b" strokeDasharray="2 3" strokeWidth="1" opacity="0.6" />
-              <text x="428" y="66" fill="#f59e0b" fontSize="7.5" textAnchor="end">70% · Preventive Inspection</text>
+              <line x1="40" y1="56" x2="430" y2="56" stroke="#d97706" strokeDasharray="2 3" strokeWidth="1" opacity="0.6" />
+              <text x="428" y="66" fill="#d97706" fontSize="7.5" textAnchor="end">70% · Preventive Inspection</text>
 
               {/* Trend Curve & Data Points */}
               {(() => {
@@ -869,7 +874,7 @@ export default function MaintenanceView() {
                     <path
                       d={pathStr}
                       fill="none"
-                      stroke="#00f2fe"
+                      stroke="#0891b2"
                       strokeWidth="2.5"
                       strokeLinecap="round"
                     />
@@ -880,7 +885,7 @@ export default function MaintenanceView() {
                         cx={pt.x}
                         cy={pt.y}
                         r={i === coords.length - 1 ? 5 : 3}
-                        fill={i === coords.length - 1 ? (selectedComponent.currentWear >= 75 ? '#fbbf24' : '#ff2a5f') : '#00f2fe'}
+                        fill={i === coords.length - 1 ? (selectedComponent.currentWear >= 75 ? '#b45309' : '#e11d48') : '#0891b2'}
                         stroke="#ffffff"
                         strokeWidth="1.5"
                       />
@@ -891,20 +896,20 @@ export default function MaintenanceView() {
 
               <defs>
                 <linearGradient id="trendGradient2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#00f2fe" stopOpacity="0.8" />
-                  <stop offset="100%" stopColor="#00f2fe" stopOpacity="0" />
+                  <stop offset="0%" stopColor="#0891b2" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="#0891b2" stopOpacity="0" />
                 </linearGradient>
               </defs>
 
               {/* X Axis Time Labels */}
-              <text x="40" y="154" fill="#94a3b8" fontSize="8" textAnchor="start">0h</text>
-              <text x="137" y="154" fill="#94a3b8" fontSize="8" textAnchor="middle">350h</text>
-              <text x="235" y="154" fill="#94a3b8" fontSize="8" textAnchor="middle">700h</text>
-              <text x="332" y="154" fill="#94a3b8" fontSize="8" textAnchor="middle">1050h</text>
-              <text x="430" y="154" fill="#94a3b8" fontSize="8" textAnchor="end">1400h</text>
+              <text x="40" y="154" fill="#5a6b65" fontSize="8" textAnchor="start">0h</text>
+              <text x="137" y="154" fill="#5a6b65" fontSize="8" textAnchor="middle">350h</text>
+              <text x="235" y="154" fill="#5a6b65" fontSize="8" textAnchor="middle">700h</text>
+              <text x="332" y="154" fill="#5a6b65" fontSize="8" textAnchor="middle">1050h</text>
+              <text x="430" y="154" fill="#5a6b65" fontSize="8" textAnchor="end">1400h</text>
             </svg>
 
-            <div style={{ textAlign: 'center', fontSize: '0.7rem', color: '#94a3b8', marginTop: '4px' }}>
+            <div style={{ textAlign: 'center', fontSize: '0.7rem', color: '#5a6b65', marginTop: '4px' }}>
               Simulated Plant Run-Time (Operating Hours Since Commissioning)
             </div>
           </div>
@@ -914,7 +919,7 @@ export default function MaintenanceView() {
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '10px' }}>
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#38bdf8' }}>
+              <span style={{ fontSize: '0.74rem', fontWeight: 800, color: '#0e7490' }}>
                 DIAGNOSTIC & REPLACEMENT ADVISORY
               </span>
               <button
@@ -926,7 +931,7 @@ export default function MaintenanceView() {
                   fontSize: '0.74rem',
                   fontWeight: 800,
                   cursor: 'pointer',
-                  border: '1px solid #10b981',
+                  border: '1px solid #059669',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px'
@@ -938,57 +943,59 @@ export default function MaintenanceView() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginTop: '10px' }}>
-              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '8px 10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
-                <div style={{ fontSize: '0.64rem', color: '#94a3b8' }}>CURRENT WEAR</div>
-                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: selectedComponent.currentWear >= 75 ? '#fbbf24' : '#34d399', marginTop: '2px' }}>
+              <div style={{ background: 'rgba(18, 35, 31, 0.03)', padding: '8px 10px', borderRadius: '8px', border: '1px solid rgba(18, 35, 31, 0.06)' }}>
+                <div style={{ fontSize: '0.64rem', color: '#5a6b65' }}>CURRENT WEAR</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: selectedComponent.currentWear >= 75 ? '#b45309' : '#047857', marginTop: '2px' }}>
                   {selectedComponent.currentWear.toFixed(1)}%
                 </div>
               </div>
 
-              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '8px 10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
-                <div style={{ fontSize: '0.64rem', color: '#94a3b8' }}>EST. REMAINING</div>
-                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#38bdf8', marginTop: '2px' }}>
+              <div style={{ background: 'rgba(18, 35, 31, 0.03)', padding: '8px 10px', borderRadius: '8px', border: '1px solid rgba(18, 35, 31, 0.06)' }}>
+                <div style={{ fontSize: '0.64rem', color: '#5a6b65' }}>EST. REMAINING</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#0e7490', marginTop: '2px' }}>
                   {remainingHours} h
                 </div>
               </div>
 
-              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '8px 10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
-                <div style={{ fontSize: '0.64rem', color: '#94a3b8' }}>HOURS ACTIVE</div>
-                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#f8fafc', marginTop: '2px' }}>
+              <div style={{ background: 'rgba(18, 35, 31, 0.03)', padding: '8px 10px', borderRadius: '8px', border: '1px solid rgba(18, 35, 31, 0.06)' }}>
+                <div style={{ fontSize: '0.64rem', color: '#5a6b65' }}>HOURS ACTIVE</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 900, color: 'var(--ink)', marginTop: '2px' }}>
                   {selectedComponent.hoursInService.toFixed(0)} h
                 </div>
               </div>
             </div>
 
             {/* Why Is It Degrading? */}
-            <div style={{ background: 'rgba(255, 255, 255, 0.02)', padding: '10px 12px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.05)', marginTop: '10px' }}>
-              <strong style={{ fontSize: '0.72rem', color: '#f8fafc' }}>Why does this component degrade?</strong>
-              <p style={{ fontSize: '0.72rem', color: '#cbd5e1', margin: '2px 0 0 0', lineHeight: 1.4 }}>
+            <div style={{ background: 'rgba(18, 35, 31, 0.02)', padding: '10px 12px', borderRadius: '8px', border: '1px solid rgba(18, 35, 31, 0.05)', marginTop: '10px' }}>
+              <strong style={{ fontSize: '0.72rem', color: 'var(--ink)' }}>Why does this component degrade?</strong>
+              <p style={{ fontSize: '0.72rem', color: '#3b4d46', margin: '2px 0 0 0', lineHeight: 1.4 }}>
                 {selectedComponent.physicalWearCause}
               </p>
             </div>
 
             {/* Risk if ignored */}
-            <div style={{ background: 'rgba(239, 68, 68, 0.06)', padding: '10px 12px', borderRadius: '8px', border: '1px solid rgba(239, 68, 68, 0.2)', marginTop: '8px' }}>
-              <strong style={{ fontSize: '0.72rem', color: '#f87171' }}>Consequence if not replaced:</strong>
-              <p style={{ fontSize: '0.72rem', color: '#cbd5e1', margin: '2px 0 0 0', lineHeight: 1.4 }}>
+            <div style={{ background: 'rgba(220, 38, 38, 0.06)', padding: '10px 12px', borderRadius: '8px', border: '1px solid rgba(220, 38, 38, 0.2)', marginTop: '8px' }}>
+              <strong style={{ fontSize: '0.72rem', color: '#dc2626' }}>Consequence if not replaced:</strong>
+              <p style={{ fontSize: '0.72rem', color: '#3b4d46', margin: '2px 0 0 0', lineHeight: 1.4 }}>
                 {selectedComponent.riskIfDamaged}
               </p>
             </div>
           </div>
 
           {/* Plain English Forecast Box */}
-          <div style={{ background: 'rgba(0, 242, 254, 0.05)', padding: '10px 12px', borderRadius: '8px', border: '1px solid rgba(0, 242, 254, 0.15)' }}>
-            <div style={{ fontSize: '0.73rem', color: '#cbd5e1', lineHeight: 1.4 }}>
-              <strong style={{ color: '#00f2fe' }}>Layman Forecast:</strong> At normal 24/7 operating load, this unit degrades at approx. <strong style={{ color: '#00f2fe' }}>{(selectedComponent.currentWear / (selectedComponent.hoursInService || 1)).toFixed(3)}% per hour</strong>. Replacing it before 75% wear ensures clean water safety with 0 downtime.
+          <div style={{ background: 'rgba(8, 145, 178, 0.05)', padding: '10px 12px', borderRadius: '8px', border: '1px solid rgba(8, 145, 178, 0.15)' }}>
+            <div style={{ fontSize: '0.73rem', color: '#3b4d46', lineHeight: 1.4 }}>
+              <strong style={{ color: '#0891b2' }}>Layman Forecast:</strong> At normal 24/7 operating load, this unit degrades at approx. <strong style={{ color: '#0891b2' }}>{(selectedComponent.currentWear / (selectedComponent.hoursInService || 1)).toFixed(3)}% per hour</strong>. Replacing it before 75% wear ensures clean water safety with 0 downtime.
             </div>
           </div>
         </div>
       </div>
+      </Section>
 
       {/* ============================================================== */}
       {/* 5. PHYSICAL STRESS SIMULATION & ACTIVITY LOG                   */}
       {/* ============================================================== */}
+      <Section id="maint-stress" title="Stress simulator & activity log" subtitle="Simulate physical shocks and review maintenance events" icon={Clock}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px' }}>
         
         {/* Outage / Physical Shock Simulator */}
@@ -997,8 +1004,8 @@ export default function MaintenanceView() {
           style={{
             padding: '18px 20px',
             borderRadius: '14px',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            background: 'rgba(15, 23, 42, 0.75)',
+            border: '1px solid rgba(18, 35, 31, 0.08)',
+            background: 'var(--frost)',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
@@ -1007,12 +1014,12 @@ export default function MaintenanceView() {
         >
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <AlertCircle size={16} color="#fbbf24" />
-              <h4 style={{ fontSize: '0.92rem', fontWeight: 800, color: '#f8fafc', margin: 0 }}>
+              <AlertCircle size={16} color="#b45309" />
+              <h4 style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--ink)', margin: 0 }}>
                 Simulate Physical Shock & Power Failure
               </h4>
             </div>
-            <p style={{ fontSize: '0.74rem', color: '#94a3b8', margin: '3px 0 10px 0' }}>
+            <p style={{ fontSize: '0.74rem', color: '#5a6b65', margin: '3px 0 10px 0' }}>
               Test how sudden blackouts or water hammer pressure shockwaves accelerate physical sensor wear.
             </p>
 
@@ -1024,9 +1031,9 @@ export default function MaintenanceView() {
                 style={{
                   padding: '7px 10px',
                   borderRadius: '8px',
-                  background: 'rgba(15, 23, 42, 0.9)',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  color: '#f8fafc',
+                  background: 'var(--frost)',
+                  border: '1px solid rgba(18, 35, 31, 0.15)',
+                  color: 'var(--ink)',
                   fontSize: '0.76rem',
                   fontWeight: 600
                 }}
@@ -1043,9 +1050,9 @@ export default function MaintenanceView() {
                 style={{
                   padding: '7px 10px',
                   borderRadius: '8px',
-                  background: 'rgba(15, 23, 42, 0.9)',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  color: '#f8fafc',
+                  background: 'var(--frost)',
+                  border: '1px solid rgba(18, 35, 31, 0.15)',
+                  color: 'var(--ink)',
                   fontSize: '0.76rem',
                   fontWeight: 600
                 }}
@@ -1061,9 +1068,9 @@ export default function MaintenanceView() {
                 style={{
                   padding: '7px 14px',
                   borderRadius: '8px',
-                  background: 'rgba(245, 158, 11, 0.18)',
-                  border: '1px solid #f59e0b',
-                  color: '#fbbf24',
+                  background: 'rgba(217, 119, 6, 0.18)',
+                  border: '1px solid #d97706',
+                  color: '#b45309',
                   fontSize: '0.76rem',
                   fontWeight: 800,
                   cursor: 'pointer',
@@ -1083,16 +1090,16 @@ export default function MaintenanceView() {
               style={{
                 padding: '10px 12px',
                 borderRadius: '8px',
-                background: 'rgba(245, 158, 11, 0.1)',
-                border: '1px solid #f59e0b',
+                background: 'rgba(217, 119, 6, 0.1)',
+                border: '1px solid #d97706',
                 marginTop: '6px'
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.76rem', fontWeight: 800, color: '#fbbf24' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.76rem', fontWeight: 800, color: '#b45309' }}>
                 <span>{outageReport.headline}</span>
                 <span>+{outageReport.wearIncrease}% Wear</span>
               </div>
-              <p style={{ fontSize: '0.72rem', color: '#cbd5e1', margin: '2px 0 0 0', lineHeight: 1.4 }}>
+              <p style={{ fontSize: '0.72rem', color: '#3b4d46', margin: '2px 0 0 0', lineHeight: 1.4 }}>
                 {outageReport.summary}
               </p>
             </div>
@@ -1105,8 +1112,8 @@ export default function MaintenanceView() {
           style={{
             padding: '18px 20px',
             borderRadius: '14px',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            background: 'rgba(15, 23, 42, 0.75)',
+            border: '1px solid rgba(18, 35, 31, 0.08)',
+            background: 'var(--frost)',
             display: 'flex',
             flexDirection: 'column',
             gap: '8px'
@@ -1114,30 +1121,30 @@ export default function MaintenanceView() {
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Calendar size={15} color="#38bdf8" />
-              <h4 style={{ fontSize: '0.92rem', fontWeight: 800, color: '#f8fafc', margin: 0 }}>
+              <Calendar size={15} color="#0e7490" />
+              <h4 style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--ink)', margin: 0 }}>
                 Maintenance & Repair History Log
               </h4>
             </div>
-            <span style={{ fontSize: '0.7rem', color: '#64748b' }}>
+            <span style={{ fontSize: '0.7rem', color: '#6b7b75' }}>
               {logs.length} Logged Entries
             </span>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '185px', overflowY: 'auto' }}>
             {logs.map(log => {
-              let tagColor = '#38bdf8';
-              let tagBg = 'rgba(56, 189, 248, 0.12)';
+              let tagColor = '#0e7490';
+              let tagBg = 'rgba(14, 116, 144, 0.12)';
 
               if (log.type === 'REPLACED' || log.type === 'REPLACED_ALL') {
-                tagColor = '#34d399';
-                tagBg = 'rgba(16, 185, 129, 0.15)';
+                tagColor = '#047857';
+                tagBg = 'rgba(5, 150, 105, 0.15)';
               } else if (log.type === 'PREVENTIVE_ALERT') {
-                tagColor = '#fbbf24';
-                tagBg = 'rgba(245, 158, 11, 0.15)';
+                tagColor = '#b45309';
+                tagBg = 'rgba(217, 119, 6, 0.15)';
               } else if (log.type === 'CYBER_WEAR') {
-                tagColor = '#ff2a5f';
-                tagBg = 'rgba(255, 42, 95, 0.15)';
+                tagColor = '#e11d48';
+                tagBg = 'rgba(225, 29, 72, 0.15)';
               }
 
               return (
@@ -1146,8 +1153,8 @@ export default function MaintenanceView() {
                   style={{
                     padding: '8px 10px',
                     borderRadius: '8px',
-                    background: 'rgba(255, 255, 255, 0.02)',
-                    border: '1px solid rgba(255, 255, 255, 0.04)',
+                    background: 'rgba(18, 35, 31, 0.02)',
+                    border: '1px solid rgba(18, 35, 31, 0.04)',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'flex-start',
@@ -1169,15 +1176,15 @@ export default function MaintenanceView() {
                       >
                         {log.type}
                       </span>
-                      <strong style={{ fontSize: '0.74rem', color: '#f8fafc' }}>
+                      <strong style={{ fontSize: '0.74rem', color: 'var(--ink)' }}>
                         {log.title}
                       </strong>
                     </div>
-                    <p style={{ fontSize: '0.7rem', color: '#94a3b8', margin: '2px 0 0 0', lineHeight: 1.35 }}>
+                    <p style={{ fontSize: '0.7rem', color: '#5a6b65', margin: '2px 0 0 0', lineHeight: 1.35 }}>
                       {log.detail}
                     </p>
                   </div>
-                  <span style={{ fontSize: '0.66rem', color: '#64748b', whiteSpace: 'nowrap' }}>
+                  <span style={{ fontSize: '0.66rem', color: '#6b7b75', whiteSpace: 'nowrap' }}>
                     {log.timestamp}
                   </span>
                 </div>
@@ -1187,6 +1194,7 @@ export default function MaintenanceView() {
         </div>
 
       </div>
+      </Section>
 
     </div>
   );

@@ -17,9 +17,9 @@ export default function BlueprintSelector({
         padding: '16px 20px',
         marginBottom: '14px',
         borderRadius: '12px',
-        background: 'rgba(11, 19, 38, 0.85)',
-        border: '1px solid rgba(56, 189, 248, 0.22)',
-        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
+        background: 'var(--frost)',
+        border: '1px solid rgba(14, 116, 144, 0.22)',
+        boxShadow: '0 8px 24px rgba(18, 35, 31, 0.072)',
         transition: 'all 0.3s ease'
       }}
     >
@@ -30,18 +30,18 @@ export default function BlueprintSelector({
               width: '34px',
               height: '34px',
               borderRadius: '8px',
-              background: 'rgba(0, 242, 254, 0.12)',
-              border: '1px solid rgba(0, 242, 254, 0.35)',
+              background: 'rgba(8, 145, 178, 0.12)',
+              border: '1px solid rgba(8, 145, 178, 0.35)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
             }}
           >
-            <Layers size={18} color="#00f2fe" />
+            <Layers size={18} color="#0891b2" />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h3 className="font-display" style={{ fontSize: '0.98rem', color: '#f8fafc', fontWeight: 900, letterSpacing: '0.03em' }}>
+              <h3 className="font-display" style={{ fontSize: '0.98rem', color: 'var(--ink)', fontWeight: 900, letterSpacing: '0.03em' }}>
                 FACILITY BLUEPRINT & TOPOLOGY STUDIO
               </h3>
               <span className="badge badge-cyan" style={{ fontSize: '0.66rem', padding: '1px 8px' }}>
@@ -57,33 +57,33 @@ export default function BlueprintSelector({
         {/* Dynamic Topology Invariant Metric Badge */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
           <div style={{
-            background: 'rgba(15, 23, 42, 0.7)',
+            background: 'var(--frost)',
             padding: '4px 12px',
             borderRadius: '20px',
-            border: '1px solid rgba(56, 189, 248, 0.25)',
+            border: '1px solid rgba(14, 116, 144, 0.25)',
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
             fontSize: '0.74rem'
           }}>
-            <Activity size={13} color="#00f2fe" />
-            <span style={{ color: '#94a3b8' }}>Dynamic Nodes:</span>
-            <strong style={{ color: '#00f2fe' }}>{activeBlueprint.tankCount} Tanks + {activeBlueprint.actuators?.length || 2} Actuators</strong>
+            <Activity size={13} color="#0891b2" />
+            <span style={{ color: '#5a6b65' }}>Dynamic Nodes:</span>
+            <strong style={{ color: '#0891b2' }}>{activeBlueprint.tankCount} Tanks + {activeBlueprint.actuators?.length || 2} Actuators</strong>
           </div>
 
           <div style={{
-            background: 'rgba(16, 185, 129, 0.1)',
+            background: 'rgba(5, 150, 105, 0.1)',
             padding: '4px 12px',
             borderRadius: '20px',
-            border: '1px solid rgba(16, 185, 129, 0.3)',
+            border: '1px solid rgba(5, 150, 105, 0.3)',
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
             fontSize: '0.74rem'
           }}>
-            <Check size={13} color="#34d399" />
-            <span style={{ color: '#a7f3d0' }}>Adaptive Physics:</span>
-            <strong style={{ color: '#10b981' }}>Synchronized</strong>
+            <Check size={13} color="#047857" />
+            <span style={{ color: '#065f46' }}>Adaptive Physics:</span>
+            <strong style={{ color: '#059669' }}>Synchronized</strong>
           </div>
         </div>
       </div>
@@ -109,13 +109,13 @@ export default function BlueprintSelector({
                 cursor: phase === 'ATTACK_ACTIVE' || phase === 'LOCALIZED' ? 'not-allowed' : 'pointer',
                 borderRadius: '10px',
                 background: isSelected
-                  ? 'rgba(0, 242, 254, 0.16)'
-                  : 'rgba(15, 23, 42, 0.65)',
+                  ? 'rgba(8, 145, 178, 0.16)'
+                  : 'var(--frost)',
                 border: isSelected
-                  ? '1.5px solid #00f2fe'
-                  : '1px solid rgba(255, 255, 255, 0.08)',
+                  ? '1.5px solid #0891b2'
+                  : '1px solid rgba(18, 35, 31, 0.08)',
                 boxShadow: isSelected
-                  ? '0 0 20px rgba(0, 242, 254, 0.25)'
+                  ? '0 0 20px rgba(8, 145, 178, 0.09)'
                   : 'none',
                 opacity: phase === 'ATTACK_ACTIVE' || phase === 'LOCALIZED' ? 0.6 : 1,
                 display: 'flex',
@@ -129,7 +129,7 @@ export default function BlueprintSelector({
                   style={{
                     fontSize: '0.86rem',
                     fontWeight: 900,
-                    color: isSelected ? '#00f2fe' : '#e2e8f0'
+                    color: isSelected ? '#0891b2' : '#24362f'
                   }}
                 >
                   {bp.shortName}
@@ -139,21 +139,21 @@ export default function BlueprintSelector({
                   style={{
                     fontSize: '0.64rem',
                     padding: '1px 6px',
-                    background: isSelected ? 'rgba(0, 242, 254, 0.25)' : 'rgba(255,255,255,0.06)',
-                    color: isSelected ? '#38bdf8' : '#94a3b8'
+                    background: isSelected ? 'rgba(8, 145, 178, 0.25)' : 'rgba(18, 35, 31, 0.06)',
+                    color: isSelected ? '#0e7490' : '#5a6b65'
                   }}
                 >
                   {bp.tankCount} Tanks
                 </span>
               </div>
 
-              <div style={{ fontSize: '0.72rem', color: isSelected ? '#cbd5e1' : '#94a3b8', lineHeight: 1.35 }}>
+              <div style={{ fontSize: '0.72rem', color: isSelected ? '#3b4d46' : '#5a6b65', lineHeight: 1.35 }}>
                 {bp.description}
               </div>
 
               <div style={{
                 fontSize: '0.67rem',
-                color: isSelected ? '#38bdf8' : '#64748b',
+                color: isSelected ? '#0e7490' : '#6b7b75',
                 fontWeight: 700,
                 marginTop: '2px',
                 display: 'flex',
@@ -173,19 +173,19 @@ export default function BlueprintSelector({
         marginTop: '12px',
         padding: '8px 14px',
         borderRadius: '8px',
-        background: 'rgba(5, 10, 24, 0.6)',
-        border: '1px solid rgba(56, 189, 248, 0.15)',
+        background: 'var(--frost)',
+        border: '1px solid rgba(14, 116, 144, 0.15)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
         gap: '8px'
       }}>
-        <div style={{ fontSize: '0.73rem', color: '#94a3b8' }}>
-          <strong style={{ color: '#38bdf8' }}>Active Flow Graph: </strong>
+        <div style={{ fontSize: '0.73rem', color: '#5a6b65' }}>
+          <strong style={{ color: '#0e7490' }}>Active Flow Graph: </strong>
           <span>{activeBlueprint.topologySummary}</span>
         </div>
-        <div style={{ fontSize: '0.7rem', color: '#34d399', fontFamily: 'monospace' }}>
+        <div style={{ fontSize: '0.7rem', color: '#047857', fontFamily: 'monospace' }}>
           {activeBlueprint.mathInvariants ? activeBlueprint.mathInvariants[0] : '∑ dVi/dt = Qin - Qout'}
         </div>
       </div>

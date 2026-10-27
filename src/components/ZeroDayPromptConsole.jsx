@@ -15,12 +15,13 @@ const QUICK_ZERO_DAY_CHIPS = [
 ];
 
 export default function ZeroDayPromptConsole({
+  embedded = false,   // true when shown inside a collapsible <Section>: no extra toggle pill
   phase,
   activeScenario,
   onLaunchCustomAttack,
   onReset
 }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(embedded);
   const [promptInput, setPromptInput] = useState('');
 
   const isAttackActive = phase === 'ATTACK_ACTIVE';
@@ -45,7 +46,7 @@ export default function ZeroDayPromptConsole({
     const customScenario = classifyCustomHackerPrompt(text);
     
     // 1. Collapse the dropdown
-    setIsOpen(false);
+    if (!embedded) setIsOpen(false);
     
     // 2. Launch the attack
     onLaunchCustomAttack(customScenario);
@@ -60,7 +61,7 @@ export default function ZeroDayPromptConsole({
     const customScenario = classifyCustomHackerPrompt(prompt);
     
     // 1. Collapse dropdown
-    setIsOpen(false);
+    if (!embedded) setIsOpen(false);
     
     // 2. Launch
     onLaunchCustomAttack(customScenario);
@@ -72,33 +73,33 @@ export default function ZeroDayPromptConsole({
   return (
     <div style={{ margin: '0 0 14px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
       {/* Sleek Top-Centre Dropdown Toggle Pill */}
-      <button
+      {!embedded && (<button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="glass-panel"
         style={{
           padding: '9px 24px',
           borderRadius: '30px',
-          border: isOpen ? '1.5px solid #00f2fe' : '1px solid rgba(56, 189, 248, 0.45)',
-          background: isOpen ? 'rgba(0, 242, 254, 0.18)' : 'rgba(15, 23, 42, 0.9)',
-          color: '#00f2fe',
+          border: isOpen ? '1.5px solid #0891b2' : '1px solid rgba(14, 116, 144, 0.45)',
+          background: isOpen ? 'rgba(8, 145, 178, 0.18)' : 'var(--frost)',
+          color: '#0891b2',
           fontSize: '0.84rem',
           fontWeight: 800,
           cursor: 'pointer',
           display: 'inline-flex',
           alignItems: 'center',
           gap: '10px',
-          boxShadow: isOpen ? '0 0 20px rgba(0,242,254,0.4)' : '0 4px 15px rgba(0,0,0,0.3)',
+          boxShadow: isOpen ? '0 0 20px rgba(8, 145, 178, 0.14)' : '0 4px 15px rgba(18, 35, 31, 0.054)',
           transition: 'all 0.25s ease',
           fontFamily: 'var(--font-display)',
           letterSpacing: '0.04em'
         }}
       >
-        <Terminal size={15} color="#00f2fe" />
+        <Terminal size={15} color="#0891b2" />
         <span>{isOpen ? 'Close Hacker Prompt Box' : 'Enter Custom Hacker Attack Prompt'}</span>
         <div
           style={{
-            background: 'rgba(0, 242, 254, 0.2)',
+            background: 'rgba(8, 145, 178, 0.2)',
             borderRadius: '50%',
             width: '20px',
             height: '20px',
@@ -110,28 +111,28 @@ export default function ZeroDayPromptConsole({
         >
           <ChevronDown
             size={14}
-            color="#00f2fe"
+            color="#0891b2"
             style={{
               transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
               transition: 'transform 0.25s ease'
             }}
           />
         </div>
-      </button>
+      </button>)}
 
       {/* Expandable Hacker Console Panel (Only appears when clicked) */}
       {isOpen && (
         <div
           className="glass-panel"
           style={{
-            marginTop: '10px',
+            marginTop: embedded ? '0' : '10px',
             padding: '16px 20px',
             borderRadius: '14px',
-            border: '1.5px solid rgba(0, 242, 254, 0.4)',
-            background: 'rgba(8, 14, 28, 0.96)',
-            boxShadow: '0 12px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 242, 254, 0.2)',
+            border: '1.5px solid rgba(8, 145, 178, 0.4)',
+            background: 'var(--frost-strong)',
+            boxShadow: '0 12px 35px rgba(18, 35, 31, 0.108), 0 0 25px rgba(8, 145, 178, 0.07)',
             width: '100%',
-            maxWidth: '920px',
+            maxWidth: embedded ? 'none' : '920px',
             animation: 'fadeIn 0.25s ease'
           }}
         >
@@ -147,14 +148,14 @@ export default function ZeroDayPromptConsole({
                 style={{
                   width: '100%',
                   padding: '10px 14px',
-                  background: 'rgba(3, 7, 18, 0.9)',
-                  border: '1.5px solid rgba(0, 242, 254, 0.4)',
+                  background: 'var(--frost)',
+                  border: '1.5px solid rgba(8, 145, 178, 0.4)',
                   borderRadius: '8px',
-                  color: '#ffffff',
+                  color: 'var(--ink)',
                   fontSize: '0.84rem',
                   fontFamily: 'var(--font-mono)',
                   outline: 'none',
-                  boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.6)'
+                  boxShadow: 'inset 0 2px 6px rgba(18, 35, 31, 0.108)'
                 }}
               />
             </div>
@@ -165,7 +166,7 @@ export default function ZeroDayPromptConsole({
               style={{
                 padding: '9px 20px',
                 borderRadius: '8px',
-                background: 'linear-gradient(135deg, #ff2a5f 0%, #a855f7 100%)',
+                background: 'linear-gradient(135deg, #e11d48 0%, #8b5cf6 100%)',
                 color: '#ffffff',
                 border: '1px solid #ffffff',
                 fontWeight: 800,
@@ -192,24 +193,24 @@ export default function ZeroDayPromptConsole({
                   type="button"
                   onClick={() => handleChipClick(chip.prompt)}
                   style={{
-                    background: 'rgba(15, 23, 42, 0.8)',
-                    border: '1px solid rgba(56, 189, 248, 0.2)',
+                    background: 'var(--frost)',
+                    border: '1px solid rgba(14, 116, 144, 0.2)',
                     borderRadius: '6px',
                     padding: '4px 10px',
                     fontSize: '0.72rem',
-                    color: '#cbd5e1',
+                    color: '#3b4d46',
                     cursor: 'pointer',
                     transition: 'all 0.15s ease'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = '#00f2fe';
-                    e.currentTarget.style.background = 'rgba(0, 242, 254, 0.15)';
+                    e.currentTarget.style.borderColor = '#0891b2';
+                    e.currentTarget.style.background = 'rgba(8, 145, 178, 0.15)';
                     e.currentTarget.style.color = '#ffffff';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(56, 189, 248, 0.2)';
-                    e.currentTarget.style.background = 'rgba(15, 23, 42, 0.8)';
-                    e.currentTarget.style.color = '#cbd5e1';
+                    e.currentTarget.style.borderColor = 'rgba(14, 116, 144, 0.2)';
+                    e.currentTarget.style.background = 'var(--frost)';
+                    e.currentTarget.style.color = '#3b4d46';
                   }}
                 >
                   <span>{chip.label}</span>

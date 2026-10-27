@@ -1,20 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import { Droplets, Volume2, VolumeX, AlertTriangle, ShieldCheck } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Droplets, Volume2, VolumeX, ChevronDown, Menu, LayoutDashboard, Database, Wrench, ChevronsUpDown } from 'lucide-react';
 import { sound } from '../utils/soundEffects';
+import { setAllSections } from './Section';
 
-export default function Header({ activeScenario, phase }) {
+const VIEW_ICONS = { lab: LayoutDashboard, dataset: Database, maintenance: Wrench };
+
+export default function Header({
+  activeScenario,
+  phase,
+  activeTab,
+  onTab,
+  views = [],
+  menuGroups = [],
+  onMenuSelect
+}) {
   const [timeStr, setTimeStr] = useState('');
   const [isMuted, setIsMuted] = useState(sound.muted);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [allOpen, setAllOpen] = useState(false);
+  const menuRef = useRef(null);
 
   useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setTimeStr(now.toLocaleTimeString('en-US', { hour12: false }));
-    };
+    const updateTime = () => setTimeStr(new Date().toLocaleTimeString('en-US', { hour12: false }));
     updateTime();
     const timer = setInterval(updateTime, 1000);
     return () => clearInterval(timer);
   }, []);
+
+  // close the Contents menu on outside click / Escape
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onDown = (e) => { if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false); };
+    const onKey = (e) => { if (e.key === 'Escape') setMenuOpen(false); };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [menuOpen]);
 
   const handleToggleSound = () => {
     const muted = sound.toggleMute();
@@ -23,99 +47,132 @@ export default function Header({ activeScenario, phase }) {
   };
 
   const isNominal = phase === 'NOMINAL' || phase === 'RESOLVED';
+  const statusText =
+    phase === 'NOMINAL' ? 'All systems normal'
+    : phase === 'ATTACK_ACTIVE' ? 'Alarm — attack in progress'
+    : phase === 'LOCALIZED' ? `Root cause: ${activeScenario?.layerName || 'identified'}`
+    : 'Fixed — clean water flowing';
+  const dot = phase === 'ATTACK_ACTIVE' || phase === 'LOCALIZED' ? '#e11d48' : '#047857';
 
   return (
-    <header className="glass-panel" style={{
-      padding: '12px 24px',
-      margin: '12px 16px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      flexWrap: 'wrap',
-      gap: '12px',
-      borderBottom: isNominal ? '1px solid rgba(0,242,254,0.2)' : '1px solid rgba(255,42,95,0.4)'
-    }}>
-      {/* Brand & Title */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <div style={{
-          width: '40px',
-          height: '40px',
-          borderRadius: '10px',
-          background: isNominal 
-            ? 'linear-gradient(135deg, rgba(0,242,254,0.2), rgba(16,185,129,0.2))' 
-            : 'linear-gradient(135deg, rgba(255,42,95,0.25), rgba(245,158,11,0.25))',
-          border: isNominal ? '1px solid #00f2fe' : '1px solid #ff2a5f',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          {isNominal ? <Droplets size={22} color="#00f2fe" /> : <AlertTriangle size={22} color="#ff2a5f" />}
-        </div>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <h1 className="font-display" style={{ fontSize: '1.2rem', letterSpacing: '0.06em', fontWeight: 800, color: '#f1f5f9' }}>
-              AQUASHIELD CPS
+    <header className="topbar">
+      <div className="topbar-inner">
+        {/* Brand */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginRight: '6px' }}>
+          <div style={{
+            width: 34, height: 34, borderRadius: 10, background: 'var(--gradient-brand)',
+            display: 'grid', placeItems: 'center', color: '#fff',
+            boxShadow: '0 4px 14px rgba(13, 148, 136, 0.35)'
+          }}>
+            <Droplets size={19} />
+          </div>
+          <div>
+            <h1 style={{
+              fontSize: '1.02rem', fontWeight: 750, letterSpacing: '-0.02em', lineHeight: 1.1,
+              background: 'var(--gradient-brand)', WebkitBackgroundClip: 'text', backgroundClip: 'text',
+              color: 'transparent', WebkitTextFillColor: 'transparent'
+            }}>
+              AquaShield CPS
             </h1>
-            <span className="badge badge-cyan" style={{ fontSize: '0.65rem' }}>
-              SMART WATER SECURITY
+            <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', lineHeight: 1.2 }}>
+              Smart water security · UN SDG 6
+            </p>
+          </div>
+        </div>
+
+        {/* Contents dropdown */}
+        <div ref={menuRef} style={{ position: 'relative' }}>
+          <button
+            type="button"
+            className="menu-btn"
+            aria-haspopup="menu"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen(o => !o)}
+          >
+            <Menu size={16} />
+            <span>Contents</span>
+            <ChevronDown size={15} style={{ transform: menuOpen ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }} />
+          </button>
+          {menuOpen && (
+            <div className="menu-pop" role="menu">
+              {menuGroups.map(group => (
+                <div key={group.label}>
+                  <div className="menu-group">{group.label}</div>
+                  {group.items.map(item => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      role="menuitem"
+                      className="menu-item"
+                      onClick={() => { setMenuOpen(false); onMenuSelect && onMenuSelect(group.view, item.id); }}
+                    >
+                      <span className="sec-icon" style={{ width: 28, height: 28, borderRadius: 8 }}>
+                        {item.icon ? <item.icon size={15} /> : null}
+                      </span>
+                      <span>
+                        {item.title}
+                        {item.subtitle && <small>{item.subtitle}</small>}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              ))}
+              <div style={{ borderTop: '1px solid var(--border-subtle)', margin: '8px 0 2px', paddingTop: 6 }}>
+                <button
+                  type="button"
+                  className="menu-item"
+                  onClick={() => { const next = !allOpen; setAllOpen(next); setAllSections(next); setMenuOpen(false); }}
+                >
+                  <span className="sec-icon" style={{ width: 28, height: 28, borderRadius: 8 }}><ChevronsUpDown size={15} /></span>
+                  <span>{allOpen ? 'Collapse all sections' : 'Expand all sections'}</span>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* View tabs */}
+        <nav className="view-tabs" aria-label="Views">
+          {views.map(v => {
+            const Icon = VIEW_ICONS[v.id];
+            return (
+              <button
+                key={v.id}
+                type="button"
+                className={`view-tab${activeTab === v.id ? ' active' : ''}`}
+                onClick={() => onTab(v.id)}
+              >
+                {Icon && <Icon size={15} />}
+                <span>{v.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Right: status, clock, sound */}
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px', borderRadius: 999,
+            background: isNominal ? '#ecfdf3' : '#fff1f2',
+            border: `1px solid ${isNominal ? '#bbf7d0' : '#fecdd3'}`
+          }}>
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: dot }} />
+            <span style={{ fontSize: '0.78rem', fontWeight: 650, color: isNominal ? '#166534' : '#be123c' }}>
+              {statusText}
             </span>
           </div>
-          <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-            Finding and fixing cyber attacks on clean water plants • <strong style={{ color: '#10b981' }}>UN Clean Water SDG 6</strong>
-          </p>
+          <span className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{timeStr}</span>
+          <button
+            type="button"
+            onClick={handleToggleSound}
+            title={isMuted ? 'Turn sound on' : 'Turn sound off'}
+            aria-label={isMuted ? 'Turn sound on' : 'Turn sound off'}
+            className="menu-btn"
+            style={{ padding: '7px 9px', color: isMuted ? 'var(--text-dim)' : 'var(--accent)' }}
+          >
+            {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+          </button>
         </div>
-      </div>
-
-      {/* Right side: Plant Status & Sound Toggle */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-        {/* Plant Status Indicator */}
-        <div className="glass-panel" style={{
-          padding: '6px 14px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px',
-          borderRadius: '20px',
-          border: isNominal ? '1px solid rgba(16,185,129,0.4)' : '1px solid rgba(255,42,95,0.7)',
-          background: isNominal ? 'rgba(16,185,129,0.08)' : 'rgba(255,42,95,0.12)'
-        }}>
-          <span style={{
-            width: '9px',
-            height: '9px',
-            borderRadius: '50%',
-            background: isNominal ? '#10b981' : '#ff2a5f',
-            boxShadow: isNominal ? '0 0 8px #10b981' : '0 0 10px #ff2a5f'
-          }} />
-          <div className="font-mono" style={{ fontSize: '0.8rem', fontWeight: 700, color: isNominal ? '#34d399' : '#fb7185' }}>
-            {phase === 'NOMINAL' && 'PLANT NORMAL: ALL SAFE'}
-            {phase === 'ATTACK_ACTIVE' && 'ALARM! ATTACK IN PROGRESS'}
-            {phase === 'LOCALIZED' && `ROOT CAUSE: ${activeScenario.layerName || 'IDENTIFIED'}`}
-            {phase === 'RESOLVED' && 'FIXED: CLEAN WATER FLOWING'}
-          </div>
-        </div>
-
-        {/* Live Clock */}
-        <div className="font-mono" style={{ fontSize: '0.85rem', color: '#94a3b8', background: 'rgba(0,0,0,0.3)', padding: '5px 10px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.06)' }}>
-          {timeStr}
-        </div>
-
-        {/* Sound Toggle */}
-        <button
-          onClick={handleToggleSound}
-          style={{
-            background: 'rgba(15,23,42,0.6)',
-            border: '1px solid rgba(56,189,248,0.2)',
-            borderRadius: '8px',
-            padding: '7px 9px',
-            cursor: 'pointer',
-            color: isMuted ? '#64748b' : '#38bdf8',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-          title={isMuted ? 'Turn Sound ON' : 'Turn Sound OFF'}
-        >
-          {isMuted ? <VolumeX size={17} /> : <Volume2 size={17} />}
-        </button>
       </div>
     </header>
   );

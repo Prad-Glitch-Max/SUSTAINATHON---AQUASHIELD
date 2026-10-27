@@ -19,7 +19,7 @@ export function classifyCustomHackerPrompt(promptText) {
       traditionalMistake: 'Old IT firewalls cannot identify the physical cause and trigger panic shutdown.',
       plainMathProof: 'Physical mass conservation (Inflow vs Outflow) deviates from observed telemetry.',
       plainFix: 'AquaShield isolates compromised node and activates virtual physics state estimator.',
-      color: '#ff2a5f',
+      color: '#e11d48',
       physicsImpact: { tank1Delta: 0, tank2Delta: 12, tank3Delta: -5, tank4Delta: 0, pressureDelta: 0.8 },
       swatCorrelation: 'SWaT Attack #1 (LIT-101 level tampering) - Kaggle Benchmark'
     };
@@ -52,7 +52,7 @@ export function classifyCustomHackerPrompt(promptText) {
       traditionalMistake: 'Old IT tools panic and repeatedly cycle commands until hydraulic pressure ruptures the steel pipeline, destroying the plant.',
       plainMathProof: 'Bernoulli Incompressible Fluid Law: Kinetic inflow (42.5 L/s) slamming into zero outflow generates destructive water hammer shockwave (ΔP > 7.8 bar).',
       plainFix: 'AquaShield mechanical pressure-relief disc vents surge pressure to 2.4 bar, decouples upstream pump P-101, and redirects water into the internal recirculation loop back to Reservoir Tank 1. 0 Liters lost.',
-      color: '#ff2a5f',
+      color: '#e11d48',
       physicsImpact: { tank1Delta: 10, tank2Delta: 15, tank3Delta: -10, tank4Delta: -10, pressureDelta: 4.6, flowDelta: -39 },
       swatCorrelation: 'SWaT Actuator Gridlock Benchmark (Multi-Valve Simultaneous Blockade)'
     };
@@ -87,7 +87,7 @@ export function classifyCustomHackerPrompt(promptText) {
       traditionalMistake: 'Traditional computerized systems go blind and crash, shutting off all municipal drinking water to the city for days.',
       plainMathProof: 'Natural Gravity Siphon Law (P = ρgh): Water elevation gradient between Tank 1 (elevated) and Tank 4 (ground) generates continuous passive head pressure of 1.6 bar without electricity.',
       plainFix: 'Fail-secure mechanical spring-return valves immediately snap into open posture with 0V power. Passive gravity-flow filtration continues supplying 18.5 L/s clean water with zero electricity.',
-      color: '#eab308',
+      color: '#a16207',
       physicsImpact: { tank1Delta: -8, tank2Delta: -4, tank3Delta: 5, tank4Delta: 8, pressureDelta: -1.6, flowDelta: -20.5 },
       swatCorrelation: 'SWaT Power Loss & Grid Disturbance Benchmark'
     };
@@ -257,7 +257,7 @@ export function classifyCustomHackerPrompt(promptText) {
     traditionalMistake,
     plainMathProof,
     plainFix,
-    color: '#ff2a5f',
+    color: '#e11d48',
     physicsImpact: {
       tank1Delta,
       tank2Delta,

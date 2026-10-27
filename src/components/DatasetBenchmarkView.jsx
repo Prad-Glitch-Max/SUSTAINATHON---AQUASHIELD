@@ -37,8 +37,8 @@ export default function DatasetBenchmarkView({
         style={{
           padding: '18px 22px',
           borderRadius: '12px',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-          background: 'rgba(15, 23, 42, 0.75)',
+          border: '1px solid rgba(18, 35, 31, 0.08)',
+          background: 'var(--frost)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -48,21 +48,21 @@ export default function DatasetBenchmarkView({
       >
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Database size={18} color="#38bdf8" />
-            <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc', margin: 0, letterSpacing: '0.02em' }}>
+            <Database size={18} color="#0e7490" />
+            <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--ink)', margin: 0, letterSpacing: '0.02em' }}>
               Real-World Industrial Dataset Evidence (SWaT / Kaggle)
             </h2>
           </div>
-          <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: '4px 0 0 0' }}>
+          <p style={{ fontSize: '0.78rem', color: '#5a6b65', margin: '4px 0 0 0' }}>
             Verified against 946,000 real physical records collected by iTrust at Singapore University of Technology & Design (SUTD).
           </p>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '0.72rem', color: '#38bdf8', background: 'rgba(56, 189, 248, 0.1)', padding: '4px 10px', borderRadius: '16px', border: '1px solid rgba(56, 189, 248, 0.2)' }}>
+          <span style={{ fontSize: '0.72rem', color: '#0e7490', background: 'rgba(14, 116, 144, 0.1)', padding: '4px 10px', borderRadius: '16px', border: '1px solid rgba(14, 116, 144, 0.2)' }}>
             36 Real Physical Attacks Tested
           </span>
-          <span style={{ fontSize: '0.72rem', color: '#34d399', background: 'rgba(52, 211, 153, 0.1)', padding: '4px 10px', borderRadius: '16px', border: '1px solid rgba(52, 211, 153, 0.2)' }}>
+          <span style={{ fontSize: '0.72rem', color: '#047857', background: 'rgba(4, 120, 87, 0.1)', padding: '4px 10px', borderRadius: '16px', border: '1px solid rgba(4, 120, 87, 0.2)' }}>
             97.6% Root Cause Accuracy
           </span>
         </div>
@@ -75,15 +75,15 @@ export default function DatasetBenchmarkView({
           style={{
             padding: '24px',
             borderRadius: '14px',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            background: 'rgba(15, 23, 42, 0.65)'
+            border: '1px solid rgba(18, 35, 31, 0.08)',
+            background: 'var(--frost)'
           }}
         >
           <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto 20px auto' }}>
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#f1f5f9', margin: '0 0 6px 0' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--ink)', margin: '0 0 6px 0' }}>
               Select a Real-World Attack Case to Inspect Evidence
             </h3>
-            <p style={{ fontSize: '0.8rem', color: '#94a3b8', margin: 0, lineHeight: 1.5 }}>
+            <p style={{ fontSize: '0.8rem', color: '#5a6b65', margin: 0, lineHeight: 1.5 }}>
               Choose any recorded testbed incident below to view what happened in reality, why traditional security failed, and test it in our SCADA digital twin.
             </p>
           </div>
@@ -98,8 +98,8 @@ export default function DatasetBenchmarkView({
                 style={{
                   padding: '14px 16px',
                   borderRadius: '10px',
-                  border: '1px solid rgba(255, 255, 255, 0.07)',
-                  background: 'rgba(11, 19, 38, 0.7)',
+                  border: '1px solid rgba(18, 35, 31, 0.07)',
+                  background: 'var(--frost)',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
@@ -108,36 +108,36 @@ export default function DatasetBenchmarkView({
                   transition: 'all 0.2s ease'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(56, 189, 248, 0.4)';
-                  e.currentTarget.style.background = 'rgba(15, 28, 54, 0.9)';
+                  e.currentTarget.style.borderColor = 'rgba(14, 116, 144, 0.4)';
+                  e.currentTarget.style.background = 'var(--frost)';
                   e.currentTarget.style.transform = 'translateY(-2px)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.07)';
-                  e.currentTarget.style.background = 'rgba(11, 19, 38, 0.7)';
+                  e.currentTarget.style.borderColor = 'rgba(18, 35, 31, 0.07)';
+                  e.currentTarget.style.background = 'var(--frost)';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-                    <span style={{ fontSize: '0.68rem', color: '#38bdf8', fontWeight: 700, textTransform: 'uppercase' }}>
+                    <span style={{ fontSize: '0.68rem', color: '#0e7490', fontWeight: 700, textTransform: 'uppercase' }}>
                       CASE #{index + 1}
                     </span>
-                    <span style={{ fontSize: '0.66rem', color: '#64748b' }}>
+                    <span style={{ fontSize: '0.66rem', color: '#6b7b75' }}>
                       {atk.kaggleIndex}
                     </span>
                   </div>
 
-                  <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#f8fafc', lineHeight: 1.3 }}>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--ink)', lineHeight: 1.3 }}>
                     {atk.name.replace(/^SWaT Attack #\d+:\s*/, '')}
                   </div>
 
-                  <div style={{ fontSize: '0.74rem', color: '#94a3b8', marginTop: '6px', lineHeight: 1.4 }}>
-                    Target: <span style={{ color: '#cbd5e1' }}>{atk.targetSensor}</span>
+                  <div style={{ fontSize: '0.74rem', color: '#5a6b65', marginTop: '6px', lineHeight: 1.4 }}>
+                    Target: <span style={{ color: '#3b4d46' }}>{atk.targetSensor}</span>
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.74rem', color: '#38bdf8', fontWeight: 700, marginTop: '4px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.74rem', color: '#0e7490', fontWeight: 700, marginTop: '4px' }}>
                   <span>Inspect Real-World Data</span>
                   <ArrowRight size={13} />
                 </div>
@@ -154,40 +154,40 @@ export default function DatasetBenchmarkView({
           style={{
             padding: '20px 24px',
             borderRadius: '14px',
-            border: '1px solid rgba(56, 189, 248, 0.25)',
-            background: 'rgba(15, 23, 42, 0.85)',
-            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)',
+            border: '1px solid rgba(14, 116, 144, 0.25)',
+            background: 'var(--frost)',
+            boxShadow: '0 8px 30px rgba(18, 35, 31, 0.072)',
             animation: 'fadeIn 0.25s ease'
           }}
         >
           {/* Card Top Bar */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '14px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px', borderBottom: '1px solid rgba(18, 35, 31, 0.08)', paddingBottom: '14px' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontSize: '0.68rem', color: '#38bdf8', fontWeight: 800, background: 'rgba(56, 189, 248, 0.12)', padding: '2px 8px', borderRadius: '10px' }}>
+                <span style={{ fontSize: '0.68rem', color: '#0e7490', fontWeight: 800, background: 'rgba(14, 116, 144, 0.12)', padding: '2px 8px', borderRadius: '10px' }}>
                   KAGGLE BENCHMARK RECORD
                 </span>
-                <span style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                <span style={{ fontSize: '0.72rem', color: '#6b7b75' }}>
                   {selectedAttack.kaggleIndex}
                 </span>
               </div>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 900, color: '#f8fafc', margin: '6px 0 2px 0' }}>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 900, color: 'var(--ink)', margin: '6px 0 2px 0' }}>
                 {selectedAttack.name}
               </h3>
-              <div style={{ fontSize: '0.76rem', color: '#94a3b8' }}>
-                Target Component: <strong style={{ color: '#38bdf8' }}>{selectedAttack.targetSensor}</strong> • Normal Operating Range: {selectedAttack.normalRange}
+              <div style={{ fontSize: '0.76rem', color: '#5a6b65' }}>
+                Target Component: <strong style={{ color: '#0e7490' }}>{selectedAttack.targetSensor}</strong> • Normal Operating Range: {selectedAttack.normalRange}
               </div>
             </div>
 
             <button
               onClick={() => setSelectedAttackId(null)}
               style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
+                background: 'rgba(18, 35, 31, 0.05)',
+                border: '1px solid rgba(18, 35, 31, 0.12)',
                 borderRadius: '8px',
                 padding: '6px 12px',
                 fontSize: '0.74rem',
-                color: '#cbd5e1',
+                color: '#3b4d46',
                 cursor: 'pointer',
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -195,12 +195,12 @@ export default function DatasetBenchmarkView({
                 transition: 'all 0.15s ease'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                e.currentTarget.style.background = 'rgba(18, 35, 31, 0.1)';
                 e.currentTarget.style.color = '#ffffff';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
-                e.currentTarget.style.color = '#cbd5e1';
+                e.currentTarget.style.background = 'rgba(18, 35, 31, 0.05)';
+                e.currentTarget.style.color = '#3b4d46';
               }}
             >
               <RotateCcw size={12} />
@@ -215,15 +215,15 @@ export default function DatasetBenchmarkView({
               style={{
                 padding: '14px',
                 borderRadius: '10px',
-                background: 'rgba(11, 19, 38, 0.6)',
-                border: '1px solid rgba(255, 255, 255, 0.06)'
+                background: 'var(--frost)',
+                border: '1px solid rgba(18, 35, 31, 0.06)'
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#f1f5f9', fontWeight: 800, fontSize: '0.78rem', marginBottom: '6px' }}>
-                <Info size={14} color="#38bdf8" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--ink)', fontWeight: 800, fontSize: '0.78rem', marginBottom: '6px' }}>
+                <Info size={14} color="#0e7490" />
                 <span>WHAT HAPPENED IN REALITY</span>
               </div>
-              <p style={{ fontSize: '0.76rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
+              <p style={{ fontSize: '0.76rem', color: '#5a6b65', lineHeight: 1.5, margin: 0 }}>
                 {selectedAttack.traditionalFailure.split(',')[0] || selectedAttack.name}.
                 {' '}The hacker manipulated: <strong>{selectedAttack.attackValue}</strong>.
               </p>
@@ -234,15 +234,15 @@ export default function DatasetBenchmarkView({
               style={{
                 padding: '14px',
                 borderRadius: '10px',
-                background: 'rgba(255, 42, 95, 0.06)',
-                border: '1px solid rgba(255, 42, 95, 0.2)'
+                background: 'rgba(225, 29, 72, 0.06)',
+                border: '1px solid rgba(225, 29, 72, 0.2)'
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#fb7185', fontWeight: 800, fontSize: '0.78rem', marginBottom: '6px' }}>
-                <AlertTriangle size={14} color="#fb7185" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#be123c', fontWeight: 800, fontSize: '0.78rem', marginBottom: '6px' }}>
+                <AlertTriangle size={14} color="#be123c" />
                 <span>WHY OLD SECURITY TOOLS FAILED</span>
               </div>
-              <p style={{ fontSize: '0.76rem', color: '#cbd5e1', lineHeight: 1.5, margin: 0 }}>
+              <p style={{ fontSize: '0.76rem', color: '#3b4d46', lineHeight: 1.5, margin: 0 }}>
                 {selectedAttack.traditionalFailure}
               </p>
             </div>
@@ -252,18 +252,18 @@ export default function DatasetBenchmarkView({
               style={{
                 padding: '14px',
                 borderRadius: '10px',
-                background: 'rgba(16, 185, 129, 0.06)',
-                border: '1px solid rgba(16, 185, 129, 0.2)'
+                background: 'rgba(5, 150, 105, 0.06)',
+                border: '1px solid rgba(5, 150, 105, 0.2)'
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#34d399', fontWeight: 800, fontSize: '0.78rem', marginBottom: '6px' }}>
-                <ShieldCheck size={14} color="#34d399" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#047857', fontWeight: 800, fontSize: '0.78rem', marginBottom: '6px' }}>
+                <ShieldCheck size={14} color="#047857" />
                 <span>HOW AQUASHIELD SOLVED IT (38ms)</span>
               </div>
-              <p style={{ fontSize: '0.76rem', color: '#cbd5e1', lineHeight: 1.5, margin: 0 }}>
+              <p style={{ fontSize: '0.76rem', color: '#3b4d46', lineHeight: 1.5, margin: 0 }}>
                 {selectedAttack.aquaShieldLocalizationProof}
               </p>
-              <div style={{ fontSize: '0.72rem', color: '#34d399', fontWeight: 700, marginTop: '6px' }}>
+              <div style={{ fontSize: '0.72rem', color: '#047857', fontWeight: 700, marginTop: '6px' }}>
                 🛡️ Autonomous Remedy: {selectedAttack.remedyApplied}
               </div>
             </div>
@@ -274,21 +274,21 @@ export default function DatasetBenchmarkView({
             style={{
               padding: '12px 16px',
               borderRadius: '8px',
-              background: 'rgba(8, 14, 28, 0.7)',
-              border: '1px solid rgba(255, 255, 255, 0.06)',
+              background: 'var(--frost)',
+              border: '1px solid rgba(18, 35, 31, 0.06)',
               marginBottom: '16px'
             }}
           >
-            <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 800, textTransform: 'uppercase', marginBottom: '8px' }}>
+            <div style={{ fontSize: '0.7rem', color: '#6b7b75', fontWeight: 800, textTransform: 'uppercase', marginBottom: '8px' }}>
               PHYSICAL TESTBED TELEMETRY SNAPSHOT
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px' }}>
               {Object.entries(selectedAttack.injectedPhysicsState).slice(0, 3).map(([key, val]) => (
-                <div key={key} style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '8px 12px', borderRadius: '6px', border: '1px solid rgba(255, 255, 255, 0.04)' }}>
-                  <div style={{ fontSize: '0.66rem', color: '#94a3b8', textTransform: 'capitalize' }}>
+                <div key={key} style={{ background: 'var(--frost)', padding: '8px 12px', borderRadius: '6px', border: '1px solid rgba(18, 35, 31, 0.04)' }}>
+                  <div style={{ fontSize: '0.66rem', color: '#5a6b65', textTransform: 'capitalize' }}>
                     {key.replace(/([A-Z])/g, ' $1')}
                   </div>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#f1f5f9', marginTop: '2px' }}>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--ink)', marginTop: '2px' }}>
                     {val}
                   </div>
                 </div>
@@ -297,8 +297,8 @@ export default function DatasetBenchmarkView({
           </div>
 
           {/* Replay in SCADA Simulation Action Options */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '14px' }}>
-            <span style={{ fontSize: '0.76rem', color: '#94a3b8' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', borderTop: '1px solid rgba(18, 35, 31, 0.08)', paddingTop: '14px' }}>
+            <span style={{ fontSize: '0.76rem', color: '#5a6b65' }}>
               Want to see this exact attack localized and healed live in the 4-tank facility?
             </span>
 
@@ -308,8 +308,8 @@ export default function DatasetBenchmarkView({
               style={{
                 padding: '9px 20px',
                 borderRadius: '8px',
-                background: 'linear-gradient(135deg, #00f2fe 0%, #10b981 100%)',
-                color: '#050811',
+                background: 'linear-gradient(135deg, #0891b2 0%, #059669 100%)',
+                color: '#ffffff',
                 border: 'none',
                 fontWeight: 800,
                 fontSize: '0.82rem',
@@ -317,7 +317,7 @@ export default function DatasetBenchmarkView({
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                boxShadow: '0 4px 16px rgba(0, 242, 254, 0.3)'
+                boxShadow: '0 4px 16px rgba(8, 145, 178, 0.3)'
               }}
             >
               <Play size={14} />
